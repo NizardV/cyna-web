@@ -1,0 +1,88 @@
+/* ============================================================
+   loading.css — Animations du composant de chargement
+   Toutes les animations sont en CSS pur, sans dépendance JS
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   @keyframes — définition des animations de base
+   ------------------------------------------------------------ */
+
+/* Rotation dans le sens horaire (anneaux 1 et 2) */
+@keyframes rotation {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Rotation dans le sens anti-horaire (anneaux 3 et 4) */
+@keyframes rotation-inverse {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(-360deg); }
+}
+
+/* Pulsation douce d'opacité */
+@keyframes pulsation {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.5; }
+}
+
+/* Apparition progressive depuis le bas */
+@keyframes apparition {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ------------------------------------------------------------
+   Anneaux du spinner
+   Chaque anneau tourne à une vitesse différente pour créer
+   un effet de profondeur et de complexité visuelle
+   ------------------------------------------------------------ */
+
+/* Anneau 1 : le plus grand, rotation lente (3s) */
+.anneau-1 {
+    animation: rotation 3s linear infinite;
+}
+
+/* Anneau 2 : anneau principal, vitesse moyenne (2s) */
+.anneau-2 {
+    animation: rotation 2s linear infinite;
+}
+
+/* Anneau 3 : rotation inverse rapide (1.5s) */
+.anneau-3 {
+    animation: rotation-inverse 1.5s linear infinite;
+}
+
+/* Anneau 4 : le plus petit, rotation inverse très lente (4s) */
+.anneau-4 {
+    animation: rotation-inverse 4s linear infinite;
+}
+
+/* ------------------------------------------------------------
+   Point central et texte
+   ------------------------------------------------------------ */
+
+/* Point central : pulsation rapide */
+.point-central {
+    animation: pulsation 2s ease-in-out infinite;
+}
+
+/* Bloc de texte : apparition après un court délai */
+.apparition {
+    animation: apparition 0.8s ease-out 0.3s both;
+}
+
+/* Titre : pulsation lente d'opacité */
+.pulsation-lente {
+    animation: pulsation 3s ease-in-out infinite;
+}
+
+/* Sous-titre : pulsation encore plus douce */
+.pulsation-tres-lente {
+    animation: pulsation 4s ease-in-out infinite;
+}
