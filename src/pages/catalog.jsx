@@ -413,24 +413,6 @@ export function Catalog() {
   }, [])
 
   // --- Chargement initial des catégories ---
-    useEffect(() => {
-    setLoadingProducts(true)
-    getCatalogProducts(filters)
-      .then((data) => { setProducts(data); setLoadingProducts(false) })
-      .catch(() => setLoadingProducts(false))
-  }, [])
-
-  useEffect(() => {
-    setLoadingCategories(true)
-    getCategories()
-      .then((data) => {
-        setCategories(data)
-        setLoadingCategories(false)
-      })
-      .catch(() => setLoadingCategories(false))
-  }, [])
-
-  // --- Chargement des produits — déclenché par chaque changement de filtre / tri / page ---
   useEffect(() => {
     setLoadingProducts(true)
 
@@ -448,8 +430,7 @@ export function Catalog() {
     }
     if (filters.onlyAvailable) params.available = "true"
 
-    apiClient
-      .get("/catalog/products", { params })
+    getCatalogProducts(params)
       .then((data) => {
         setProducts(data.items ?? [])
         setTotal(data.total ?? 0)
@@ -459,6 +440,34 @@ export function Catalog() {
       })
       .catch(() => setLoadingProducts(false))
   }, [debouncedSearch, filters.categories, filters.maxPrice, filters.onlyAvailable, sortBy, currentPage])
+
+  // --- Chargement initial des produits ---
+  useEffect(() => {
+    getCatalogProducts({
+      page: "1",
+      pageSize: String(PAGE_SIZE),
+      sortBy: "relevance"
+    })
+      .then((data) => {
+        setProducts(data.items ?? [])
+        setTotal(data.total ?? 0)
+        setTotalPages(data.totalPages ?? 1)
+        setCurrentPage(data.page ?? 1)
+        setLoadingProducts(false)
+      })
+      .catch(() => setLoadingProducts(false))
+  }, [])
+
+  // --- Chargement des catégories ---
+  useEffect(() => {
+    setLoadingCategories(true)
+    getCategories()
+      .then((data) => {
+        setCategories(data)
+        setLoadingCategories(false)
+      })
+      .catch(() => setLoadingCategories(false))
+  }, [])
 
   // ---------------------------------------------------------------------------
   // Rendu

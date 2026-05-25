@@ -159,6 +159,23 @@ async function coreFetch(path, options = {}) {
   return response.json();
 }
 
+// Ajoutez cette fonction helper dans client.js
+/**
+ * Build query string from params object
+ * @param {Record<string, string>} params
+ * @returns {string}
+ */
+function buildQueryString(params = {}) {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      searchParams.append(key, value);
+    }
+  });
+  const qs = searchParams.toString();
+  return qs ? `?${qs}` : "";
+}
+
 // ---------------------------------------------------------------------------
 // ApiError
 // ---------------------------------------------------------------------------
@@ -189,13 +206,14 @@ class ApiClient {
    */
   async get(path, { params, mock } = {}) {
     const resolved = buildUrl(path, params);
+    const queryString = buildQueryString(params);
 
     if (resolveMock(mock)) {
       const intercepted = await interceptMock("GET", resolved, null);
       if (intercepted) return intercepted.data;
     }
 
-    return coreFetch(resolved, { method: "GET" });
+    return coreFetch(`${resolved}${queryString}`, { method: "GET" });
   }
 
   /**

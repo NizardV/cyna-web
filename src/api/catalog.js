@@ -7,12 +7,25 @@
 import { apiClient } from "./client.js"
 
 /**
- * Récupère tous les produits du catalogue avec filtres optionnels.
- * @param {{ categoryId?: string, minPrice?: number, maxPrice?: number, available?: boolean }} [filters] - Filtres optionnels
- * @returns {Promise<object[]>}
+ * Récupère tous les produits du catalogue avec filtres, tri et pagination.
+ * @param {{
+ *   q?: string,
+ *   categoryIds?: string,
+ *   maxPrice?: string,
+ *   available?: string,
+ *   page?: string,
+ *   pageSize?: string,
+ *   sortBy?: string
+ * }} [params] - Paramètres de requête
+ * @returns {Promise<{
+ *   items: object[],
+ *   total: number,
+ *   totalPages: number,
+ *   page: number
+ * }>}
  */
-export const getCatalogProducts = (filters = {}) =>
-  apiClient.get("/products", { params: filters })
+export const getCatalogProducts = (params = {}) =>
+  apiClient.get("/catalog/products", { params })
 
 /**
  * Récupère toutes les catégories disponibles.
