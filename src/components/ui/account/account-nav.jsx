@@ -75,29 +75,30 @@ export function AccountNav({ user }) {
       className="flex w-full flex-col gap-0.5 md:w-52 md:shrink-0"
       aria-label="Navigation du compte"
     >
-      {/* En-tête utilisateur */}
-      {user && (
-        <div className="mb-3 flex items-center gap-3 px-2 py-2">
-          <Avatar size="default">
-            <AvatarFallback className="bg-primary/10 text-primary font-semibold text-xs">
-              {getInitials(user.name)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="min-w-0">
-            <p className="truncate text-xs font-semibold text-foreground">
-              {user.name}
-            </p>
-            <p className="truncate text-xs text-muted-foreground">
-              {user.email}
-            </p>
-          </div>
+      {/* En-tête utilisateur - Affiche un fallback si user n'existe pas */}
+      <div className="mb-3 flex items-center gap-3 px-2 py-2">
+        <Avatar size="default">
+          <AvatarFallback className={cn(
+            "font-semibold text-xs",
+            user 
+              ? "bg-primary/10 text-primary" 
+              : "bg-muted text-muted-foreground"
+          )}>
+            {user ? getInitials(user.name) : "?"}
+          </AvatarFallback>
+        </Avatar>
+        <div className="min-w-0">
+          <p className="truncate text-xs font-semibold text-foreground">
+            {user?.name || "Invité"}
+          </p>
+          <p className="truncate text-xs text-muted-foreground">
+            {user?.email || "Non connecté"}
+          </p>
         </div>
-      )}
+      </div>
 
-      {/* Séparateur visuel */}
-      {user && (
-        <div className="mb-2 h-px bg-border" />
-      )}
+      {/* Séparateur visuel - toujours affiché dans ce cas */}
+      <div className="mb-2 h-px bg-border" />
 
       {/* Liens de navigation */}
       {NAV_ITEMS.map(({ to, label, Icon }) => (

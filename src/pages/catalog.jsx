@@ -1,6 +1,6 @@
 /**
  * @file pages/catalog.jsx
- * Rebuilt to match search.html maquette.
+ * Uses shared UI components: Card, Button, Input, Label, Select, Skeleton.
  */
 
 import { useEffect, useState, useCallback } from "react"
@@ -10,7 +10,9 @@ import { getCatalogProducts, getCategories } from "@/api/catalog.js"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   Select,
   SelectContent,
@@ -34,114 +36,102 @@ function formatMonthlyPrice(price) {
 }
 
 // ---------------------------------------------------------------------------
-// AvailabilityBadge — pill shape to match maquette
-// ---------------------------------------------------------------------------
-
-function AvailabilityBadge({ available }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
-        available
-          ? "bg-green-100 text-green-800"
-          : "bg-red-100 text-red-700"
-      )}
-    >
-      {available ? "Disponible" : "Service indisponible"}
-    </span>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// ProductCard — matches maquette card with image placeholder block
+// ProductCard — uses Card component
 // ---------------------------------------------------------------------------
 
 function ProductCard({ product, categoryName }) {
   return (
-    <div
+    <Card
       className={cn(
-        "flex flex-col rounded-xl border bg-card transition-colors hover:border-primary",
-        !product.isAvailable && "bg-gray-50 opacity-75"
+        "flex flex-col transition-colors hover:ring-primary",
+        !product.isAvailable && "opacity-75"
       )}
     >
       {/* Image placeholder */}
-      <div
+      <img
+        src="https://avatar.vercel.sh/shadcn1"
+        alt="Event cover"
         className={cn(
-          "flex h-32 items-center justify-center rounded-t-xl font-bold text-lg",
+          "relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40",
           product.isAvailable
             ? "bg-muted text-primary"
-            : "bg-gray-200 text-gray-400"
+            : "bg-muted/50 text-muted-foreground"
         )}
-      >
-        {categoryName}
-      </div>
+      />
 
-      <div className="flex flex-1 flex-col gap-2 p-5">
-        <h3 className="font-bold text-foreground">{product.name}</h3>
-        <p className="line-clamp-2 h-10 text-sm text-muted-foreground">
+      <CardContent className="flex flex-1 flex-col gap-2 pt-3">
+        <h3 className="text-xs font-bold text-foreground">{product.name}</h3>
+        <p className="line-clamp-2 text-xs text-muted-foreground">
           {product.description}
         </p>
 
-        <div className="mt-4 flex items-end justify-between">
-          <div>
-            <AvailabilityBadge available={product.isAvailable} />
-            {product.isAvailable && (
-              <p className="mt-2 text-lg font-extrabold text-primary">
-                {formatMonthlyPrice(product.priceMonthly)}{" "}
-                <span className="text-xs font-normal text-muted-foreground">/mois</span>
-              </p>
-            )}
-            {!product.isAvailable && (
-              <p className="mt-2 text-lg font-extrabold text-muted-foreground">—</p>
+        <div className="mt-auto flex items-end justify-between pt-3">
+          <div className="flex flex-col gap-1">
+            {product.isAvailable ? (
+              <>
+                <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">Disponible</Badge>
+                <p className="text-sm font-extrabold text-primary">
+                  {formatMonthlyPrice(product.priceMonthly)}{" "}
+                  <span className="text-xs font-normal text-muted-foreground">/mois</span>
+                </p>
+              </>
+            ) : (
+              <>
+                <Badge variant="destructive">Indisponible</Badge>
+              </>
             )}
           </div>
-          <Button size="sm" disabled={!product.isAvailable} variant={product.isAvailable ? "default" : "outline"}>
+          <Button
+            size="sm"
+            disabled={!product.isAvailable}
+            variant={product.isAvailable ? "default" : "outline"}
+          >
             Détails
           </Button>
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
 // ---------------------------------------------------------------------------
-// ProductCardSkeleton
+// ProductCardSkeleton — uses Card + Skeleton
 // ---------------------------------------------------------------------------
 
 function ProductCardSkeleton() {
   return (
-    <div className="flex flex-col rounded-xl border bg-card">
-      <Skeleton className="h-32 rounded-t-xl rounded-b-none" />
-      <div className="flex flex-col gap-2 p-5">
-        <Skeleton className="h-4 w-3/4" />
+    <Card className="flex flex-col">
+      <Skeleton className="h-28" />
+      <CardContent className="flex flex-col gap-2 pt-3">
+        <Skeleton className="h-3 w-3/4" />
         <Skeleton className="h-3 w-full" />
         <Skeleton className="h-3 w-5/6" />
-        <div className="mt-4 flex items-end justify-between">
+        <div className="mt-3 flex items-end justify-between">
           <div className="flex flex-col gap-1">
             <Skeleton className="h-5 w-20 rounded-full" />
-            <Skeleton className="h-5 w-16" />
+            <Skeleton className="h-4 w-16" />
           </div>
-          <Skeleton className="h-8 w-16 rounded-md" />
+          <Skeleton className="h-7 w-16" />
         </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   )
 }
 
 // ---------------------------------------------------------------------------
-// FilterSidebar — matches maquette layout with range slider for budget
+// FilterSidebar — uses Input, Label, shared primitives
 // ---------------------------------------------------------------------------
 
 function FilterSidebar({ categories, filters, onChange }) {
   return (
-    <aside className="w-64 shrink-0">
-      <h2 className="mb-6 text-lg font-bold text-foreground">
+    <aside className="w-56 shrink-0">
+      <h2 className="mb-4 text-sm font-bold text-foreground">
         Filtrer les services
       </h2>
 
       {/* Recherche */}
-      <div className="mb-6 border-b border-border pb-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Recherche</p>
+      <div className="mb-4 border-b border-border pb-4">
+        <p className="mb-2 text-xs font-semibold text-foreground">Recherche</p>
         <Input
           type="search"
           placeholder="Titre ou description..."
@@ -151,13 +141,13 @@ function FilterSidebar({ categories, filters, onChange }) {
       </div>
 
       {/* Catégories */}
-      <div className="mb-6 border-b border-border pb-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Catégories</p>
-        <div className="flex flex-col gap-2">
+      <div className="mb-4 border-b border-border pb-4">
+        <p className="mb-2 text-xs font-semibold text-foreground">Catégories</p>
+        <div className="flex flex-col gap-1.5">
           {categories.map((cat) => (
             <Label
               key={cat.id}
-              className="flex cursor-pointer items-center gap-2 text-sm font-normal text-muted-foreground"
+              className="flex cursor-pointer items-center gap-2 font-normal text-muted-foreground"
             >
               <input
                 type="checkbox"
@@ -176,9 +166,9 @@ function FilterSidebar({ categories, filters, onChange }) {
         </div>
       </div>
 
-      {/* Budget — range slider like maquette */}
-      <div className="mb-6 border-b border-border pb-6">
-        <p className="mb-3 text-sm font-semibold text-foreground">Budget (Mensuel)</p>
+      {/* Budget */}
+      <div className="mb-4 border-b border-border pb-4">
+        <p className="mb-2 text-xs font-semibold text-foreground">Budget (Mensuel)</p>
         <input
           type="range"
           min="0"
@@ -188,22 +178,35 @@ function FilterSidebar({ categories, filters, onChange }) {
           onChange={(e) => onChange({ maxPrice: e.target.value })}
           className="w-full accent-primary"
         />
-        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+        <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
           <span>0€</span>
           <span>{filters.maxPrice ? `${filters.maxPrice}€` : "max"}</span>
         </div>
       </div>
 
       {/* Disponibilité */}
-      <Label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+      <Label className="flex cursor-pointer items-center gap-2 font-medium">
         <input
           type="checkbox"
           checked={filters.onlyAvailable}
           onChange={(e) => onChange({ onlyAvailable: e.target.checked })}
           className="accent-primary"
         />
-        Uniquement services disponibles
+        Uniquement disponibles
       </Label>
+    </aside>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// FilterSidebarSkeleton
+// ---------------------------------------------------------------------------
+
+function FilterSidebarSkeleton() {
+  return (
+    <aside className="hidden w-56 shrink-0 space-y-3 md:block">
+      <Skeleton className="h-4 w-40 mb-4" />
+      {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-3 w-full" />)}
     </aside>
   )
 }
@@ -270,14 +273,11 @@ export function Catalog() {
 
   return (
     <Layout>
-      <main className="flex gap-8 p-8 max-w-7xl mx-auto w-full">
+      <main className="flex w-full max-w-7xl mx-auto gap-8 p-8">
 
         {/* Sidebar */}
         {loadingCategories ? (
-          <aside className="hidden w-64 shrink-0 space-y-3 md:block">
-            <Skeleton className="h-5 w-40 mb-6" />
-            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-3 w-full" />)}
-          </aside>
+          <FilterSidebarSkeleton />
         ) : (
           <div className="hidden md:block">
             <FilterSidebar
@@ -289,20 +289,20 @@ export function Catalog() {
         )}
 
         {/* Results */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {/* Header row */}
-          <div className="mb-6 flex items-center justify-between">
-            <h1 className="text-2xl font-bold text-foreground">
+          <div className="mb-5 flex items-center justify-between">
+            <h1 className="text-sm font-bold text-foreground">
               Résultats de recherche{" "}
               {!loadingProducts && (
-                <span className="text-base font-normal text-muted-foreground">
+                <span className="font-normal text-muted-foreground">
                   ({sorted.length} service{sorted.length !== 1 ? "s" : ""})
                 </span>
               )}
             </h1>
 
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-44">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -316,25 +316,28 @@ export function Catalog() {
 
           {/* Grid */}
           {loadingProducts ? (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
             </div>
           ) : sorted.length === 0 ? (
-            <div className="flex flex-col items-center justify-center rounded-xl border bg-card py-20 text-center">
-              <p className="font-bold text-foreground">Aucun résultat</p>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Essayez de modifier vos critères de recherche.
-              </p>
-              <Button
-                variant="link"
-                className="mt-3"
-                onClick={() => setFilters({ search: "", categories: [], maxPrice: "", onlyAvailable: false })}
-              >
-                Réinitialiser les filtres
-              </Button>
-            </div>
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-20 text-center">
+                <p className="text-xs font-bold text-foreground">Aucun résultat</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Essayez de modifier vos critères de recherche.
+                </p>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="mt-2"
+                  onClick={() => setFilters({ search: "", categories: [], maxPrice: "", onlyAvailable: false })}
+                >
+                  Réinitialiser les filtres
+                </Button>
+              </CardContent>
+            </Card>
           ) : (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {sorted.map((product) => (
                 <ProductCard
                   key={product.id}
