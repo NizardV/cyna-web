@@ -1,0 +1,37 @@
+{
+  "title": "Profil & Sécurité",
+  "personalInfo": {
+    "title": "Informations Personnelles",
+    "description": "Gérez vos informations de contact et votre adresse e-mail.",
+    "fullName": "Nom complet",
+    "email": "Adresse e-mail",
+    "verified": "Validé",
+    "save": "Sauvegarder les modifications",
+    "saving": "Enregistrement…",
+    "success": "Informations mises à jour avec succès.",
+    "error": "Une erreur est survenue."
+  },
+  "security": {
+    "title": "Sécurité du compte",
+    "description": "Mettez à jour votre mot de passe pour sécuriser l'accès à vos services SaaS.",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmPassword": "Confirmer le mot de passe",
+    "update": "Mettre à jour le mot de passe",
+    "updating": "Mise à jour…",
+    "success": "Mot de passe mis à jour avec succès.",
+    "errorRequired": "Le mot de passe actuel est requis.",
+    "errorMismatch": "Les mots de passe ne correspondent pas.",
+    "errorLength": "Le mot de passe doit contenir au moins 8 caractères.",
+    "error": "Une erreur est survenue."
+  },
+  "subscriptions": {
+    "title": "Abonnements SaaS actifs",
+    "description": "Gérez vos licences en cours.",
+    "viewAll": "Voir tout →",
+    "empty": "Aucun abonnement actif pour le moment.",
+    "users": "{{count}} utilisateurs",
+    "renewal": "Renouvellement auto le {{date}}",
+    "cancel": "Résilier"
+  }
+}

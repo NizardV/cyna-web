@@ -1,86 +1,65 @@
 /**
  * @file handlers/auth.js
- * @description Mock handlers for authentication routes.
+ * @description Handlers mock pour les routes d'authentification.
+ * - Login et register : erreurs intentionnelles (délégués à l'équipe login)
+ * - Logout : peut échouer aléatoirement pour tester la résilience côté client
+ * - /auth/me : retourne un utilisateur Faker fixe (Jean Dupont)
  */
 
-import { makeAuthResponse, makeUser } from "../factories/factories.js";
+import { faker } from "@faker-js/faker"
+import { makeUser } from "../factories/factories.js"
 
-// Simulate a registered user store
-const _users = [
-  makeUser({ email: "user@cyna.com", role: "user" }),
-  makeUser({ email: "admin@cyna.com", role: "admin", is2faEnabled: true }),
-];
+/**
+ * Probabilité d'échec simulé sur le logout (0–1).
+ * Même en cas d'échec API, le client doit supprimer le token local.
+ * @type {number}
+ */
+const TAUX_ECHEC_LOGOUT = 0.25
+
+// ---------------------------------------------------------------------------
+// Handlers enregistrés
+// ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const authHandlers = [
-  // -------------------------------------------------------------------------
-  // POST /auth/register
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/register",
-    resolver: ({ body }) => {
-      const existing = _users.find((u) => u.email === body.email);
-      if (existing) throw new Error("Email already in use");
-
-      const user = makeUser({ email: body.email, name: body.name, isConfirmed: false });
-      _users.push(user);
-
-      return { message: "Registration successful. Please confirm your email." };
-    },
-    status: 201,
-  },
 
   // -------------------------------------------------------------------------
-  // POST /auth/login
+  // POST /auth/logout — Supprime le token local, peut échouer aléatoirement.
+  // Le client doit toujours rediriger même si l'API renvoie une erreur.
   // -------------------------------------------------------------------------
   {
     method: "POST",
-    path: "/auth/login",
-    resolver: ({ body }) => {
-      const user = _users.find((u) => u.email === body.email);
-
-      // Accept any password in mock mode
-      if (!user) throw new Error("Invalid credentials");
-      if (!user.isConfirmed) throw new Error("Please confirm your email first");
-
-      return makeAuthResponse({ ...user });
+    path: "/auth/logout",
+    resolver: () => {
+      localStorage.removeItem("cyna_token")
+      if (faker.datatype.boolean({ probability: TAUX_ECHEC_LOGOUT })) {
+        throw new Error("Erreur lors de la déconnexion côté serveur (token révoqué localement).")
+      }
+      return { message: "Déconnecté avec succès." }
     },
   },
 
   // -------------------------------------------------------------------------
-  // POST /auth/confirm
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/confirm",
-    resolver: () => ({ message: "Email confirmed successfully" }),
-  },
-
-  // -------------------------------------------------------------------------
-  // POST /auth/forgot-password
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/forgot-password",
-    resolver: () => ({ message: "Reset link sent if email exists" }),
-  },
-
-  // -------------------------------------------------------------------------
-  // POST /auth/reset-password
+  // POST /auth/reset-password — Réinitialisation du mot de passe
   // -------------------------------------------------------------------------
   {
     method: "POST",
     path: "/auth/reset-password",
-    resolver: () => ({ message: "Password reset successfully" }),
+    resolver: () => ({ message: "Mot de passe réinitialisé avec succès." }),
   },
 
   // -------------------------------------------------------------------------
-  // GET /auth/me
+  // GET /auth/me — Profil de l'utilisateur connecté (données fixes pour la démo)
   // -------------------------------------------------------------------------
   {
     method: "GET",
     path: "/auth/me",
-    resolver: () => makeUser({ email: "user@cyna.com" }),
+    resolver: () =>
+      makeUser({
+        email: "jean.dupont@entreprise.com",
+        name: "Jean Dupont",
+        role: "user",
+        isConfirmed: true,
+      }),
   },
-];
+]
