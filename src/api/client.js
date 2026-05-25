@@ -103,26 +103,26 @@ function matchPattern(pattern, url) {
  * @param {unknown} body    Request body (for POST/PUT)
  * @returns {Promise<{ data: unknown; status: number }> | null}
  */
-async function interceptMock(method, path, body) {
-  const handlers = mockRegistry.getHandlers();
+async function interceptMock(method, path, body, queryParams = {}) {
+  const handlers = mockRegistry.getHandlers()
 
   for (const handler of handlers) {
-    if (handler.method.toUpperCase() !== method.toUpperCase()) continue;
+    if (handler.method.toUpperCase() !== method.toUpperCase()) continue
 
-    const params = matchPattern(handler.path, path);
-    if (params === null) continue;
+    const pathParams = matchPattern(handler.path, path)
+    if (pathParams === null) continue
 
-    await delay(MOCK_DELAY_MS);
+    await delay(MOCK_DELAY_MS)
 
     const result =
       typeof handler.resolver === "function"
-        ? await handler.resolver({ params, body })
-        : handler.resolver;
+        ? await handler.resolver({ params: { ...pathParams, ...queryParams }, body })
+        : handler.resolver
 
-    return { data: result, status: handler.status ?? 200 };
+    return { data: result, status: handler.status ?? 200 }
   }
 
-  return null;
+  return null
 }
 
 // ---------------------------------------------------------------------------
@@ -159,6 +159,23 @@ async function coreFetch(path, options = {}) {
   return response.json();
 }
 
+// Ajoutez cette fonction helper dans client.js
+/**
+ * Build query string from params object
+ * @param {Record<string, string>} params
+ * @returns {string}
+ */
+function buildQueryString(params = {}) {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      searchParams.append(key, value);
+    }
+  });
+  const qs = searchParams.toString();
+  return qs ? `?${qs}` : "";
+}
+
 // ---------------------------------------------------------------------------
 // ApiError
 // ---------------------------------------------------------------------------
@@ -187,16 +204,17 @@ class ApiClient {
    * @param {{ params?: Record<string, string>; mock?: boolean }} [options]
    * @returns {Promise<unknown>}
    */
-  async get(path, { params, mock } = {}) {
-    const resolved = buildUrl(path, params);
+    async get(path, { params, mock } = {}) {
+      const resolved = buildUrl(path, params)
+      const queryString = buildQueryString(params)
 
-    if (resolveMock(mock)) {
-      const intercepted = await interceptMock("GET", resolved, null);
-      if (intercepted) return intercepted.data;
+      if (resolveMock(mock)) {
+        const intercepted = await interceptMock("GET", resolved, null, params ?? {})
+        if (intercepted) return intercepted.data
+      }
+
+      return coreFetch(`${resolved}${queryString}`, { method: "GET" })
     }
-
-    return coreFetch(resolved, { method: "GET" });
-  }
 
   /**
    * POST request.
