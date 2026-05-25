@@ -51,12 +51,10 @@ function ProductCard({ product, categoryName }) {
       <img
         src="https://avatar.vercel.sh/shadcn1"
         alt="Event cover"
-        className={cn(
-          "relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40",
+        className={cn("relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40",
           product.isAvailable
             ? "bg-muted text-primary"
-            : "bg-muted/50 text-muted-foreground"
-        )}
+            : "bg-muted/50 text-muted-foreground")}
       />
 
       <CardContent className="flex flex-1 flex-col gap-2 pt-3">
