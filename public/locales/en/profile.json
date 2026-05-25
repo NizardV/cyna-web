@@ -1,0 +1,37 @@
+{
+  "title": "Profile & Security",
+  "personalInfo": {
+    "title": "Personal Information",
+    "description": "Manage your contact information and email address.",
+    "fullName": "Full name",
+    "email": "Email address",
+    "verified": "Verified",
+    "save": "Save changes",
+    "saving": "Saving…",
+    "success": "Information updated successfully.",
+    "error": "An error occurred."
+  },
+  "security": {
+    "title": "Account Security",
+    "description": "Update your password to secure access to your SaaS services.",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "update": "Update password",
+    "updating": "Updating…",
+    "success": "Password updated successfully.",
+    "errorRequired": "Current password is required.",
+    "errorMismatch": "Passwords do not match.",
+    "errorLength": "Password must be at least 8 characters.",
+    "error": "An error occurred."
+  },
+  "subscriptions": {
+    "title": "Active SaaS Subscriptions",
+    "description": "Manage your current licenses.",
+    "viewAll": "View all →",
+    "empty": "No active subscriptions at the moment.",
+    "users": "{{count}} users",
+    "renewal": "Auto-renewal on {{date}}",
+    "cancel": "Cancel"
+  }
+}

@@ -9,6 +9,7 @@
   "noOrdersEmpty": "Vous n'avez pas encore passé de commande.",
   "error": "Erreur : {{message}}",
   "orderedOn": "Commande passée le {{date}}",
+  "orderType": "{{type}}",
   "paidVia": "Payé via {{method}}",
   "paidViaCard": "Payé via {{method}} terminant par {{last4}}",
   "invoicePdf": "Facture PDF",

@@ -4,6 +4,7 @@
  */
 
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/ui/layout/layout"
 import { AccountNav } from "@/components/ui/account/account-nav"
 import { getAccountOrders } from "@/api/orders.js"
@@ -30,7 +31,7 @@ function formatPrice(amount) {
 }
 
 function formatDate(isoDate) {
-  return new Date(isoDate).toLocaleDateString("fr-FR", {
+  return new Date(isoDate).toLocaleDateString(undefined, {
     day: "numeric", month: "long", year: "numeric",
   })
 }
@@ -52,7 +53,9 @@ const STATUS_STYLES = {
   failed:     "bg-red-100 text-red-800",
 }
 
-function StatusBadge({ status, label }) {
+function StatusBadge({ status }) {
+  const { t } = useTranslation("order-history")
+
   return (
     <span
       className={cn(
@@ -60,7 +63,7 @@ function StatusBadge({ status, label }) {
         STATUS_STYLES[status] ?? STATUS_STYLES.terminated
       )}
     >
-      {label}
+      {t(`status.${status}`, { defaultValue: status })}
     </span>
   )
 }
@@ -70,6 +73,12 @@ function StatusBadge({ status, label }) {
 // ---------------------------------------------------------------------------
 
 function OrderRow({ order, isLast }) {
+  const { t } = useTranslation("order-history")
+
+  const paymentLine = order.paymentLast4
+    ? t("paidViaCard", { method: order.paymentMethod, last4: order.paymentLast4 })
+    : t("paidVia", { method: order.paymentMethod })
+
   return (
     <div
       className={cn(
@@ -81,20 +90,17 @@ function OrderRow({ order, isLast }) {
       <div className="flex-1">
         <div className="mb-1 flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-foreground">{order.productName}</span>
-          <StatusBadge status={order.status} label={order.statusLabel} />
+          <StatusBadge status={order.status} />
         </div>
         <p className="text-xs text-muted-foreground">
-          Commande passée le {formatDate(order.createdAt)} • {order.type}
+          {t("orderedOn", { date: formatDate(order.createdAt) })} • {order.type}
         </p>
       </div>
 
       {/* Center: amount */}
       <div className="text-right">
         <p className="text-sm font-extrabold text-foreground">{formatPrice(order.total)}</p>
-        <p className="text-xs text-muted-foreground">
-          Payé via {order.paymentMethod}
-          {order.paymentLast4 ? ` terminant par ${order.paymentLast4}` : ""}
-        </p>
+        <p className="text-xs text-muted-foreground">{paymentLine}</p>
       </div>
 
       {/* Right: actions */}
@@ -105,7 +111,7 @@ function OrderRow({ order, isLast }) {
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
-              Facture PDF
+              {t("invoicePdf")}
             </a>
           </Button>
         )}
@@ -119,10 +125,12 @@ function OrderRow({ order, isLast }) {
 // ---------------------------------------------------------------------------
 
 function OrderGroup({ year, orders, dimmed }) {
+  const { t } = useTranslation("order-history")
+
   return (
     <div className={cn(dimmed && "opacity-75")}>
       <h2 className="mb-3 border-b border-border pb-2 text-sm font-bold text-foreground">
-        Commandes en {year}
+        {t("ordersIn", { year })}
       </h2>
       <Card>
         <CardContent className="p-0">
@@ -134,6 +142,10 @@ function OrderGroup({ year, orders, dimmed }) {
     </div>
   )
 }
+
+// ---------------------------------------------------------------------------
+// OrderHistorySkeleton
+// ---------------------------------------------------------------------------
 
 function OrderHistorySkeleton() {
   return (
@@ -172,6 +184,8 @@ function OrderHistorySkeleton() {
 // ---------------------------------------------------------------------------
 
 export function OrderHistory() {
+  const { t } = useTranslation("order-history")
+
   const [orders, setOrders] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -216,7 +230,7 @@ export function OrderHistory() {
     <Layout>
       <main className="flex w-full flex-col gap-8 py-8 md:flex-row">
 
-        {/* Sidebar — same position as profile */}
+        {/* Sidebar */}
         <div className="w-full md:w-52 md:shrink-0">
           <AccountNav user={loadingUser ? undefined : user ?? undefined} />
         </div>
@@ -227,30 +241,26 @@ export function OrderHistory() {
           {/* Page header + filters */}
           <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
-              <h1 className="text-lg font-bold text-foreground">
-                Historique des commandes
-              </h1>
-              <p className="text-xs text-muted-foreground">
-                Retrouvez toutes vos factures et abonnements souscrits.
-              </p>
+              <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
+              <p className="text-xs text-muted-foreground">{t("subtitle")}</p>
             </div>
             <div className="flex gap-2 shrink-0">
               <Input
                 type="text"
-                placeholder="Rechercher une commande..."
+                placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-48"
               />
               <Select value={selectedYear} onValueChange={setSelectedYear}>
                 <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Toutes les années" />
+                  <SelectValue placeholder={t("allYears")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">Toutes les années</SelectItem>
+                  <SelectItem value="all">{t("allYears")}</SelectItem>
                   {allYears.map((year) => (
                     <SelectItem key={year} value={String(year)}>
-                      Année : {year}
+                      {t("year", { year })}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -264,7 +274,7 @@ export function OrderHistory() {
           {error && (
             <Card>
               <CardContent className="py-8 text-center">
-                <p className="text-xs text-destructive">Erreur : {error}</p>
+                <p className="text-xs text-destructive">{t("error", { message: error })}</p>
               </CardContent>
             </Card>
           )}
@@ -272,9 +282,9 @@ export function OrderHistory() {
           {!loading && !error && grouped.length === 0 && (
             <Card>
               <CardContent className="py-16 text-center">
-                <p className="text-xs font-bold text-foreground">Aucune commande trouvée</p>
+                <p className="text-xs font-bold text-foreground">{t("noOrders")}</p>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  {searchQuery ? "Essayez un autre terme." : "Vous n'avez pas encore passé de commande."}
+                  {searchQuery ? t("noOrdersHint") : t("noOrdersEmpty")}
                 </p>
               </CardContent>
             </Card>

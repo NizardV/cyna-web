@@ -435,28 +435,10 @@ export function Catalog() {
         setProducts(data.items ?? [])
         setTotal(data.total ?? 0)
         setTotalPages(data.totalPages ?? 1)
-        setCurrentPage(data.page ?? 1)
         setLoadingProducts(false)
       })
       .catch(() => setLoadingProducts(false))
   }, [debouncedSearch, filters.categories, filters.maxPrice, filters.onlyAvailable, sortBy, currentPage])
-
-  // --- Chargement initial des produits ---
-  useEffect(() => {
-    getCatalogProducts({
-      page: "1",
-      pageSize: String(PAGE_SIZE),
-      sortBy: "relevance"
-    })
-      .then((data) => {
-        setProducts(data.items ?? [])
-        setTotal(data.total ?? 0)
-        setTotalPages(data.totalPages ?? 1)
-        setCurrentPage(data.page ?? 1)
-        setLoadingProducts(false)
-      })
-      .catch(() => setLoadingProducts(false))
-  }, [])
 
   // --- Chargement des catégories ---
   useEffect(() => {

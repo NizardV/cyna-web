@@ -9,6 +9,7 @@
   "noOrdersEmpty": "You haven't placed any orders yet.",
   "error": "Error: {{message}}",
   "orderedOn": "Ordered on {{date}}",
+  "orderType": "{{type}}",
   "paidVia": "Paid via {{method}}",
   "paidViaCard": "Paid via {{method}} ending in {{last4}}",
   "invoicePdf": "PDF Invoice",
