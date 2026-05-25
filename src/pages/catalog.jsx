@@ -1,7 +1,6 @@
 /**
  * @file pages/catalog.jsx
- * @description Page "Catalogue / Résultats de recherche" — affiche les produits
- * filtrables par catégorie, budget et disponibilité.
+ * Rebuilt to match search.html maquette.
  */
 
 import { useEffect, useState, useCallback } from "react"
@@ -9,17 +8,23 @@ import { useSearchParams } from "react-router-dom"
 import { Layout } from "@/components/ui/layout/layout"
 import { getCatalogProducts, getCategories } from "@/api/catalog.js"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useDebounce } from "@/hooks/useDebounce.js"
+import { cn } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Formate un prix mensuel en euros.
- * @param {number} price
- * @returns {string}
- */
 function formatMonthlyPrice(price) {
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
@@ -29,127 +34,70 @@ function formatMonthlyPrice(price) {
 }
 
 // ---------------------------------------------------------------------------
-// Composant CategoryTag — tag de catégorie sur la carte produit
+// AvailabilityBadge — pill shape to match maquette
 // ---------------------------------------------------------------------------
 
-/**
- * Tag de catégorie affiché en haut d'une carte produit.
- * @param {{ name: string }} props
- */
-function CategoryTag({ name }) {
-  return (
-    <span className="text-xs font-semibold tracking-widest text-primary uppercase">
-      {name}
-    </span>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Composant AvailabilityBadge
-// ---------------------------------------------------------------------------
-
-/**
- * Badge de disponibilité d'un produit.
- * @param {{ available: boolean }} props
- */
 function AvailabilityBadge({ available }) {
-  if (available) {
-    return (
-      <span className="inline-flex items-center gap-1 text-xs text-emerald-600 dark:text-emerald-400">
-        <span className="inline-block h-1.5 w-1.5 rounded-full bg-emerald-500" aria-hidden="true" />
-        Disponible
-      </span>
-    )
-  }
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-rose-500 dark:text-rose-400">
-      <span className="inline-block h-1.5 w-1.5 rounded-full bg-rose-500" aria-hidden="true" />
-      Service indisponible
+    <span
+      className={cn(
+        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
+        available
+          ? "bg-green-100 text-green-800"
+          : "bg-red-100 text-red-700"
+      )}
+    >
+      {available ? "Disponible" : "Service indisponible"}
     </span>
   )
 }
 
 // ---------------------------------------------------------------------------
-// Composant ProductCard
+// ProductCard — matches maquette card with image placeholder block
 // ---------------------------------------------------------------------------
 
-/**
- * Carte de produit dans la grille des résultats.
- * @param {{ product: object, categoryName: string }} props
- */
 function ProductCard({ product, categoryName }) {
   return (
-    <div className="flex flex-col rounded border border-border bg-card hover:border-primary/40 transition-colors">
-      {/* En-tête catégorie */}
-      <div className="border-b border-border px-4 py-3">
-        <CategoryTag name={categoryName} />
+    <div
+      className={cn(
+        "flex flex-col rounded-xl border bg-card transition-colors hover:border-primary",
+        !product.isAvailable && "bg-gray-50 opacity-75"
+      )}
+    >
+      {/* Image placeholder */}
+      <div
+        className={cn(
+          "flex h-32 items-center justify-center rounded-t-xl font-bold text-lg",
+          product.isAvailable
+            ? "bg-muted text-primary"
+            : "bg-gray-200 text-gray-400"
+        )}
+      >
+        {categoryName}
       </div>
 
-      {/* Corps */}
-      <div className="flex flex-1 flex-col gap-2 px-4 py-4">
-        <h3 className="font-semibold text-foreground text-sm leading-snug">
-          {product.name}
-        </h3>
-        <p className="line-clamp-2 text-xs leading-relaxed text-muted-foreground">
+      <div className="flex flex-1 flex-col gap-2 p-5">
+        <h3 className="font-bold text-foreground">{product.name}</h3>
+        <p className="line-clamp-2 h-10 text-sm text-muted-foreground">
           {product.description}
         </p>
 
-        <AvailabilityBadge available={product.isAvailable} />
-      </div>
-
-      {/* Pied de carte — prix + CTA */}
-      <div className="mt-auto border-t border-border px-4 py-3">
-        {product.isAvailable ? (
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-foreground">
-              {formatMonthlyPrice(product.priceMonthly)}
-              <span className="ml-1 text-xs font-normal text-muted-foreground">
-                /mois
-              </span>
-            </span>
-            <button className="rounded border border-primary bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
-              Détails
-            </button>
+        <div className="mt-4 flex items-end justify-between">
+          <div>
+            <AvailabilityBadge available={product.isAvailable} />
+            {product.isAvailable && (
+              <p className="mt-2 text-lg font-extrabold text-primary">
+                {formatMonthlyPrice(product.priceMonthly)}{" "}
+                <span className="text-xs font-normal text-muted-foreground">/mois</span>
+              </p>
+            )}
+            {!product.isAvailable && (
+              <p className="mt-2 text-lg font-extrabold text-muted-foreground">—</p>
+            )}
           </div>
-        ) : (
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">—</span>
-            <button
-              disabled
-              className="rounded border border-border px-3 py-1.5 text-xs font-medium text-muted-foreground cursor-not-allowed"
-            >
-              Détails
-            </button>
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Composant ProductCardSkeleton
-// ---------------------------------------------------------------------------
-
-/**
- * Squelette de chargement pour une carte produit.
- */
-function ProductCardSkeleton() {
-  return (
-    <div className="flex flex-col rounded border border-border bg-card">
-      <div className="border-b border-border px-4 py-3">
-        <Skeleton className="h-3 w-16" />
-      </div>
-      <div className="flex flex-col gap-2 px-4 py-4">
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-full" />
-        <Skeleton className="h-3 w-5/6" />
-        <Skeleton className="h-3 w-20" />
-      </div>
-      <div className="mt-auto border-t border-border px-4 py-3">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-4 w-16" />
-          <Skeleton className="h-7 w-16 rounded" />
+          <Button size="sm" disabled={!product.isAvailable} variant={product.isAvailable ? "default" : "outline"}>
+            Détails
+          </Button>
         </div>
       </div>
     </div>
@@ -157,42 +105,60 @@ function ProductCardSkeleton() {
 }
 
 // ---------------------------------------------------------------------------
-// Composant FilterSidebar — panneau de filtres
+// ProductCardSkeleton
 // ---------------------------------------------------------------------------
 
-/**
- * Panneau latéral de filtres (catégories, budget, disponibilité).
- * @param {{ categories: object[], filters: object, onChange: Function }} props
- */
+function ProductCardSkeleton() {
+  return (
+    <div className="flex flex-col rounded-xl border bg-card">
+      <Skeleton className="h-32 rounded-t-xl rounded-b-none" />
+      <div className="flex flex-col gap-2 p-5">
+        <Skeleton className="h-4 w-3/4" />
+        <Skeleton className="h-3 w-full" />
+        <Skeleton className="h-3 w-5/6" />
+        <div className="mt-4 flex items-end justify-between">
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-5 w-20 rounded-full" />
+            <Skeleton className="h-5 w-16" />
+          </div>
+          <Skeleton className="h-8 w-16 rounded-md" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// FilterSidebar — matches maquette layout with range slider for budget
+// ---------------------------------------------------------------------------
+
 function FilterSidebar({ categories, filters, onChange }) {
   return (
-    <aside className="w-full shrink-0 md:w-52">
-      <h2 className="mb-4 text-sm font-semibold text-foreground">
+    <aside className="w-64 shrink-0">
+      <h2 className="mb-6 text-lg font-bold text-foreground">
         Filtrer les services
       </h2>
 
-      {/* Recherche textuelle */}
-      <div className="mb-5">
-        <label className="mb-1.5 block text-xs font-medium text-muted-foreground">
-          Recherche
-        </label>
-        <input
+      {/* Recherche */}
+      <div className="mb-6 border-b border-border pb-6">
+        <p className="mb-3 text-sm font-semibold text-foreground">Recherche</p>
+        <Input
           type="search"
           placeholder="Titre ou description..."
           value={filters.search}
           onChange={(e) => onChange({ search: e.target.value })}
-          className="h-8 w-full rounded border border-input bg-background px-2.5 text-xs placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
         />
       </div>
 
-      {/* Filtres catégorie */}
-      <div className="mb-5">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Catégories
-        </p>
-        <div className="flex flex-col gap-1.5">
+      {/* Catégories */}
+      <div className="mb-6 border-b border-border pb-6">
+        <p className="mb-3 text-sm font-semibold text-foreground">Catégories</p>
+        <div className="flex flex-col gap-2">
           {categories.map((cat) => (
-            <label key={cat.id} className="flex cursor-pointer items-center gap-2 text-xs">
+            <Label
+              key={cat.id}
+              className="flex cursor-pointer items-center gap-2 text-sm font-normal text-muted-foreground"
+            >
               <input
                 type="checkbox"
                 checked={filters.categories.includes(cat.id)}
@@ -204,52 +170,40 @@ function FilterSidebar({ categories, filters, onChange }) {
                 }}
                 className="accent-primary"
               />
-              <span className="text-foreground">Solutions {cat.name}</span>
-            </label>
+              Solutions {cat.name}
+            </Label>
           ))}
         </div>
       </div>
 
-      {/* Budget mensuel */}
-      <div className="mb-5">
-        <p className="mb-2 text-xs font-medium text-muted-foreground">
-          Budget (Mensuel)
-        </p>
-        <div className="flex items-center gap-2">
-          <input
-            type="number"
-            min={0}
-            placeholder="0€"
-            value={filters.minPrice}
-            onChange={(e) => onChange({ minPrice: e.target.value })}
-            className="h-8 w-full rounded border border-input bg-background px-2 text-xs focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
-          />
-          <span className="text-xs text-muted-foreground">—</span>
-          <input
-            type="number"
-            min={0}
-            placeholder="+100€"
-            value={filters.maxPrice}
-            onChange={(e) => onChange({ maxPrice: e.target.value })}
-            className="h-8 w-full rounded border border-input bg-background px-2 text-xs focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
-          />
+      {/* Budget — range slider like maquette */}
+      <div className="mb-6 border-b border-border pb-6">
+        <p className="mb-3 text-sm font-semibold text-foreground">Budget (Mensuel)</p>
+        <input
+          type="range"
+          min="0"
+          max="1000"
+          step="10"
+          value={filters.maxPrice || 1000}
+          onChange={(e) => onChange({ maxPrice: e.target.value })}
+          className="w-full accent-primary"
+        />
+        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+          <span>0€</span>
+          <span>{filters.maxPrice ? `${filters.maxPrice}€` : "max"}</span>
         </div>
       </div>
 
       {/* Disponibilité */}
-      <div>
-        <label className="flex cursor-pointer items-center gap-2 text-xs">
-          <input
-            type="checkbox"
-            checked={filters.onlyAvailable}
-            onChange={(e) => onChange({ onlyAvailable: e.target.checked })}
-            className="accent-primary"
-          />
-          <span className="text-foreground font-medium">
-            Uniquement services disponibles
-          </span>
-        </label>
-      </div>
+      <Label className="flex cursor-pointer items-center gap-2 text-sm font-medium">
+        <input
+          type="checkbox"
+          checked={filters.onlyAvailable}
+          onChange={(e) => onChange({ onlyAvailable: e.target.checked })}
+          className="accent-primary"
+        />
+        Uniquement services disponibles
+      </Label>
     </aside>
   )
 }
@@ -258,200 +212,140 @@ function FilterSidebar({ categories, filters, onChange }) {
 // Page principale
 // ---------------------------------------------------------------------------
 
-/**
- * Page "Catalogue / Résultats de recherche" — affiche les produits SaaS
- * filtrables par catégorie, budget et disponibilité.
- */
 export function Catalog() {
   const [searchParams] = useSearchParams()
 
-  // --- Produits et catégories ---
   const [products, setProducts] = useState([])
   const [categories, setCategories] = useState([])
   const [loadingProducts, setLoadingProducts] = useState(true)
   const [loadingCategories, setLoadingCategories] = useState(true)
-
-  // --- Tri ---
   const [sortBy, setSortBy] = useState("relevance")
-
-  // --- Filtres ---
   const [filters, setFilters] = useState({
     search: searchParams.get("q") || "",
     categories: [],
-    minPrice: "",
     maxPrice: "",
     onlyAvailable: false,
   })
 
   const debouncedSearch = useDebounce(filters.search, 300)
-
-  // Mise à jour partielle des filtres
   const handleFilterChange = useCallback((patch) => {
     setFilters((prev) => ({ ...prev, ...patch }))
   }, [])
 
-  // Chargement initial des produits et catégories
   useEffect(() => {
     setLoadingProducts(true)
     getCatalogProducts()
-      .then((data) => {
-        setProducts(data)
-        setLoadingProducts(false)
-      })
+      .then((data) => { setProducts(data); setLoadingProducts(false) })
       .catch(() => setLoadingProducts(false))
   }, [])
 
   useEffect(() => {
     setLoadingCategories(true)
     getCategories()
-      .then((data) => {
-        setCategories(data)
-        setLoadingCategories(false)
-      })
+      .then((data) => { setCategories(data); setLoadingCategories(false) })
       .catch(() => setLoadingCategories(false))
   }, [])
 
-  // --- Filtrage côté client ---
   const filtered = products.filter((p) => {
     if (
       debouncedSearch &&
       !p.name.toLowerCase().includes(debouncedSearch.toLowerCase()) &&
       !p.description.toLowerCase().includes(debouncedSearch.toLowerCase())
-    ) {
-      return false
-    }
-    if (filters.categories.length > 0 && !filters.categories.includes(p.categoryId)) {
-      return false
-    }
-    if (filters.minPrice !== "" && p.priceMonthly < parseFloat(filters.minPrice)) {
-      return false
-    }
-    if (filters.maxPrice !== "" && p.priceMonthly > parseFloat(filters.maxPrice)) {
-      return false
-    }
-    if (filters.onlyAvailable && !p.isAvailable) {
-      return false
-    }
+    ) return false
+    if (filters.categories.length > 0 && !filters.categories.includes(p.categoryId)) return false
+    if (filters.maxPrice !== "" && p.priceMonthly > parseFloat(filters.maxPrice)) return false
+    if (filters.onlyAvailable && !p.isAvailable) return false
     return true
   })
 
-  // --- Tri ---
   const sorted = [...filtered].sort((a, b) => {
     if (sortBy === "price_asc") return a.priceMonthly - b.priceMonthly
     if (sortBy === "price_desc") return b.priceMonthly - a.priceMonthly
     if (sortBy === "name") return a.name.localeCompare(b.name)
-    return 0 // relevance : ordre naturel
+    return 0
   })
 
-  /**
-   * Retourne le nom de catégorie pour un produit.
-   * @param {string} categoryId
-   * @returns {string}
-   */
-  const getCategoryName = (categoryId) => {
-    return categories.find((c) => c.id === categoryId)?.name ?? "Service"
-  }
+  const getCategoryName = (categoryId) =>
+    categories.find((c) => c.id === categoryId)?.name ?? "Service"
 
   return (
     <Layout>
-      <div className="mx-auto max-w-6xl py-8">
-        <div className="flex gap-8">
+      <main className="flex gap-8 p-8 max-w-7xl mx-auto w-full">
 
-          {/* Panneau latéral de filtres */}
-          {loadingCategories ? (
-            <aside className="hidden w-52 shrink-0 space-y-3 md:block">
-              <Skeleton className="h-4 w-32 mb-4" />
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-3 w-full" />
-              ))}
-            </aside>
+        {/* Sidebar */}
+        {loadingCategories ? (
+          <aside className="hidden w-64 shrink-0 space-y-3 md:block">
+            <Skeleton className="h-5 w-40 mb-6" />
+            {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-3 w-full" />)}
+          </aside>
+        ) : (
+          <div className="hidden md:block">
+            <FilterSidebar
+              categories={categories}
+              filters={filters}
+              onChange={handleFilterChange}
+            />
+          </div>
+        )}
+
+        {/* Results */}
+        <div className="flex-1 min-w-0">
+          {/* Header row */}
+          <div className="mb-6 flex items-center justify-between">
+            <h1 className="text-2xl font-bold text-foreground">
+              Résultats de recherche{" "}
+              {!loadingProducts && (
+                <span className="text-base font-normal text-muted-foreground">
+                  ({sorted.length} service{sorted.length !== 1 ? "s" : ""})
+                </span>
+              )}
+            </h1>
+
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="relevance">Trier par : Pertinence</SelectItem>
+                <SelectItem value="price_asc">Prix : Croissant</SelectItem>
+                <SelectItem value="price_desc">Prix : Décroissant</SelectItem>
+                <SelectItem value="name">Nom A–Z</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Grid */}
+          {loadingProducts ? (
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => <ProductCardSkeleton key={i} />)}
+            </div>
+          ) : sorted.length === 0 ? (
+            <div className="flex flex-col items-center justify-center rounded-xl border bg-card py-20 text-center">
+              <p className="font-bold text-foreground">Aucun résultat</p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                Essayez de modifier vos critères de recherche.
+              </p>
+              <Button
+                variant="link"
+                className="mt-3"
+                onClick={() => setFilters({ search: "", categories: [], maxPrice: "", onlyAvailable: false })}
+              >
+                Réinitialiser les filtres
+              </Button>
+            </div>
           ) : (
-            <div className="hidden md:block">
-              <FilterSidebar
-                categories={categories}
-                filters={filters}
-                onChange={handleFilterChange}
-              />
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+              {sorted.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  categoryName={getCategoryName(product.categoryId)}
+                />
+              ))}
             </div>
           )}
-
-          {/* Zone résultats */}
-          <div className="flex-1 min-w-0">
-
-            {/* En-tête résultats */}
-            <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <h1 className="text-sm font-semibold text-foreground">
-                Résultats de recherche
-                {!loadingProducts && (
-                  <span className="ml-2 font-normal text-muted-foreground">
-                    ({sorted.length} service{sorted.length !== 1 ? "s" : ""})
-                  </span>
-                )}
-              </h1>
-
-              <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground">Trier par :</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value)}
-                  className="h-8 rounded border border-input bg-background px-2 text-xs focus:border-ring focus:outline-none focus:ring-1 focus:ring-ring/50"
-                >
-                  <option value="relevance">Pertinence</option>
-                  <option value="price_asc">Prix croissant</option>
-                  <option value="price_desc">Prix décroissant</option>
-                  <option value="name">Nom A–Z</option>
-                </select>
-              </div>
-            </div>
-
-            {/* Grille de produits */}
-            {loadingProducts ? (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <ProductCardSkeleton key={i} />
-                ))}
-              </div>
-            ) : sorted.length === 0 ? (
-              <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="mb-3 rounded-full border border-border bg-muted p-4">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-muted-foreground" aria-hidden="true">
-                    <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="1.5" />
-                    <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                  </svg>
-                </div>
-                <p className="text-sm font-medium text-foreground">Aucun résultat</p>
-                <p className="mt-1 text-xs text-muted-foreground">
-                  Essayez de modifier vos critères de recherche.
-                </p>
-                <button
-                  onClick={() =>
-                    setFilters({
-                      search: "",
-                      categories: [],
-                      minPrice: "",
-                      maxPrice: "",
-                      onlyAvailable: false,
-                    })
-                  }
-                  className="mt-4 text-xs text-primary hover:underline"
-                >
-                  Réinitialiser les filtres
-                </button>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                {sorted.map((product) => (
-                  <ProductCard
-                    key={product.id}
-                    product={product}
-                    categoryName={getCategoryName(product.categoryId)}
-                  />
-                ))}
-              </div>
-            )}
-          </div>
         </div>
-      </div>
+      </main>
     </Layout>
   )
 }
