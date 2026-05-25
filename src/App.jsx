@@ -5,6 +5,7 @@ import { Home } from './pages/home';
 import { Unauthorized } from './pages/specials/unauthorized';
 import Loading from './pages/specials/loading';
 import { MockDemo } from './pages/mock-demo'
+import { Catalog } from "./pages/catalog"
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/mock-demo" element={<MockDemo />} />
+          <Route path="/catalog" element={<Catalog />} />
           <Route path="*" element={<NotFound />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
         </Routes>

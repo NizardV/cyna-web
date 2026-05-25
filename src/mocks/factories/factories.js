@@ -99,6 +99,7 @@ export function makeProduct(overrides = {}) {
   return {
     id: faker.string.uuid(),
     categoryId: faker.string.uuid(),
+    imageUrl: faker.image.url(),
     name: `${prefix} ${suffix}`,
     description: faker.lorem.paragraphs(2),
     priceMonthly,
