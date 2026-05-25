@@ -1,86 +1,94 @@
 /**
  * @file handlers/auth.js
- * @description Mock handlers for authentication routes.
+ * @description Handlers mock pour les routes d'authentification.
+ * Login et register retournent intentionnellement une erreur (délégués à l'équipe login).
  */
 
-import { makeAuthResponse, makeUser } from "../factories/factories.js";
+import { makeAuthResponse, makeUser } from "../factories/factories.js"
 
-// Simulate a registered user store
+/** Utilisateurs enregistrés simulés en mémoire */
 const _users = [
   makeUser({ email: "user@cyna.com", role: "user" }),
   makeUser({ email: "admin@cyna.com", role: "admin", is2faEnabled: true }),
-];
+]
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const authHandlers = [
   // -------------------------------------------------------------------------
-  // POST /auth/register
+  // POST /auth/register — Intentionnellement en erreur (équipe login)
   // -------------------------------------------------------------------------
   {
     method: "POST",
     path: "/auth/register",
-    resolver: ({ body }) => {
-      const existing = _users.find((u) => u.email === body.email);
-      if (existing) throw new Error("Email already in use");
-
-      const user = makeUser({ email: body.email, name: body.name, isConfirmed: false });
-      _users.push(user);
-
-      return { message: "Registration successful. Please confirm your email." };
+    resolver: () => {
+      throw new Error("Register : non implémenté — délégué à l'équipe login.")
     },
-    status: 201,
+    status: 501,
   },
 
   // -------------------------------------------------------------------------
-  // POST /auth/login
+  // POST /auth/login — Intentionnellement en erreur (équipe login)
   // -------------------------------------------------------------------------
   {
     method: "POST",
     path: "/auth/login",
-    resolver: ({ body }) => {
-      const user = _users.find((u) => u.email === body.email);
+    resolver: () => {
+      throw new Error("Login : non implémenté — délégué à l'équipe login.")
+    },
+    status: 501,
+  },
 
-      // Accept any password in mock mode
-      if (!user) throw new Error("Invalid credentials");
-      if (!user.isConfirmed) throw new Error("Please confirm your email first");
-
-      return makeAuthResponse({ ...user });
+  // -------------------------------------------------------------------------
+  // POST /auth/logout — Supprime le token et redirige
+  // -------------------------------------------------------------------------
+  {
+    method: "POST",
+    path: "/auth/logout",
+    resolver: () => {
+      localStorage.removeItem("cyna_token")
+      return { message: "Déconnecté avec succès." }
     },
   },
 
   // -------------------------------------------------------------------------
-  // POST /auth/confirm
+  // POST /auth/confirm — Confirmation e-mail
   // -------------------------------------------------------------------------
   {
     method: "POST",
     path: "/auth/confirm",
-    resolver: () => ({ message: "Email confirmed successfully" }),
+    resolver: () => ({ message: "Email confirmé avec succès" }),
   },
 
   // -------------------------------------------------------------------------
-  // POST /auth/forgot-password
+  // POST /auth/forgot-password — Lien de réinitialisation
   // -------------------------------------------------------------------------
   {
     method: "POST",
     path: "/auth/forgot-password",
-    resolver: () => ({ message: "Reset link sent if email exists" }),
+    resolver: () => ({ message: "Lien envoyé si l'email existe" }),
   },
 
   // -------------------------------------------------------------------------
-  // POST /auth/reset-password
+  // POST /auth/reset-password — Réinitialisation mot de passe
   // -------------------------------------------------------------------------
   {
     method: "POST",
     path: "/auth/reset-password",
-    resolver: () => ({ message: "Password reset successfully" }),
+    resolver: () => ({ message: "Mot de passe réinitialisé avec succès" }),
   },
 
   // -------------------------------------------------------------------------
-  // GET /auth/me
+  // GET /auth/me — Utilisateur connecté simulé
   // -------------------------------------------------------------------------
   {
     method: "GET",
     path: "/auth/me",
-    resolver: () => makeUser({ email: "user@cyna.com" }),
+    resolver: () =>
+      makeUser({
+        email: "jean.dupont@entreprise.com",
+        name: "Jean Dupont",
+        role: "user",
+        isConfirmed: true,
+      }),
   },
-];
+]
