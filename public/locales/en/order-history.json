@@ -1,0 +1,24 @@
+{
+  "title": "Order History",
+  "subtitle": "Find all your invoices and subscriptions.",
+  "searchPlaceholder": "Search an order...",
+  "allYears": "All years",
+  "year": "Year: {{year}}",
+  "noOrders": "No orders found",
+  "noOrdersHint": "Try a different search term.",
+  "noOrdersEmpty": "You haven't placed any orders yet.",
+  "error": "Error: {{message}}",
+  "orderedOn": "Ordered on {{date}}",
+  "paidVia": "Paid via {{method}}",
+  "paidViaCard": "Paid via {{method}} ending in {{last4}}",
+  "invoicePdf": "PDF Invoice",
+  "ordersIn": "Orders in {{year}}",
+  "status": {
+    "active": "Active",
+    "terminated": "Terminated",
+    "refunded": "Refunded",
+    "paid": "Paid",
+    "pending": "Pending",
+    "failed": "Failed"
+  }
+}
