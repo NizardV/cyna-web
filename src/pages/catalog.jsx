@@ -84,7 +84,9 @@ export function Catalog() {
   // --- Tri (valeur Combobox) ---
   const [sortBy, setSortBy] = useState("relevance")
 
-  const debouncedFilters = useDebounce(filters, 300)
+  const debouncedSearch = useDebounce(filters.search, 700)
+  const debouncedCategories = useDebounce(filters.categories, 1000)
+  const debouncedMaxPrice = useDebounce(filters.maxPrice, 500)
 
   /**
    * Met à jour partiellement l'état des filtres.
@@ -108,12 +110,12 @@ export function Catalog() {
       sortBy,
     }
 
-    if (debouncedFilters.search) params.q = debouncedFilters.search
-    if (debouncedFilters.categories.length > 0) params.categoryIds = debouncedFilters.categories.join(",")
-    if (debouncedFilters.maxPrice !== "" && debouncedFilters.maxPrice !== "1000") {
-      params.maxPrice = debouncedFilters.maxPrice
+    if (debouncedSearch) params.q = debouncedSearch
+    if (debouncedCategories.length > 0) params.categoryIds = debouncedCategories.join(",")
+    if (debouncedMaxPrice !== "" && debouncedMaxPrice !== "1000") {
+      params.maxPrice = debouncedMaxPrice
     }
-    if (debouncedFilters.onlyAvailable) params.available = "true"
+    if (filters.onlyAvailable) params.available = "true"
 
     getCatalogProducts(params)
       .then((data) => {
@@ -123,7 +125,7 @@ export function Catalog() {
         setLoadingProducts(false)
       })
       .catch(() => setLoadingProducts(false))
-  }, [debouncedFilters, sortBy, currentPage])
+  }, [debouncedSearch, debouncedCategories, debouncedMaxPrice, filters.onlyAvailable, sortBy, currentPage])
 
   // --- Chargement des catégories ---
   useEffect(() => {
