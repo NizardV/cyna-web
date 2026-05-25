@@ -147,31 +147,6 @@ export const subscriptionHandlers = [
 ]
 
 // ---------------------------------------------------------------------------
-// Handlers de recherche
-// ---------------------------------------------------------------------------
-
-/** @type {import("../registry.js").MockHandler[]} */
-export const searchHandlers = [
-  {
-    method: "GET",
-    path: "/search",
-    resolver: ({ params }) => {
-      const q = (params.q ?? "").toLowerCase()
-      const results = _products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q)
-      )
-      return {
-        hits: results.slice(0, 20),
-        total: results.length,
-        query: q,
-      }
-    },
-  },
-]
-
-// ---------------------------------------------------------------------------
 // Handlers du catalogue — filtrage, tri et pagination côté serveur
 // ---------------------------------------------------------------------------
 

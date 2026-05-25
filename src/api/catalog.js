@@ -32,11 +32,3 @@ export const getCatalogProducts = (params = {}) =>
  * @returns {Promise<object[]>}
  */
 export const getCategories = () => apiClient.get("/categories")
-
-/**
- * Recherche des produits par mot-clé.
- * @param {string} query - Terme de recherche
- * @returns {Promise<{ hits: object[], total: number, query: string }>}
- */
-export const searchProducts = (query) =>
-  apiClient.get("/search", { params: { q: query } })
