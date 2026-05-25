@@ -14,12 +14,13 @@ import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent } from "@/components/ui/card"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+  Combobox,
+  ComboboxInput,
+  ComboboxContent,
+  ComboboxList,
+  ComboboxItem,
+  ComboboxEmpty,
+} from "@/components/ui/combobox"
 import { cn } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
@@ -180,6 +181,43 @@ function OrderHistorySkeleton() {
 }
 
 // ---------------------------------------------------------------------------
+// YearCombobox — replaces the Select for year filtering
+// ---------------------------------------------------------------------------
+
+function YearCombobox({ value, onChange, years, t }) {
+  // Build items: "all" + each year string
+  const items = [
+    { value: "all", label: t("allYears") },
+    ...years.map((y) => ({ value: String(y), label: t("year", { year: y }) })),
+  ]
+
+  const selectedLabel = items.find((i) => i.value === value)?.label ?? t("allYears")
+
+  return (
+    <Combobox
+      value={value}
+      onValueChange={onChange}
+    >
+      <ComboboxInput
+        placeholder={selectedLabel}
+        className="w-40"
+        showClear={value !== "all"}
+      />
+      <ComboboxContent>
+        <ComboboxList>
+          <ComboboxEmpty>{t("noResults", { defaultValue: "Aucun résultat" })}</ComboboxEmpty>
+          {items.map((item) => (
+            <ComboboxItem key={item.value} value={item.value}>
+              {item.label}
+            </ComboboxItem>
+          ))}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // Page principale
 // ---------------------------------------------------------------------------
 
@@ -250,21 +288,13 @@ export function OrderHistory() {
                 placeholder={t("searchPlaceholder")}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48"
               />
-              <Select value={selectedYear} onValueChange={setSelectedYear}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder={t("allYears")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">{t("allYears")}</SelectItem>
-                  {allYears.map((year) => (
-                    <SelectItem key={year} value={String(year)}>
-                      {t("year", { year })}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <YearCombobox
+                value={selectedYear}
+                onChange={(val) => setSelectedYear(val ?? "all")}
+                years={allYears}
+                t={t}
+              />
             </div>
           </div>
 
