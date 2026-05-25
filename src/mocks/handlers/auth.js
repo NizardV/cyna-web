@@ -22,29 +22,6 @@ const TAUX_ECHEC_LOGOUT = 0.25
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const authHandlers = [
-  // -------------------------------------------------------------------------
-  // POST /auth/register — Intentionnellement non implémenté (équipe login)
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/register",
-    resolver: () => {
-      throw new Error("Register : non implémenté")
-    },
-    status: 501,
-  },
-
-  // -------------------------------------------------------------------------
-  // POST /auth/login — Intentionnellement non implémenté (équipe login)
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/login",
-    resolver: () => {
-      throw new Error("Login : non implémenté")
-    },
-    status: 501,
-  },
 
   // -------------------------------------------------------------------------
   // POST /auth/logout — Supprime le token local, peut échouer aléatoirement.
@@ -60,24 +37,6 @@ export const authHandlers = [
       }
       return { message: "Déconnecté avec succès." }
     },
-  },
-
-  // -------------------------------------------------------------------------
-  // POST /auth/confirm — Confirmation d'adresse e-mail
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/confirm",
-    resolver: () => ({ message: "Email confirmé avec succès." }),
-  },
-
-  // -------------------------------------------------------------------------
-  // POST /auth/forgot-password — Demande de lien de réinitialisation
-  // -------------------------------------------------------------------------
-  {
-    method: "POST",
-    path: "/auth/forgot-password",
-    resolver: () => ({ message: "Lien envoyé si l'adresse e-mail existe." }),
   },
 
   // -------------------------------------------------------------------------

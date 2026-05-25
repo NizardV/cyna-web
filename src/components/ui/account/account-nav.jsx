@@ -1,5 +1,4 @@
 /**
- * @file components/account/account-nav.jsx
  * @description Navigation latérale du compte utilisateur.
  * Affiche les liens Profil & Sécurité, Mes Abonnements SaaS, Facturation & Paiement
  * et Se déconnecter. Correspond au panneau visible dans la maquette.
