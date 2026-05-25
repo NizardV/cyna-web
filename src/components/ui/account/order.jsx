@@ -2,7 +2,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-import { formatDate, formatPrice } from "../../../lib/utils"
+import { Badge } from "@/components/ui/badge"
+import { formatDate, formatPrice } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
 
 // ---------------------------------------------------------------------------
@@ -16,21 +17,6 @@ const STATUS_STYLES = {
   paid:       "bg-green-100 text-green-800",
   pending:    "bg-amber-100 text-amber-800",
   failed:     "bg-red-100 text-red-800",
-}
-
-function StatusBadge({ status }) {
-  const { t } = useTranslation("order-history")
-
-  return (
-    <span
-      className={cn(
-        "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-bold",
-        STATUS_STYLES[status] ?? STATUS_STYLES.terminated
-      )}
-    >
-      {t(`status.${status}`, { defaultValue: status })}
-    </span>
-  )
 }
 
 // ---------------------------------------------------------------------------
@@ -55,7 +41,9 @@ function OrderRow({ order, isLast }) {
       <div className="flex-1">
         <div className="mb-1 flex flex-wrap items-center gap-2">
           <span className="text-xs font-bold text-foreground">{order.productName}</span>
-          <StatusBadge status={order.status} />
+          <Badge className={STATUS_STYLES[order.status] ?? STATUS_STYLES.terminated} >
+            {t(`status.${order.status}`, { defaultValue: order.status })}
+          </Badge>
         </div>
         <p className="text-xs text-muted-foreground">
           {t("orderedOn", { date: formatDate(order.createdAt) })} • {order.type}
