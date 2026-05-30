@@ -1,0 +1,11 @@
+{
+  "loading": "Chargement en cours...",
+  "fixedTextTitle": "Notre mission",
+  "categoriesTitle": "Nos Catégories de Services",
+  "topProductsTitle": "Les Top Produits du moment",
+  "perMonth": "/poste/mois",
+  "addToCart": "Ajouter au panier",
+  "unavailable": "Indisponible",
+  "outOfStock": "Stock épuisé",
+  "onEstimate": "Sur devis"
+}

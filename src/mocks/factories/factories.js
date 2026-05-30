@@ -94,17 +94,40 @@ const PRODUCT_SUFFIXES = ["EDR Pro", "XDR Suite", "SOC Manager", "Zero Trust Gat
 export function makeProduct(overrides = {}) {
   const prefix = faker.helpers.arrayElement(PRODUCT_PREFIXES);
   const suffix = faker.helpers.arrayElement(PRODUCT_SUFFIXES);
-  const priceMonthly = faker.number.float({ min: 49, max: 999, fractionDigits: 2 });
+  const productName = `${prefix} ${suffix}`;
+  
+  // Génération d'un prix de base pour créer nos plans tarifaires
+  const basePrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 });
 
   return {
     id: faker.string.uuid(),
     categoryId: faker.string.uuid(),
-    name: `${prefix} ${suffix}`,
+    slug: faker.helpers.slugify(productName).toLowerCase(), 
+    name: productName,
     description: faker.lorem.paragraphs(2),
-    priceMonthly,
-    priceYearly: parseFloat((priceMonthly * 10).toFixed(2)), // 2 months free
-    isAvailable: faker.datatype.boolean({ probability: 0.85 }),
-    priority: faker.number.int({ min: 0, max: 5 }),
+    
+    // Correspondance exacte avec la BDD :
+    status: faker.helpers.arrayElement(["available", "unavailable", "out_of_stock"]), 
+    isFeatured: faker.datatype.boolean({ probability: 0.2 }), 
+    
+    // Remplacement des prix plats par le tableau de pricing_plans de la BDD !
+    pricingPlans: [
+      {
+        id: faker.string.uuid(),
+        name: "Mensuel",
+        billingPeriod: "monthly",
+        price: basePrice,
+        discountPercent: 0,
+      },
+      {
+        id: faker.string.uuid(),
+        name: "Annuel",
+        billingPeriod: "yearly",
+        price: parseFloat((basePrice * 12).toFixed(2)),
+        discountPercent: 15, // Reflète la colonne discount_percent de ta BDD
+      }
+    ],
+
     images: Array.from({ length: 3 }, (_, i) =>
       `https://picsum.photos/seed/${prefix}-${i}/800/600`
     ),
@@ -114,7 +137,7 @@ export function makeProduct(overrides = {}) {
       sla: `${faker.number.int({ min: 95, max: 99 })}% uptime`,
       maxDevices: faker.number.int({ min: 10, max: 1000 }),
     },
-    createdAt: faker.date.past().toISOString(),
+createdAt: faker.date.past().toISOString(),
     ...overrides,
   };
 }
