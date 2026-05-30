@@ -5,6 +5,9 @@
 
 import { apiClient } from "./client.js"
 
+export const loginUser = ({ email, password }) =>
+  apiClient.post("/auth/login", { email, password })
+
 export const registerUser = ({ fullName, email, password }) =>
   apiClient.post("/auth/register", { fullName, email, password })
 
