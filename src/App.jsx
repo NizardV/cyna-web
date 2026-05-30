@@ -12,6 +12,7 @@ import Loading from "./pages/specials/loading"
 import { MockDemo } from "./pages/mock-demo"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
+import { LoginPage } from "./pages/login-page"
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/mock-demo" element={<MockDemo />} />
           <Route path="/account/profile" element={<Profile />} />
