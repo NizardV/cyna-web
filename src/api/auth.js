@@ -5,6 +5,9 @@
 
 import { apiClient } from "./client.js"
 
+export const registerUser = ({ fullName, email, password }) =>
+  apiClient.post("/auth/register", { fullName, email, password })
+
 /**
  * Déconnecte l'utilisateur courant (supprime le token local et appelle le backend).
  * @returns {Promise<null>}
