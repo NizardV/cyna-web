@@ -12,6 +12,7 @@ import Loading from "./pages/specials/loading"
 import { MockDemo } from "./pages/mock-demo"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
+import { Product } from "./pages/product"
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
           <Route path="/mock-demo" element={<MockDemo />} />
           <Route path="/account/profile" element={<Profile />} />
           <Route path="/account/orders" element={<OrderHistory />} />
+          <Route path="/products/:id" element={<Product />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

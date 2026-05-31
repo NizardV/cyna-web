@@ -131,12 +131,15 @@ export function makeProduct(overrides = {}) {
     images: Array.from({ length: 3 }, (_, i) =>
       `https://picsum.photos/seed/${prefix}-${i}/800/600`
     ),
-    technicalSpecs: {
-      platforms: faker.helpers.arrayElements(["Windows", "macOS", "Linux", "Android", "iOS"], 3),
-      support: "24/7",
-      sla: `${faker.number.int({ min: 95, max: 99 })}% uptime`,
-      maxDevices: faker.number.int({ min: 10, max: 1000 }),
-    },
+    // NOUVELLE VERSION : Un tableau dynamique de caractéristiques
+    technicalSpecs: faker.helpers.arrayElements([
+      "Protection multi-terminaux (Windows, macOS, Linux)",
+      "Isolation réseau automatique en cas d'infection",
+      "Support technique 24/7 inclus",
+      "SLA 99.9% avec temps de réponse garanti",
+      "Intégration native avec les outils SOC existants",
+      "Déploiement cloud instantané"
+    ], faker.number.int({ min: 3, max: 5 })), // Prend 3 à 5 phrases au hasard
 createdAt: faker.date.past().toISOString(),
     ...overrides,
   };

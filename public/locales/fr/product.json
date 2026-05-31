@@ -1,0 +1,12 @@
+{
+  "availableImmediately": "Disponible immédiatement",
+  "serviceUnavailable": "Service momentanément indisponible",
+  "technicalSpecsTitle": "Caractéristiques Techniques",
+  "perUserMonth": "par utilisateur / mois",
+  "perUserYear": "par utilisateur / an (-{{discount}}%)",
+  "subscribeNow": "S'ABONNER MAINTENANT",
+  "tryNow": "ESSAYER MAINTENANT",
+  "serviceUnavailableBtn": "SERVICE INDISPONIBLE",
+  "try14Days": "Essayer (14 jours)",
+  "similarServicesTitle": "Services similaires"
+}

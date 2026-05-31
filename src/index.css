@@ -69,7 +69,7 @@
 
     /* --- Primaire : violet Cyna --- */
     /* #6C3BF5 ≈ oklch(0.50 0.27 280) */
-    --primary: oklch(0.205 0 0);
+    --primary: oklch(0.50 0.27 280);
     --primary-foreground: oklch(0.985 0 0);    /* blanc sur violet */
 
     /* --- Secondaire : violet très désaturé (surfaces neutres) --- */
@@ -90,7 +90,7 @@
     /* --- Bordures & inputs --- */
     --border: oklch(0.922 0 0);
     --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);     /* focus ring violet */
+    --ring: oklch(0.50 0.27 280);   /* focus ring violet */
 
     /* --- Graphiques --- */
     --chart-1: oklch(0.87 0 0);     /* violet primaire */
