@@ -1,24 +1,28 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { CheckCircle2, Circle, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { Layout } from "@/components/layout/layout";
+import { useAuth } from "@/hooks/use-auth";
 import { registerUser } from "@/api/auth";
 
 const PASSWORD_RULES = [
-  { id: "length", label: "8 caractères minimum", test: (pwd) => pwd.length >= 8 },
-  { id: "uppercase", label: "Une majuscule", test: (pwd) => /[A-Z]/.test(pwd) },
-  { id: "number", label: "Un chiffre", test: (pwd) => /[0-9]/.test(pwd) },
-  { id: "special", label: "Un caractère spécial", test: (pwd) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) },
+  { id: "length", label: "password.minLength", test: (pwd) => pwd.length >= 8 },
+  { id: "uppercase", label: "password.uppercase", test: (pwd) => /[A-Z]/.test(pwd) },
+  { id: "number", label: "password.number", test: (pwd) => /[0-9]/.test(pwd) },
+  { id: "special", label: "password.special", test: (pwd) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) },
 ];
 
 export function RegisterPage() {
   const navigate = useNavigate();
+  const { t } = useTranslation("auth");
+  const { login, setLoading } = useAuth();
   const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [showPasswordRules, setShowPasswordRules] = useState(false);
@@ -45,23 +49,27 @@ export function RegisterPage() {
     e.preventDefault();
 
     if (!isFormValid) {
-      setError("Veuillez remplir tous les champs et respecter les critères de mot de passe.");
+      setError(t("register.fillAllFields"));
       return;
     }
 
+    setLoadingState(true);
     setLoading(true);
     setError("");
 
     try {
-      await registerUser({
+      const response = await registerUser({
         fullName: formData.fullName,
         email: formData.email,
         password: formData.password,
       });
+
+      login(response.user, response.token);
       setSuccess(true);
     } catch (err) {
-      setError(err.response?.data?.message || "Une erreur est survenue lors de l'inscription.");
+      setError(err.response?.data?.message || t("register.error"));
     } finally {
+      setLoadingState(false);
       setLoading(false);
     }
   };
@@ -72,15 +80,13 @@ export function RegisterPage() {
         <div className="min-h-screen bg-[#f4f4f6] flex items-center justify-center p-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-sm">
             <div className="flex justify-center mb-6">
-              <CheckCircle2 className="h-16 w-16 text-green-500" />
+              <CheckCircle2 className="size-16 text-green-500" />
             </div>
-            <h2 className="text-center text-2xl font-bold mb-2">Inscription réussie!</h2>
-            <p className="text-center text-gray-600 mb-6">
-              Un e-mail de confirmation a été envoyé. Veuillez vérifier votre boîte de réception.
-            </p>
+            <h2 className="text-center text-2xl font-bold mb-2">{t("register.success")}</h2>
+            <p className="text-center text-gray-600 mb-6">{t("register.successMessage")}</p>
             <Link to="/login">
               <Button className="w-full" variant="default">
-                Retourner à la connexion
+                {t("register.returnToLogin")}
               </Button>
             </Link>
           </div>
@@ -93,22 +99,22 @@ export function RegisterPage() {
     <Layout hideSearch hideNav hideUserSection>
       <div className="min-h-screen bg-[#f4f4f6] flex items-center justify-center p-4">
         <div className="w-full max-w-md rounded-2xl border border-gray-100 bg-white p-8 shadow-sm">
-          <h1 className="text-center text-2xl font-bold mb-2">Créer un compte</h1>
+          <h1 className="text-center text-2xl font-bold mb-2">{t("register.title")}</h1>
           <p className="text-center text-gray-600 mb-6">
-            Vous avez déjà un compte ?{" "}
+            {t("register.subtitle")}
             <Link to="/login" className="text-[#7C3AED] font-semibold hover:underline">
-              Connectez-vous
+              {t("register.subtitleLink")}
             </Link>
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="fullName">Nom complet</Label>
+              <Label htmlFor="fullName">{t("register.fullName")}</Label>
               <Input
                 id="fullName"
                 name="fullName"
                 type="text"
-                placeholder="Jean Dupont"
+                placeholder={t("register.fullNamePlaceholder")}
                 value={formData.fullName}
                 onChange={handleChange}
                 disabled={loading}
@@ -116,12 +122,12 @@ export function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Adresse e-mail</Label>
+              <Label htmlFor="email">{t("register.email")}</Label>
               <Input
                 id="email"
                 name="email"
                 type="email"
-                placeholder="vous@entreprise.com"
+                placeholder={t("register.emailPlaceholder")}
                 value={formData.email}
                 onChange={handleChange}
                 disabled={loading}
@@ -129,12 +135,12 @@ export function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label htmlFor="password">{t("register.password")}</Label>
               <Input
                 id="password"
                 name="password"
                 type="password"
-                placeholder="••••••••"
+                placeholder={t("register.passwordPlaceholder")}
                 value={formData.password}
                 onChange={handleChange}
                 onFocus={handlePasswordFocus}
@@ -154,7 +160,7 @@ export function RegisterPage() {
                           rule.satisfied ? "text-green-700" : "text-gray-600"
                         }`}
                       >
-                        {rule.label}
+                        {t(rule.label)}
                       </span>
                     </div>
                   ))}
@@ -172,18 +178,16 @@ export function RegisterPage() {
               {loading ? (
                 <>
                   <Spinner className="mr-2" />
-                  Inscription en cours...
+                  {t("register.signingUp")}
                 </>
               ) : (
-                "S'inscrire"
+                t("register.submit")
               )}
             </Button>
 
             <div className="rounded-lg border border-[#DDD6FE] bg-[#EDE9FE]/60 p-4">
-              <p className="text-sm font-semibold text-[#7C3AED] mb-1">Étape suivante</p>
-              <p className="text-sm text-gray-700">
-                Après validation, un e-mail de confirmation vous sera envoyé pour activer votre compte de manière sécurisée.
-              </p>
+              <p className="text-sm font-semibold text-[#7C3AED] mb-1">{t("register.nextStep")}</p>
+              <p className="text-sm text-gray-700">{t("register.nextStepMessage")}</p>
             </div>
           </form>
         </div>
