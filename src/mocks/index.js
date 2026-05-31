@@ -38,3 +38,29 @@ if (import.meta.env.DEV) {
   mockRegistry.listRoutes().forEach((r) => console.log(r))
   console.groupEnd()
 }
+
+// Seed le panier localStorage avec des articles de démo si vide
+const CART_KEY = "cyna_cart"
+if (!localStorage.getItem(CART_KEY)) {
+  localStorage.setItem(
+    CART_KEY,
+    JSON.stringify([
+      {
+        id: crypto.randomUUID(),
+        productId: "mock-product-1",
+        productName: "Cyna EDR Advanced",
+        quantity: 50,
+        duration: "monthly",
+        unitPrice: 12,
+      },
+      {
+        id: crypto.randomUUID(),
+        productId: "mock-product-2",
+        productName: "Cyna XDR Entreprise",
+        quantity: 10,
+        duration: "monthly",
+        unitPrice: 45,
+      },
+    ])
+  )
+}
