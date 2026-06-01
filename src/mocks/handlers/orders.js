@@ -171,49 +171,50 @@ const CATALOG_PAGE_SIZE = 9
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const catalogHandlers = [
-  /**
-   * GET /catalog/products
-   * Supporte les paramètres :
-   *   - q           : recherche textuelle
-   *   - categoryIds : liste d'IDs séparés par des virgules
-   *   - maxPrice    : prix mensuel maximum
-   *   - available   : "true" pour filtrer les services disponibles uniquement
-   *   - sortBy      : "relevance" | "price_asc" | "price_desc" | "name"
-   *   - page        : numéro de page (base 1)
-   *   - pageSize    : nombre d'éléments par page
-   */
   {
     method: "GET",
     path: "/catalog/products",
     resolver: ({ params }) => {
-      const q          = (params.q ?? "").toLowerCase()
-      const catIds     = params.categoryIds
+      const q        = (params.q ?? "").toLowerCase()
+      const catIds   = params.categoryIds
         ? params.categoryIds.split(",").filter(Boolean)
         : []
-      const maxPrice   = params.maxPrice ? parseFloat(params.maxPrice) : null
-      const available  = params.available === "true"
-      const sortBy     = params.sortBy ?? "relevance"
-      const page       = Math.max(1, parseInt(params.page ?? "1", 10))
-      const pageSize   = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
+      const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null
+      const available = params.available === "true"
+      const sortBy   = params.sortBy ?? "relevance"
+      const page     = Math.max(1, parseInt(params.page ?? "1", 10))
+      const pageSize = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
+
+      // Helper — prix mensuel depuis pricingPlans
+      const getMonthlyPrice = (p) =>
+        p.pricingPlans?.find((pl) => pl.billingPeriod === "monthly")?.price ?? 0
 
       // --- Filtrage ---
       let filtered = _products.filter((p) => {
-        if (q && !p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q)) {
+        if (q && !p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q))
           return false
-        }
-        if (catIds.length > 0 && !catIds.includes(p.categoryId)) return false
-        if (maxPrice !== null && p.priceMonthly > maxPrice) return false
-        if (available && !p.isAvailable) return false
+
+        if (catIds.length > 0 && !catIds.includes(p.categoryId))
+          return false
+
+        // ✅ pricingPlans au lieu de priceMonthly
+        if (maxPrice !== null && getMonthlyPrice(p) > maxPrice)
+          return false
+
+        // ✅ status au lieu de isAvailable
+        if (available && p.status !== "available")
+          return false
+
         return true
       })
 
       // --- Tri ---
       filtered = [...filtered].sort((a, b) => {
         switch (sortBy) {
-          case "price_asc":  return a.priceMonthly - b.priceMonthly
-          case "price_desc": return b.priceMonthly - a.priceMonthly
+          case "price_asc":  return getMonthlyPrice(a) - getMonthlyPrice(b)  // ✅
+          case "price_desc": return getMonthlyPrice(b) - getMonthlyPrice(a)  // ✅
           case "name":       return a.name.localeCompare(b.name)
-          default:           return 0 // pertinence : ordre naturel
+          default:           return 0
         }
       })
 
