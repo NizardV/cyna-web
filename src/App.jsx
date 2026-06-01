@@ -12,6 +12,7 @@ import Loading from "./pages/specials/loading"
 import { MockDemo } from "./pages/mock-demo"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
+import { Catalog } from "./pages/catalog"
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/mock-demo" element={<MockDemo />} />
+          <Route path="/catalog" element={<Catalog />} />
           <Route path="/account/profile" element={<Profile />} />
           <Route path="/account/orders" element={<OrderHistory />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
