@@ -13,11 +13,12 @@ import {
   orderHandlers,
   cartHandlers,
   subscriptionHandlers,
-  searchHandlers,
+  catalogHandlers,
   categoryHandlers,
   carouselHandlers,
   adminHandlers,
 } from "./handlers/orders.js"
+import { seedCart } from "./handlers/cart.js"
 
 mockRegistry.registerMany([
   ...productHandlers,
@@ -27,7 +28,7 @@ mockRegistry.registerMany([
   ...orderHandlers,
   ...cartHandlers,
   ...subscriptionHandlers,
-  ...searchHandlers,
+  ...catalogHandlers,
   ...categoryHandlers,
   ...carouselHandlers,
   ...adminHandlers,
@@ -38,3 +39,6 @@ if (import.meta.env.DEV) {
   mockRegistry.listRoutes().forEach((r) => console.log(r))
   console.groupEnd()
 }
+
+// Seed le panier localStorage avec des articles de démo si vide
+seedCart()
