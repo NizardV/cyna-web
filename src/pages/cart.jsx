@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { Layout } from "@/components/ui/layout/layout"
+import { Layout } from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

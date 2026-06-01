@@ -1,10 +1,10 @@
-import { Search, User, Lock } from "lucide-react";
+import { User, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useAuth } from "@/hooks/use-auth";
+import { Search } from "./search";
 
-export function Header({ hideSearch = false, hideNav = false, hideUserSection = false }) {
+export function Header({ hideNav = false, hideUserSection = false }) {
   const { user } = useAuth();
 
   return (
@@ -17,18 +17,11 @@ export function Header({ hideSearch = false, hideNav = false, hideUserSection = 
           <span className="font-bold text-lg">CYNA</span>
         </Link>
 
-        {!hideSearch && (
           <div className="flex-1 max-w-md mx-8">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                type="text"
-                placeholder="Rechercher une solution (RDC, EDR...)"
-                className="pl-9"
-              />
+              <Search />
             </div>
           </div>
-        )}
 
         {!hideNav && (
           <nav className="flex items-center gap-6 flex-1 justify-center">

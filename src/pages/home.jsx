@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Layout } from "@/components/ui/layout/layout"
+import { Layout } from "@/components/layout/layout"
 
 export function Home() {
   const { t, i18n } = useTranslation();
