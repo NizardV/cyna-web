@@ -8,6 +8,7 @@ import { mockRegistry } from "./registry.js"
 import { productHandlers } from "./handlers/products.js"
 import { authHandlers } from "./handlers/auth.js"
 import { userHandlers } from "./handlers/user.js"
+import { homeHandlers } from "./handlers/home.js"
 import { accountOrderHandlers } from "./handlers/orders-account.js"
 import {
   orderHandlers,
@@ -25,6 +26,7 @@ mockRegistry.registerMany([
   ...authHandlers,
   ...userHandlers,
   ...accountOrderHandlers,
+  ...homeHandlers,
   ...orderHandlers,
   ...cartHandlers,
   ...subscriptionHandlers,
