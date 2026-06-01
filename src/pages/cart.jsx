@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate, Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/ui/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -14,6 +15,7 @@ import { toast } from "sonner"
 // ---------------------------------------------------------------------------
 
 function CartRow({ item, onQuantityChange, onRemove }) {
+  const { t } = useTranslation("cart")
   const [updating, setUpdating] = useState(false)
 
   const handleQty = async (delta) => {
@@ -24,18 +26,16 @@ function CartRow({ item, onQuantityChange, onRemove }) {
     setUpdating(false)
   }
 
-  const durationLabel =
-    item.duration === "yearly" ? "Abonnement Annuel" : "Abonnement Mensuel"
+  const durationLabel = t(`item.duration.${item.duration}`, {
+    defaultValue: item.duration,
+  })
 
   return (
     <div className="grid grid-cols-[1fr_auto_auto] items-center gap-6 border-b border-border px-4 py-4 last:border-0">
       {/* Service */}
       <div>
         <p className="text-sm font-bold text-foreground">{item.productName}</p>
-        <Badge
-          variant="secondary"
-          className="mt-1.5 text-xs font-normal"
-        >
+        <Badge variant="secondary" className="mt-1.5 text-xs font-normal">
           {durationLabel}
         </Badge>
         <button
@@ -43,7 +43,7 @@ function CartRow({ item, onQuantityChange, onRemove }) {
           disabled={updating}
           className="mt-1.5 block text-xs text-destructive hover:underline disabled:opacity-50"
         >
-          Supprimer
+          {t("item.remove")}
         </button>
       </div>
 
@@ -87,6 +87,7 @@ function CartRow({ item, onQuantityChange, onRemove }) {
 // ---------------------------------------------------------------------------
 
 function CartSummary({ subtotal, tva, total, hasItems, onCheckout }) {
+  const { t } = useTranslation("cart")
   const isLoggedIn = !!localStorage.getItem("cyna_token")
 
   return (
@@ -94,24 +95,22 @@ function CartSummary({ subtotal, tva, total, hasItems, onCheckout }) {
       <Card>
         <CardContent className="space-y-4 p-4">
           <h2 className="text-sm font-bold text-foreground">
-            Résumé de la commande
+            {t("summary.title")}
           </h2>
 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Sous-total HT</span>
-              <span className="font-medium tabular-nums">
-                {formatPrice(subtotal)}
-              </span>
+              <span className="text-muted-foreground">{t("summary.subtotal")}</span>
+              <span className="font-medium tabular-nums">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">TVA (20%)</span>
+              <span className="text-muted-foreground">{t("summary.vat")}</span>
               <span className="font-medium tabular-nums">{formatPrice(tva)}</span>
             </div>
           </div>
 
           <div className="flex items-center justify-between border-t border-border pt-3">
-            <span className="text-sm font-bold">Total TTC</span>
+            <span className="text-sm font-bold">{t("summary.total")}</span>
             <span className="text-xl font-extrabold text-primary tabular-nums">
               {formatPrice(total)}
             </span>
@@ -119,11 +118,11 @@ function CartSummary({ subtotal, tva, total, hasItems, onCheckout }) {
 
           {!isLoggedIn && (
             <p className="rounded-md bg-muted/50 p-2.5 text-xs text-muted-foreground">
-              Vous possédez déjà un compte ?{" "}
+              {t("summary.loginHintBefore")}{" "}
               <Link to="/login" className="text-primary underline">
-                Connectez-vous
+                {t("summary.loginHintLink")}
               </Link>{" "}
-              pour retrouver vos informations.
+              {t("summary.loginHintAfter")}
             </p>
           )}
 
@@ -132,7 +131,7 @@ function CartSummary({ subtotal, tva, total, hasItems, onCheckout }) {
             onClick={onCheckout}
             disabled={!hasItems}
           >
-            PASSER À LA CAISSE
+            {t("summary.checkout")}
           </Button>
         </CardContent>
       </Card>
@@ -180,6 +179,7 @@ function CartSkeleton() {
 // ---------------------------------------------------------------------------
 
 export function Cart() {
+  const { t } = useTranslation("cart")
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [loading, setLoading] = useState(true)
@@ -193,15 +193,13 @@ export function Cart() {
 
   const handleQuantityChange = async (id, quantity) => {
     await updateCartItem(id, { quantity })
-    setItems((prev) =>
-      prev.map((i) => (i.id === id ? { ...i, quantity } : i))
-    )
+    setItems((prev) => prev.map((i) => (i.id === id ? { ...i, quantity } : i)))
   }
 
   const handleRemove = async (id) => {
     await removeFromCart(id)
     setItems((prev) => prev.filter((i) => i.id !== id))
-    toast.success("Service retiré du panier")
+    toast.success(t("toast.removed"))
   }
 
   const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
@@ -211,21 +209,17 @@ export function Cart() {
   return (
     <Layout>
       <main className="py-8">
-        <h1 className="mb-6 text-xl font-bold text-foreground">Votre Panier</h1>
+        <h1 className="mb-6 text-xl font-bold text-foreground">{t("title")}</h1>
 
         {loading && <CartSkeleton />}
 
         {!loading && items.length === 0 && (
           <Card>
             <CardContent className="py-16 text-center">
-              <p className="text-sm font-bold text-foreground">
-                Votre panier est vide
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Ajoutez des services depuis le catalogue pour commencer
-              </p>
+              <p className="text-sm font-bold text-foreground">{t("empty")}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{t("emptyHint")}</p>
               <Button className="mt-4" onClick={() => navigate("/")}>
-                Retour à l'accueil
+                {t("backHome")}
               </Button>
             </CardContent>
           </Card>
@@ -240,13 +234,13 @@ export function Cart() {
                   {/* En-tête */}
                   <div className="grid grid-cols-[1fr_auto_auto] gap-6 border-b border-border bg-muted/30 px-4 py-2.5">
                     <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                      Service SaaS
+                      {t("header.service")}
                     </span>
                     <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                      Quantité
+                      {t("header.quantity")}
                     </span>
                     <span className="min-w-[90px] text-right text-xs font-bold uppercase tracking-wide text-muted-foreground">
-                      Total
+                      {t("header.total")}
                     </span>
                   </div>
 

@@ -18,6 +18,7 @@ import {
   carouselHandlers,
   adminHandlers,
 } from "./handlers/orders.js"
+import { seedCart } from "./handlers/cart.js"
 
 mockRegistry.registerMany([
   ...productHandlers,
@@ -40,27 +41,4 @@ if (import.meta.env.DEV) {
 }
 
 // Seed le panier localStorage avec des articles de démo si vide
-const CART_KEY = "cyna_cart"
-if (!localStorage.getItem(CART_KEY)) {
-  localStorage.setItem(
-    CART_KEY,
-    JSON.stringify([
-      {
-        id: crypto.randomUUID(),
-        productId: "mock-product-1",
-        productName: "Cyna EDR Advanced",
-        quantity: 50,
-        duration: "monthly",
-        unitPrice: 12,
-      },
-      {
-        id: crypto.randomUUID(),
-        productId: "mock-product-2",
-        productName: "Cyna XDR Entreprise",
-        quantity: 10,
-        duration: "monthly",
-        unitPrice: 45,
-      },
-    ])
-  )
-}
+seedCart()

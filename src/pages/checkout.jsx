@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -67,12 +68,14 @@ function StepBlock({ number, title, done = false, active = false, children }) {
 // ---------------------------------------------------------------------------
 
 function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting }) {
+  const { t } = useTranslation("checkout")
+
   return (
     <div className="w-full md:w-80 md:shrink-0">
       <Card className="sticky top-4">
         <CardContent className="space-y-4 p-4">
           <h2 className="text-sm font-bold text-foreground">
-            Récapitulatif de la commande
+            {t("summary.title")}
           </h2>
 
           {/* Liste des articles */}
@@ -84,8 +87,9 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
                     {item.productName}
                   </p>
                   <p className="text-muted-foreground">
-                    {item.duration === "yearly" ? "Annuel" : "Mensuel"} •{" "}
-                    {item.quantity} utilisateur{item.quantity > 1 ? "s" : ""}
+                    {t(`summary.duration.${item.duration}`, { defaultValue: item.duration })}
+                    {" • "}
+                    {t("summary.users", { count: item.quantity })}
                   </p>
                 </div>
                 <span className="shrink-0 font-medium tabular-nums">
@@ -98,18 +102,18 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
           {/* Sous-totaux */}
           <div className="space-y-1.5 border-t border-border pt-3 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Sous-total HT</span>
+              <span className="text-muted-foreground">{t("summary.subtotal")}</span>
               <span className="tabular-nums">{formatPrice(subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">TVA (20%)</span>
+              <span className="text-muted-foreground">{t("summary.vat")}</span>
               <span className="tabular-nums">{formatPrice(tva)}</span>
             </div>
           </div>
 
           {/* Total TTC */}
           <div className="flex items-center justify-between border-t border-border pt-3">
-            <span className="text-sm font-bold">Total TTC</span>
+            <span className="text-sm font-bold">{t("summary.total")}</span>
             <span className="text-xl font-extrabold text-primary tabular-nums">
               {formatPrice(total)}
             </span>
@@ -120,13 +124,13 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
             onClick={onConfirm}
             disabled={submitting}
           >
-            {submitting ? "Traitement…" : "CONFIRMER L'ACHAT"}
+            {submitting ? t("summary.confirming") : t("summary.confirm")}
           </Button>
 
           <p className="text-center text-xs text-muted-foreground">
-            En confirmant votre achat, vous acceptez nos{" "}
+            {t("summary.cgvBefore")}{" "}
             <Link to="/cgu" className="underline">
-              Conditions Générales de Vente
+              {t("summary.cgvLink")}
             </Link>
           </p>
         </CardContent>
@@ -140,6 +144,7 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
 // ---------------------------------------------------------------------------
 
 export function Checkout() {
+  const { t } = useTranslation("checkout")
   const navigate = useNavigate()
   const [items, setItems] = useState([])
   const [user, setUser] = useState(null)
@@ -164,9 +169,7 @@ export function Checkout() {
   useEffect(() => {
     getCart().then(setItems)
     if (localStorage.getItem("cyna_token")) {
-      getMe()
-        .then(setUser)
-        .catch(() => {})
+      getMe().then(setUser).catch(() => {})
     }
   }, [])
 
@@ -175,23 +178,12 @@ export function Checkout() {
   const total = subtotal + tva
 
   const handleConfirm = async () => {
-    if (
-      !address.firstName ||
-      !address.lastName ||
-      !address.line1 ||
-      !address.postalCode ||
-      !address.city
-    ) {
-      toast.error("Veuillez remplir tous les champs de l'adresse")
+    if (!address.firstName || !address.lastName || !address.line1 || !address.postalCode || !address.city) {
+      toast.error(t("errors.missingAddress"))
       return
     }
-    if (
-      !payment.cardName ||
-      !payment.cardNumber ||
-      !payment.expiry ||
-      !payment.cvv
-    ) {
-      toast.error("Veuillez remplir les informations de paiement")
+    if (!payment.cardName || !payment.cardNumber || !payment.expiry || !payment.cvv) {
+      toast.error(t("errors.missingPayment"))
       return
     }
 
@@ -199,22 +191,20 @@ export function Checkout() {
     try {
       const order = await apiClient.post("/orders", { items, address, total })
       await clearCart()
-      toast.success("Commande confirmée !")
+      toast.success(t("toast.success"))
       navigate("/order-confirmation", { state: { order, total } })
     } catch {
-      toast.error("Une erreur est survenue lors de la commande")
+      toast.error(t("errors.orderFailed"))
       setSubmitting(false)
     }
   }
 
-  // Formatage automatique du numéro de carte (groupes de 4)
   const handleCardNumber = (e) => {
     const raw = e.target.value.replace(/\D/g, "").slice(0, 16)
     const formatted = raw.match(/.{1,4}/g)?.join(" ") ?? raw
     setPayment((p) => ({ ...p, cardNumber: formatted }))
   }
 
-  // Formatage automatique de l'expiration (MM/AA)
   const handleExpiry = (e) => {
     const raw = e.target.value.replace(/\D/g, "").slice(0, 4)
     const formatted = raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw
@@ -226,152 +216,120 @@ export function Checkout() {
       {/* Header minimal sécurisé */}
       <header className="border-b bg-background">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
-          <Link
-            to="/"
-            className="text-lg font-extrabold tracking-tight text-foreground"
-          >
+          <Link to="/" className="text-lg font-extrabold tracking-tight text-foreground">
             C CYNA
           </Link>
           <span className="rounded-full border border-green-200 bg-green-50 px-3 py-1 text-xs font-medium text-green-700">
-            🔒 Paiement 100% Sécurisé
+            🔒 {t("badge")}
           </span>
         </div>
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        <h1 className="mb-6 text-xl font-bold text-foreground">
-          Finaliser votre commande
-        </h1>
+        <h1 className="mb-6 text-xl font-bold text-foreground">{t("title")}</h1>
 
         <div className="flex flex-col gap-6 md:flex-row">
           {/* ——— Étapes ——— */}
           <div className="flex-1 space-y-4">
             {/* Étape 1 — Compte client */}
-            <StepBlock number={1} title="Compte Client" done={!!user}>
+            <StepBlock number={1} title={t("step1.title")} done={!!user}>
               {user ? (
                 <div className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">
-                    Connecté en tant que{" "}
-                    <span className="font-medium text-foreground">
-                      {user.email}
-                    </span>
+                    {t("step1.loggedAs")}{" "}
+                    <span className="font-medium text-foreground">{user.email}</span>
                   </p>
                   <button className="text-xs text-primary underline">
-                    Modifier
+                    {t("step1.edit")}
                   </button>
                 </div>
               ) : (
                 <p className="text-xs text-muted-foreground">
                   <Link to="/login" className="text-primary underline">
-                    Connectez-vous
+                    {t("step1.loginHintLink")}
                   </Link>{" "}
-                  ou continuez en tant qu'invité.
+                  {t("step1.loginHintAfter")}
                 </p>
               )}
             </StepBlock>
 
             {/* Étape 2 — Adresse */}
-            <StepBlock number={2} title="Adresse de facturation" active>
+            <StepBlock number={2} title={t("step2.title")} active>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Prénom</Label>
+                  <Label className="text-xs">{t("step2.firstName")}</Label>
                   <Input
                     value={address.firstName}
-                    onChange={(e) =>
-                      setAddress((p) => ({ ...p, firstName: e.target.value }))
-                    }
+                    onChange={(e) => setAddress((p) => ({ ...p, firstName: e.target.value }))}
                     placeholder="Jean"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Nom</Label>
+                  <Label className="text-xs">{t("step2.lastName")}</Label>
                   <Input
                     value={address.lastName}
-                    onChange={(e) =>
-                      setAddress((p) => ({ ...p, lastName: e.target.value }))
-                    }
+                    onChange={(e) => setAddress((p) => ({ ...p, lastName: e.target.value }))}
                     placeholder="Dupont"
                   />
                 </div>
                 <div className="col-span-2 space-y-1">
-                  <Label className="text-xs">Adresse</Label>
+                  <Label className="text-xs">{t("step2.address")}</Label>
                   <Input
                     value={address.line1}
-                    onChange={(e) =>
-                      setAddress((p) => ({ ...p, line1: e.target.value }))
-                    }
-                    placeholder="N° et nom de rue"
+                    onChange={(e) => setAddress((p) => ({ ...p, line1: e.target.value }))}
+                    placeholder={t("step2.addressPlaceholder")}
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Code postal</Label>
+                  <Label className="text-xs">{t("step2.postalCode")}</Label>
                   <Input
                     value={address.postalCode}
-                    onChange={(e) =>
-                      setAddress((p) => ({
-                        ...p,
-                        postalCode: e.target.value,
-                      }))
-                    }
+                    onChange={(e) => setAddress((p) => ({ ...p, postalCode: e.target.value }))}
                     placeholder="75001"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Ville</Label>
+                  <Label className="text-xs">{t("step2.city")}</Label>
                   <Input
                     value={address.city}
-                    onChange={(e) =>
-                      setAddress((p) => ({ ...p, city: e.target.value }))
-                    }
+                    onChange={(e) => setAddress((p) => ({ ...p, city: e.target.value }))}
                     placeholder="Paris"
                   />
                 </div>
                 <div className="col-span-2 space-y-1">
-                  <Label className="text-xs">Pays</Label>
+                  <Label className="text-xs">{t("step2.country")}</Label>
                   <Input
                     value={address.country}
-                    onChange={(e) =>
-                      setAddress((p) => ({ ...p, country: e.target.value }))
-                    }
+                    onChange={(e) => setAddress((p) => ({ ...p, country: e.target.value }))}
                   />
                 </div>
               </div>
             </StepBlock>
 
             {/* Étape 3 — Paiement */}
-            <StepBlock number={3} title="Moyen de paiement" active>
-              {/* Sélection Carte Bancaire */}
+            <StepBlock number={3} title={t("step3.title")} active>
               <div className="mb-4 flex items-center gap-2 rounded-lg border border-primary bg-primary/5 px-3 py-2.5">
                 <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-primary bg-primary">
                   <div className="h-1.5 w-1.5 rounded-full bg-white" />
                 </div>
-                <span className="text-sm font-medium">Carte Bancaire</span>
+                <span className="text-sm font-medium">{t("step3.cardType")}</span>
                 <div className="ml-auto flex gap-1">
-                  <Badge variant="outline" className="px-1.5 py-0 text-xs">
-                    VISA
-                  </Badge>
-                  <Badge variant="outline" className="px-1.5 py-0 text-xs">
-                    MC
-                  </Badge>
+                  <Badge variant="outline" className="px-1.5 py-0 text-xs">VISA</Badge>
+                  <Badge variant="outline" className="px-1.5 py-0 text-xs">MC</Badge>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="space-y-1">
-                  <Label className="text-xs">Nom sur la carte</Label>
+                  <Label className="text-xs">{t("step3.cardName")}</Label>
                   <Input
                     value={payment.cardName}
-                    onChange={(e) =>
-                      setPayment((p) => ({
-                        ...p,
-                        cardName: e.target.value.toUpperCase(),
-                      }))
-                    }
+                    onChange={(e) => setPayment((p) => ({ ...p, cardName: e.target.value.toUpperCase() }))}
                     placeholder="JEAN DUPONT"
                   />
                 </div>
                 <div className="space-y-1">
-                  <Label className="text-xs">Numéro de carte</Label>
+                  <Label className="text-xs">{t("step3.cardNumber")}</Label>
                   <Input
                     value={payment.cardNumber}
                     onChange={handleCardNumber}
@@ -382,7 +340,7 @@ export function Checkout() {
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <Label className="text-xs">Expiration (MM/AA)</Label>
+                    <Label className="text-xs">{t("step3.expiry")}</Label>
                     <Input
                       value={payment.expiry}
                       onChange={handleExpiry}
@@ -392,15 +350,10 @@ export function Checkout() {
                     />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-xs">CVV</Label>
+                    <Label className="text-xs">{t("step3.cvv")}</Label>
                     <Input
                       value={payment.cvv}
-                      onChange={(e) =>
-                        setPayment((p) => ({
-                          ...p,
-                          cvv: e.target.value.replace(/\D/g, "").slice(0, 3),
-                        }))
-                      }
+                      onChange={(e) => setPayment((p) => ({ ...p, cvv: e.target.value.replace(/\D/g, "").slice(0, 3) }))}
                       placeholder="123"
                       maxLength={3}
                       type="password"
@@ -427,15 +380,9 @@ export function Checkout() {
       {/* Footer minimal */}
       <footer className="mt-12 border-t bg-background">
         <div className="container mx-auto flex justify-center gap-6 px-4 py-4 text-xs text-muted-foreground">
-          <Link to="/mentions-legales" className="hover:underline">
-            Mentions Légales
-          </Link>
-          <Link to="/cgu" className="hover:underline">
-            CGU
-          </Link>
-          <Link to="/contact" className="hover:underline">
-            Contact
-          </Link>
+          <Link to="/mentions-legales" className="hover:underline">{t("footer.legal")}</Link>
+          <Link to="/cgu" className="hover:underline">{t("footer.cgu")}</Link>
+          <Link to="/contact" className="hover:underline">{t("footer.contact")}</Link>
         </div>
       </footer>
     </div>

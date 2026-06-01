@@ -1,10 +1,12 @@
 import { useLocation, Link } from "react-router-dom"
+import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/ui/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatPrice } from "@/lib/utils"
 
 export function OrderConfirmation() {
+  const { t } = useTranslation("order-confirmation")
   const { state } = useLocation()
   const total = state?.total ?? 0
 
@@ -32,18 +34,13 @@ export function OrderConfirmation() {
             </div>
 
             <div>
-              <h1 className="text-lg font-bold text-foreground">
-                Commande confirmée !
-              </h1>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Merci pour votre achat. Vous recevrez un e-mail de confirmation
-                sous peu.
-              </p>
+              <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
+              <p className="mt-1 text-sm text-muted-foreground">{t("subtitle")}</p>
             </div>
 
             {total > 0 && (
               <div className="rounded-lg bg-muted/40 px-4 py-3">
-                <p className="text-xs text-muted-foreground">Montant débité</p>
+                <p className="text-xs text-muted-foreground">{t("amount")}</p>
                 <p className="text-2xl font-extrabold text-primary tabular-nums">
                   {formatPrice(total)}
                 </p>
@@ -52,10 +49,10 @@ export function OrderConfirmation() {
 
             <div className="flex flex-col gap-2">
               <Button asChild>
-                <Link to="/account/orders">Voir mes commandes</Link>
+                <Link to="/account/orders">{t("viewOrders")}</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/">Retour à l'accueil</Link>
+                <Link to="/">{t("backHome")}</Link>
               </Button>
             </div>
           </CardContent>
