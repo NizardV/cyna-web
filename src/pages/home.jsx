@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Layout } from "@/components/layout/layout"
 import { fetchHomeData } from "@/api/home";
-import { Layout } from "@/components/ui/layout/layout";
 import { HomeCarousel } from "@/components/home/home-carousel";
 import { FixedText } from "@/components/home/fixed-text";
 import { CategoryGrid } from "@/components/home/category-grid";
