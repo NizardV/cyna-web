@@ -12,6 +12,8 @@ import Loading from "./pages/specials/loading"
 import { MockDemo } from "./pages/mock-demo"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
+import { LoginPage } from "./pages/login-page"
+import { RegisterPage } from "./pages/register-page"
 import { Cart } from "./pages/cart"
 import { Checkout } from "./pages/checkout"
 import { OrderConfirmation } from "./pages/order-confirmation"
@@ -23,6 +25,8 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<Home />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/mock-demo" element={<MockDemo />} />
           <Route path="/catalog" element={<Catalog />} />

@@ -1,0 +1,22 @@
+{
+  "header": {
+    "search": "Search a solution (SOC, EDR...)",
+    "home": "Home",
+    "categories": "Categories",
+    "contact": "Contact",
+    "userProfile": "User profile",
+    "escapeClient": "Client Area"
+  },
+  "footer": {
+    "description": "Your trusted partner for the security of your IT infrastructure. High-performance and scalable SaaS solutions.",
+    "information": "INFORMATION",
+    "aboutCyna": "About Cyna",
+    "contactUs": "Contact us",
+    "legal": "LEGAL",
+    "legalNotice": "Legal Notice",
+    "termsOfService": "Terms of Service (ToS)",
+    "privacyPolicy": "Privacy Policy",
+    "followUs": "FOLLOW US",
+    "copyright": "© 2024 Cyna. All rights reserved."
+  }
+}
