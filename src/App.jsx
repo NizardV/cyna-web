@@ -15,6 +15,7 @@ import { Profile } from "./pages/account/profile"
 import { Cart } from "./pages/cart"
 import { Checkout } from "./pages/checkout"
 import { OrderConfirmation } from "./pages/order-confirmation"
+import { Catalog } from "./pages/catalog"
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/mock-demo" element={<MockDemo />} />
+          <Route path="/catalog" element={<Catalog />} />
           <Route path="/account/profile" element={<Profile />} />
           <Route path="/account/orders" element={<OrderHistory />} />
           <Route path="/cart" element={<Cart />} />
