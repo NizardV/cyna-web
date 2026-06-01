@@ -25,6 +25,7 @@
   "product": {
     "available": "Disponible",
     "unavailable": "Indisponible",
+    "outOfStock": "Rupture de stock",
     "perMonth": "/mois",
     "details": "Détails",
     "solutions": "Solutions"

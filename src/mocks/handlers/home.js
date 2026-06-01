@@ -1,5 +1,6 @@
 import { makeMany, makeProduct, makeCategory, makeCarouselItem } from "../factories/factories.js";
 import { faker } from "@faker-js/faker";
+import { _products } from "./products.js";
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const homeHandlers = [
@@ -25,7 +26,16 @@ export const homeHandlers = [
         (a, b) => a.displayOrder - b.displayOrder
       );
       // Les Top Produits (On génère 4 produits "Featured")
-      const featuredProducts = makeMany(4, () => makeProduct({ isFeatured: true }));
+      let featuredProducts = _products.filter(p => p.isFeatured);
+      
+      // Sécurité : Si Faker n'en a pas généré au moins 4 avec 'isFeatured=true',
+      // on complète avec des produits normaux pour avoir une belle grille de 4.
+      if (featuredProducts.length < 4) {
+        const others = _products.filter(p => !p.isFeatured);
+        featuredProducts = [...featuredProducts, ...others].slice(0, 4);
+      } else {
+        featuredProducts = featuredProducts.slice(0, 4);
+      }
 
       return {
         carouselSlides,

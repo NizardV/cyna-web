@@ -3,8 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import { formatPrice } from "@/lib/utils"
+import { cn, getStatusBadge, formatPrice } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
 // ProductCard — carte d'un service du catalogue
@@ -18,11 +17,15 @@ import { formatPrice } from "@/lib/utils"
 export function ProductCard({ product }) {
   const { t } = useTranslation("catalog")
 
+  const isAvailable = product.status === "available"
+  const priceMonthly = product.pricingPlans?.find(pl => pl.billingPeriod === "monthly")?.price ?? 0
+  const { variant: badgeVariant, labelKey } = getStatusBadge(product.status)
+
   return (
     <Card
       className={cn(
         "flex flex-col transition-colors hover:ring-primary",
-        !product.isAvailable && "opacity-75"
+        !isAvailable && "opacity-75"
       )}
     >
       {/* Vignette du produit */}
@@ -31,7 +34,7 @@ export function ProductCard({ product }) {
         alt={product.name}
         className={cn(
           "relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40",
-          product.isAvailable ? "bg-muted text-primary" : "bg-muted/50 text-muted-foreground"
+          isAvailable ? "bg-muted text-primary" : "bg-muted/50 text-muted-foreground"
         )}
       />
 
@@ -41,26 +44,23 @@ export function ProductCard({ product }) {
 
         <div className="mt-auto flex items-end justify-between pt-3">
           <div className="flex flex-col gap-1">
-            {product.isAvailable ? (
-              <>
-                <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
-                  {t("product.available")}
-                </Badge>
-                <p className="text-sm font-extrabold text-primary">
-                  {formatPrice(product.priceMonthly)}{" "}
-                  <span className="text-xs font-normal text-muted-foreground">
-                    {t("product.perMonth")}
-                  </span>
-                </p>
-              </>
-            ) : (
-              <Badge variant="destructive">{t("product.unavailable")}</Badge>
+            <Badge variant={badgeVariant}>
+              {t(labelKey)}
+            </Badge>
+            {isAvailable && (
+              <p className="text-sm font-extrabold text-primary">
+                {formatPrice(priceMonthly)}{" "}
+                <span className="text-xs font-normal text-muted-foreground">
+                  {t("product.perMonth")}
+                </span>
+              </p>
             )}
           </div>
+
           <Button
             size="sm"
-            disabled={!product.isAvailable}
-            variant={product.isAvailable ? "default" : "outline"}
+            disabled={!isAvailable}
+            variant={isAvailable ? "default" : "outline"}
           >
             {t("product.details")}
           </Button>

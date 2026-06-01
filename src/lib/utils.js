@@ -44,3 +44,15 @@ export function buildPageRange(current, total) {
 
   return result
 }
+
+export function getStatusBadge(status) {
+  switch (status) {
+    case "available":
+      return { variant: "default", labelKey: "product.available" }
+    case "out_of_stock":
+      return { variant: "outline", labelKey: "product.outOfStock" }
+    case "unavailable":
+    default:
+      return { variant: "destructive", labelKey: "product.unavailable" }
+  }
+}
