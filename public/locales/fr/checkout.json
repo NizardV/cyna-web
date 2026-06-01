@@ -1,0 +1,58 @@
+{
+  "title": "Finaliser votre commande",
+  "badge": "Paiement 100% Sécurisé",
+  "step1": {
+    "title": "Compte Client",
+    "loggedAs": "Connecté en tant que",
+    "edit": "Modifier",
+    "loginHintLink": "Connectez-vous",
+    "loginHintAfter": "ou continuez en tant qu'invité."
+  },
+  "step2": {
+    "title": "Adresse de facturation",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "address": "Adresse",
+    "addressPlaceholder": "N° et nom de rue",
+    "postalCode": "Code postal",
+    "city": "Ville",
+    "country": "Pays"
+  },
+  "step3": {
+    "title": "Moyen de paiement",
+    "cardType": "Carte Bancaire",
+    "cardName": "Nom sur la carte",
+    "cardNumber": "Numéro de carte",
+    "expiry": "Expiration (MM/AA)",
+    "cvv": "CVV"
+  },
+  "summary": {
+    "title": "Récapitulatif de la commande",
+    "duration": {
+      "monthly": "Mensuel",
+      "yearly": "Annuel"
+    },
+    "users_one": "{{count}} utilisateur",
+    "users_other": "{{count}} utilisateurs",
+    "subtotal": "Sous-total HT",
+    "vat": "TVA (20%)",
+    "total": "Total TTC",
+    "confirm": "CONFIRMER L'ACHAT",
+    "confirming": "Traitement…",
+    "cgvBefore": "En confirmant votre achat, vous acceptez nos",
+    "cgvLink": "Conditions Générales de Vente"
+  },
+  "errors": {
+    "missingAddress": "Veuillez remplir tous les champs de l'adresse",
+    "missingPayment": "Veuillez remplir les informations de paiement",
+    "orderFailed": "Une erreur est survenue lors de la commande"
+  },
+  "toast": {
+    "success": "Commande confirmée !"
+  },
+  "footer": {
+    "legal": "Mentions Légales",
+    "cgu": "CGU",
+    "contact": "Contact"
+  }
+}

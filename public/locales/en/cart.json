@@ -1,0 +1,31 @@
+{
+  "title": "Your Cart",
+  "empty": "Your cart is empty",
+  "emptyHint": "Add services from the catalog to get started",
+  "backHome": "Back to home",
+  "header": {
+    "service": "SaaS Service",
+    "quantity": "Quantity",
+    "total": "Total"
+  },
+  "item": {
+    "remove": "Remove",
+    "duration": {
+      "monthly": "Monthly Subscription",
+      "yearly": "Yearly Subscription"
+    }
+  },
+  "summary": {
+    "title": "Order Summary",
+    "subtotal": "Subtotal (excl. tax)",
+    "vat": "VAT (20%)",
+    "total": "Total incl. tax",
+    "loginHintBefore": "Already have an account?",
+    "loginHintLink": "Log in",
+    "loginHintAfter": "to find your information.",
+    "checkout": "PROCEED TO CHECKOUT"
+  },
+  "toast": {
+    "removed": "Service removed from cart"
+  }
+}

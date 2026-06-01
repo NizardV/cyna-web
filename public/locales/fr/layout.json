@@ -1,0 +1,22 @@
+{
+  "header": {
+    "search": "Rechercher une solution (RDC, EDR...)",
+    "home": "Accueil",
+    "categories": "Catégories",
+    "contact": "Contact",
+    "userProfile": "Profil utilisateur",
+    "escapeClient": "Espace Client"
+  },
+  "footer": {
+    "description": "Votre partenaire de confiance pour la sécurité de vos infrastructures IT. Solutions SaaS performantes et évolutives.",
+    "information": "INFORMATIONS",
+    "aboutCyna": "À propos de Cyna",
+    "contactUs": "Contactez-nous",
+    "legal": "LÉGAL",
+    "legalNotice": "Mentions Légales",
+    "termsOfService": "Conditions Générales (CGU)",
+    "privacyPolicy": "Politique de confidentialité",
+    "followUs": "SUIVEZ-NOUS",
+    "copyright": "© 2024 Cyna. Tous droits réservés."
+  }
+}
