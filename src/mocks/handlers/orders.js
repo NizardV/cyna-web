@@ -3,6 +3,9 @@
  * @description Handlers mock pour les commandes, le panier, les abonnements,
  * la recherche, les catégories, le carrousel et le tableau de bord admin.
  * Toutes les données sont générées aléatoirement via Faker au démarrage.
+ * @description Handlers mock pour les commandes, le panier, les abonnements,
+ * la recherche, les catégories, le carrousel et le tableau de bord admin.
+ * Toutes les données sont générées aléatoirement via Faker au démarrage.
  */
 
 import { faker } from "@faker-js/faker"
@@ -16,6 +19,7 @@ import {
 } from "../factories/factories.js"
 
 // ---------------------------------------------------------------------------
+// Stores en mémoire — initialisés une fois au démarrage
 // Stores en mémoire — initialisés une fois au démarrage
 // ---------------------------------------------------------------------------
 
@@ -45,6 +49,7 @@ const _carousel = makeMany(3, (_, i) => makeCarouselItem({ displayOrder: i }))
 
 // ---------------------------------------------------------------------------
 // Handlers de commandes
+// Handlers de commandes
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
@@ -71,7 +76,9 @@ export const orderHandlers = [
   },
 ]
 
+
 // ---------------------------------------------------------------------------
+// Handlers du panier
 // Handlers du panier
 // ---------------------------------------------------------------------------
 
@@ -92,10 +99,13 @@ export const cartHandlers = [
       if (existing) {
         existing.quantity += body.quantity ?? 1
         return existing
+        existing.quantity += body.quantity ?? 1
+        return existing
       }
       const item = {
         id: faker.string.uuid(),
         productId: body.productId,
+        productName: _products.find((p) => p.id === body.productId)?.name ?? "Inconnu",
         productName: _products.find((p) => p.id === body.productId)?.name ?? "Inconnu",
         quantity: body.quantity ?? 1,
         duration: body.duration ?? "monthly",
@@ -127,7 +137,9 @@ export const cartHandlers = [
   },
 ]
 
+
 // ---------------------------------------------------------------------------
+// Handlers des abonnements
 // Handlers des abonnements
 // ---------------------------------------------------------------------------
 
@@ -146,30 +158,6 @@ export const subscriptionHandlers = [
   },
 ]
 
-// ---------------------------------------------------------------------------
-// Handlers de recherche
-// ---------------------------------------------------------------------------
-
-/** @type {import("../registry.js").MockHandler[]} */
-export const searchHandlers = [
-  {
-    method: "GET",
-    path: "/search",
-    resolver: ({ params }) => {
-      const q = (params.q ?? "").toLowerCase()
-      const results = _products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(q) ||
-          p.description.toLowerCase().includes(q)
-      )
-      return {
-        hits: results.slice(0, 20),
-        total: results.length,
-        query: q,
-      }
-    },
-  },
-]
 
 // ---------------------------------------------------------------------------
 // Handlers du catalogue — filtrage, tri et pagination côté serveur
@@ -260,6 +248,7 @@ export const categoryHandlers = [
 ]
 
 // ---------------------------------------------------------------------------
+// Handlers du carrousel (CMS admin)
 // Handlers du carrousel (CMS admin)
 // ---------------------------------------------------------------------------
 

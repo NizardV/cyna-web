@@ -7,7 +7,7 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { Layout } from "@/components/ui/layout/layout"
+import { Layout } from "@/components/layout/layout"
 import { AccountNav } from "@/components/ui/account/account-nav"
 import { getMe, updateProfile, updatePassword } from "@/api/user.js"
 import { getSubscriptions } from "@/api/orders.js"

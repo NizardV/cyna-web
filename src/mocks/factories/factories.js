@@ -103,6 +103,7 @@ export function makeProduct(overrides = {}) {
     id: faker.string.uuid(),
     categoryId: faker.string.uuid(),
     slug: faker.helpers.slugify(productName).toLowerCase(), 
+    imageUrl: faker.image.url(),
     name: productName,
     description: faker.lorem.paragraphs(2),
     
