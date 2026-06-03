@@ -46,7 +46,7 @@ stages:
       displayName: 'Run Tests'
       continueOnError: true # À enlever si tes tests unitaires sont déjà fonctionnels et obligatoires
 
-    - script: npm run build
+    - script: npx run build
       displayName: 'Build Production Bundle (Vite)'
 
     - task: SonarCloudAnalyze@3
