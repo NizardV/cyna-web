@@ -1,0 +1,71 @@
+trigger:
+  branches:
+    include: [ "main", "dev" ] # Le pipeline se déclenche sur les deux branches
+
+pool:
+  name: 'Default' # Ton agent local
+
+variables:
+  # On définit dynamiquement le nom de l'environnement selon la branche
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    envName: 'production'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
+    envName: 'staging'
+
+stages:
+- stage: CI_CD_MultiEnv
+  displayName: 'CI/CD Multi-Environnements'
+  jobs:
+  - job: Build_And_Deploy
+    steps:
+    # 1. Analyse statique SonarCloud
+    - task: SonarCloudPrepare@3
+      inputs:
+        SonarCloud: 'SonarCloud-CYNA'
+        organization: '2028di1p5g3'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        cliProjectKey: '2028DI1P5G3_Cyna-Web'
+        cliProjectName: 'CYNA - Frontend Web'
+        cliSources: '.'
+        extraProperties: |
+          sonar.tests=.
+          sonar.test.inclusions=**/*.test.tsx,**/*.test.ts,**/*.spec.ts
+          sonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+    - script: npm ci && npm run test -- --coverage --watchAll=false
+      displayName: 'Tests Unitaires'
+      continueOnError: true
+
+    - task: SonarCloudAnalyze@3
+      displayName: 'Run SonarCloud Analysis'
+      
+    - task: SonarCloudPublish@3
+      displayName: 'Publish Quality Gate'
+      inputs:
+        pollingTimeoutSec: '300'
+      continueOnError: true
+
+    # 2. Build Docker adapté à l'environnement (Staging ou Production)
+    - script: |
+        docker build -t cyna-frontend:$(envName) .
+      displayName: 'Docker Build [ $(envName) ]'
+
+# 3. CD : Simulation de mise à disposition de l'environnement sur ton PC
+    - task: bash@3
+      displayName: 'CD : Run Conteneur [ $(envName) ]'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # On nettoie le conteneur existant s'il y en a un
+          docker stop cyna-web-$(envName) 2>/dev/null || true
+          docker rm cyna-web-$(envName) 2>/dev/null || true
+          
+          # Choix du port selon l'environnement
+          if [ "$(envName)" = "production" ]; then
+            echo "Démarrage de la PRODUCTION sur le port 8080..."
+            docker run -d --name cyna-web-production -p 8080:80 cyna-frontend:production
+          else
+            echo "Démarrage du STAGING sur le port 8081..."
+            docker run -d --name cyna-web-staging -p 8081:80 cyna-frontend:staging
+          fi
