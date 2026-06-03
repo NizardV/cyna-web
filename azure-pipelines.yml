@@ -51,15 +51,21 @@ stages:
         docker build -t cyna-frontend:$(envName) .
       displayName: 'Docker Build [ $(envName) ]'
 
-    # 3. CD : Simulation de mise à disposition de l'environnement sur ton PC
-    - script: |
-        docker stop cyna-web-$(envName) || true
-        docker rm cyna-web-$(envName) || true
-        
-        # Si c'est la prod on le met sur le port 8080, si c'est la dev sur le port 8081
-        if [ "$(envName)" = "production" ]; then
-          docker run -d --name cyna-web-production -p 8080:80 cyna-frontend:production
-        else
-          docker run -d --name cyna-web-staging -p 8081:80 cyna-frontend:staging
-        fi
+# 3. CD : Simulation de mise à disposition de l'environnement sur ton PC
+    - task: bash@3
       displayName: 'CD : Run Conteneur [ $(envName) ]'
+      inputs:
+        targetType: 'inline'
+        script: |
+          # On nettoie le conteneur existant s'il y en a un
+          docker stop cyna-web-$(envName) 2>/dev/null || true
+          docker rm cyna-web-$(envName) 2>/dev/null || true
+          
+          # Choix du port selon l'environnement
+          if [ "$(envName)" = "production" ]; then
+            echo "Démarrage de la PRODUCTION sur le port 8080..."
+            docker run -d --name cyna-web-production -p 8080:80 cyna-frontend:production
+          else
+            echo "Démarrage du STAGING sur le port 8081..."
+            docker run -d --name cyna-web-staging -p 8081:80 cyna-frontend:staging
+          fi
