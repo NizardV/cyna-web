@@ -4,18 +4,15 @@ WORKDIR /app
 
 # Copie des fichiers de dépendances
 COPY package*.json ./
-RUN npm ci
+# ON REMPLACE "RUN npm ci" PAR LA LIGNE CI-DESSOUS :
+RUN npm install --legacy-peer-deps
 
 # Copie du reste du code source et build
 COPY . .
 RUN npm run build
 
-# Stage 2 : Serveur de production ultra-léger avec NGINX
+# Stage 2 : Serveur de production avec NGINX
 FROM nginx:stable-alpine
-# Copie des fichiers compilés par Vite dans le dossier public de NGINX
 COPY --from=build /app/dist /usr/share/nginx/html
-
-# Exposition du port 80 (le port standard HTTP)
 EXPOSE 80
-
 CMD ["nginx", "-g", "daemon off;"]
