@@ -27,8 +27,8 @@ stages:
         organization: '$(sonarOrganization)'
         scannerMode: 'CLI'
         configMode: 'manual'
-        projectKey: '$(sonarProjectKeyFrontend)'
-        projectName: 'CYNA - Frontend Web'
+        cliProjectKey: '$(sonarProjectKeyFrontend)'
+        cliProjectName: 'CYNA - Frontend Web'
         cliSources: '.' # Comme on est déjà à la racine du dépôt Web, '.' suffit
         extraProperties: |
           sonar.tests=.
