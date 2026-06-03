@@ -40,7 +40,6 @@ stages:
         pollingTimeoutSec: '300'
       continueOnError: true
 
-    # 2. La partie Docker en ligne de commande directe (Plus besoin de Service Connection !)
     - script: |
         docker build -t cyna-frontend:latest .
       displayName: 'Docker Build Image'
