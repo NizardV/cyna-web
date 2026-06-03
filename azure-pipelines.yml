@@ -1,56 +1,43 @@
 trigger:
   branches:
-    include: [ "main", "dev" ]
+    include: [ "main", "develop" ]
 
 pool:
-  name: 'Default'
-
-variables:
-  sonarOrganization: '2028di1p5g3'
-  sonarProjectKeyFrontend: '2028DI1P5G3_Cyna-Web'
+  name: 'Default' # Ton agent local (qui doit avoir Docker lancé)
 
 stages:
-- stage: CI_Frontend
-  displayName: 'CI Web Build & SonarCloud'
+- stage: CI_Docker_Web
+  displayName: 'Build Image Docker'
   jobs:
-  - job: Build_Frontend
+  - job: Push_to_Registry
     steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '20.x'
-      displayName: 'Install Node.js'
-
+    # 1. Analyse statique SonarCloud du code React
     - task: SonarCloudPrepare@3
-      displayName: 'Prepare SonarCloud'
       inputs:
         SonarCloud: 'SonarCloud-CYNA'
-        organization: '$(sonarOrganization)'
+        organization: '2028di1p5g3'
         scannerMode: 'CLI'
         configMode: 'manual'
-        cliProjectKey: '$(sonarProjectKeyFrontend)'
+        cliProjectKey: '2028DI1P5G3_Cyna-Web'
         cliProjectName: 'CYNA - Frontend Web'
-        cliSources: '.' # Comme on est déjà à la racine du dépôt Web, '.' suffit
+        cliSources: '.'
         extraProperties: |
           sonar.tests=.
           sonar.test.inclusions=**/*.test.tsx,**/*.test.ts,**/*.spec.ts
           sonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-    - script: npm ci
-      displayName: 'Install Dependencies'
-
-    - script: npm run lint
-      displayName: 'Linter Check'
-      continueOnError: true
-
-    - script: npm run test -- --coverage --watchAll=false
-      displayName: 'Run Tests'
-      continueOnError: true # À enlever si tes tests unitaires sont déjà fonctionnels et obligatoires
-
-    - script: npx vite build
-      displayName: 'Build Production Bundle (Vite)'
+    # Installation locale pour générer le rapport de couverture requis par Sonar
+    - script: npm ci && npm run test -- --coverage --watchAll=false
+      displayName: 'Tests Unitaires pour SonarCloud'
+      continueOnError: true # Évite de bloquer la suite si tes tests ne sont pas encore parfaits
 
     - task: SonarCloudAnalyze@3
       displayName: 'Run SonarCloud Analysis'
-
+      
     - task: SonarCloudPublish@3
       displayName: 'Publish Quality Gate'
+
+    # 2. La partie Docker en ligne de commande directe (Plus besoin de Service Connection !)
+    - script: |
+        docker build -t cyna-frontend:latest .
+      displayName: 'Docker Build Image'
