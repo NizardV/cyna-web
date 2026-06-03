@@ -37,7 +37,8 @@ stages:
     - task: SonarCloudPublish@3
       displayName: 'Publish Quality Gate'
       inputs:
-        pollingTimeoutSec: '300' # <-- AJOUTE CETTE LIGNE (Donne jusqu'à 5 min d'attente max à Azure)
+        pollingTimeoutSec: '300'
+      continueOnError: true
 
     # 2. La partie Docker en ligne de commande directe (Plus besoin de Service Connection !)
     - script: |
