@@ -20,7 +20,7 @@ stages:
         versionSpec: '20.x'
       displayName: 'Install Node.js'
 
-    - task: SonarCloudPrepare@2
+    - task: SonarCloudPrepare@3
       displayName: 'Prepare SonarCloud'
       inputs:
         SonarCloud: 'SonarCloud-CYNA'
@@ -49,8 +49,8 @@ stages:
     - script: npm run build
       displayName: 'Build Production Bundle (Vite)'
 
-    - task: SonarCloudAnalyze@2
+    - task: SonarCloudAnalyze@3
       displayName: 'Run SonarCloud Analysis'
 
-    - task: SonarCloudPublish@2
+    - task: SonarCloudPublish@3
       displayName: 'Publish Quality Gate'
