@@ -1,0 +1,56 @@
+trigger:
+  branches:
+    include: [ "main", "dev" ]
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  sonarOrganization: '2028di1p5g3'
+  sonarProjectKeyFrontend: '2028DI1P5G3_Cyna-Web'
+
+stages:
+- stage: CI_Frontend
+  displayName: 'CI Web Build & SonarCloud'
+  jobs:
+  - job: Build_Frontend
+    steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '20.x'
+      displayName: 'Install Node.js'
+
+    - task: SonarCloudPrepare@2
+      displayName: 'Prepare SonarCloud'
+      inputs:
+        SonarCloud: 'SonarCloud-CYNA'
+        organization: '$(sonarOrganization)'
+        scannerMode: 'CLI'
+        configMode: 'manual'
+        projectKey: '$(sonarProjectKeyFrontend)'
+        projectName: 'CYNA - Frontend Web'
+        cliSources: '.' # Comme on est déjà à la racine du dépôt Web, '.' suffit
+        extraProperties: |
+          sonar.tests=.
+          sonar.test.inclusions=**/*.test.tsx,**/*.test.ts,**/*.spec.ts
+          sonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+    - script: npm ci
+      displayName: 'Install Dependencies'
+
+    - script: npm run lint
+      displayName: 'Linter Check'
+      continueOnError: true
+
+    - script: npm run test -- --coverage --watchAll=false
+      displayName: 'Run Tests'
+      continueOnError: true # À enlever si tes tests unitaires sont déjà fonctionnels et obligatoires
+
+    - script: npm run build
+      displayName: 'Build Production Bundle (Vite)'
+
+    - task: SonarCloudAnalyze@2
+      displayName: 'Run SonarCloud Analysis'
+
+    - task: SonarCloudPublish@2
+      displayName: 'Publish Quality Gate'
