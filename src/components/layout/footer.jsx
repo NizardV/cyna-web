@@ -5,7 +5,7 @@ export function Footer({ hideDescription = false, hideInfoSection = false, hideL
   return (
     <footer className="bg-gray-900 text-gray-300 mt-auto">
       <div className="px-6 py-12">
-        <div className="grid grid-cols-4 gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <Link to="/" className="flex items-center gap-2 mb-4">
               <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#7C3AED]">
