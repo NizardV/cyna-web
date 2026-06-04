@@ -33,7 +33,9 @@ stages:
           sonar.test.inclusions=**/*.test.tsx,**/*.test.ts,**/*.spec.ts
           sonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-    - script: npm ci && npm run test -- --coverage --watchAll=false
+    - script: |
+        set CI=true
+        npm ci && npm run test -- --coverage --watchAll=false
       displayName: 'Tests Unitaires'
       continueOnError: true
 
