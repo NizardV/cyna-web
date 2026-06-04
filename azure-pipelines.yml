@@ -3,7 +3,7 @@ trigger:
     include: [ "main", "dev" ] # Le pipeline se déclenche sur les deux branches
 
 pool:
-  name: 'Default' # Ton agent local
+  name: 'CyanPool' # Agent OVH
 
 variables:
   # On définit dynamiquement le nom de l'environnement selon la branche
