@@ -1,5 +1,5 @@
 # Stage 1 : Build de l'application React
-FROM node:20-alpine AS build
+FROM node:22-alpine AS build
 WORKDIR /app
 
 # Copie des fichiers de dépendances
