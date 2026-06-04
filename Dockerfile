@@ -6,7 +6,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # On installe proprement TOUTES les dépendances (y compris Vite) dans le conteneur
-RUN npm ci
+RUN npm install
 
 # On copie le reste du code source
 COPY . .
