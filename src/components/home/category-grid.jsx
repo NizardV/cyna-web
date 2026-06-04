@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom"
 
 export function CategoryGrid({ categories }) {
   const { t } = useTranslation("home");
@@ -18,9 +19,9 @@ export function CategoryGrid({ categories }) {
         {/* Grille responsive : 1 colonne sur mobile, 2 sur tablette, 4 sur PC */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {categories.map((category) => (
-            <a
+            <Link
               key={category.id}
-              href={`/categories/${category.id}`} 
+              to={`/catalog?category=${category.id}`}
               className="group relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all h-64 flex items-end cursor-pointer"
             >
               {/* L'image de fond (vient de la BDD/Mock) */}
@@ -37,7 +38,7 @@ export function CategoryGrid({ categories }) {
               <h3 className="relative z-10 p-6 text-xl font-bold text-white w-full text-center tracking-wide">
                 {category.name}
               </h3>
-            </a>
+            </Link>
           ))}
         </div>
       </div>

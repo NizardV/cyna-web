@@ -76,7 +76,7 @@ export function Catalog() {
   // --- État des filtres (recherche en direct, reste debounced pour l'API) ---
   const [filters, setFilters] = useState({
     search: searchParams.get("q") || "",
-    categories: [],
+    categories: searchParams.get("category") ? [searchParams.get("category")] : [],
     maxPrice: "",
     onlyAvailable: false,
   })
