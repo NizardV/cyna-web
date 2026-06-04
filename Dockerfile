@@ -2,13 +2,10 @@
 FROM node:22-slim AS build
 WORKDIR /app
 
-# Copie des fichiers de dépendances
-COPY package*.json ./
-# ON REMPLACE "RUN npm ci" PAR LA LIGNE CI-DESSOUS :
-RUN npm install --legacy-peer-deps
-
-# Copie du reste du code source et build
+# On copie DIRECTEMENT tout le projet, y compris tes dépendances locales
 COPY . .
+
+# On vire npm install ! On build directement avec ce qui est sur ton PC
 RUN npm run build
 
 # Stage 2 : Serveur de production avec NGINX
