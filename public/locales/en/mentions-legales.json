@@ -1,0 +1,44 @@
+{
+  "title": "Legal Notice",
+  "lastUpdated": "Last updated: January 2025",
+  "sections": {
+    "editor": {
+      "title": "1. Publisher",
+      "intro": "The website cyna.fr is published by:",
+      "name": "Company name: CYNA SAS",
+      "type": "Legal form: Simplified joint-stock company (SAS)",
+      "capital": "Share capital: €50,000",
+      "address": "Registered office: 10 Rue de la Cybersécurité, 75001 Paris, France",
+      "siret": "SIRET: 123 456 789 00010",
+      "rcs": "RCS: Paris B 123 456 789",
+      "vat": "EU VAT number: FR 12 123456789",
+      "director": "Publication director: Jean Dupont, President",
+      "email": "Email: contact@cyna.fr"
+    },
+    "hosting": {
+      "title": "2. Hosting",
+      "intro": "The website is hosted by:",
+      "name": "Host: OVH SAS",
+      "address": "Address: 2 rue Kellermann, 59100 Roubaix, France",
+      "website": "Website: www.ovh.com"
+    },
+    "ip": {
+      "title": "3. Intellectual Property",
+      "p1": "All elements of the cyna.fr website (texts, images, logos, icons, sounds, software, etc.) are the exclusive property of CYNA SAS or its partners.",
+      "p2": "Any reproduction, representation, modification, publication or adaptation of all or part of the site's elements, by any means or process, is prohibited without prior written consent from CYNA SAS."
+    },
+    "liability": {
+      "title": "4. Limitation of Liability",
+      "p1": "CYNA SAS strives to ensure the accuracy and currency of the information published on this site. However, CYNA SAS cannot guarantee the accuracy, precision or completeness of the information provided.",
+      "p2": "CYNA SAS shall not be liable for direct or indirect damages resulting from access to or use of the site, including unavailability, data loss or any other harm."
+    },
+    "links": {
+      "title": "5. Hyperlinks",
+      "p1": "The site may contain links to other websites. CYNA SAS has no control over these sites and accepts no responsibility for their content."
+    },
+    "law": {
+      "title": "6. Applicable Law",
+      "p1": "This site and its legal notices are governed by French law. Any dispute relating to the use of the site shall fall under the exclusive jurisdiction of the French courts."
+    }
+  }
+}

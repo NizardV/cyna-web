@@ -1,6 +1,7 @@
-import { makeMany, makeProduct, makeCategory, makeCarouselItem } from "../factories/factories.js";
+import { makeMany, makeCarouselItem } from "../factories/factories.js";
 import { faker } from "@faker-js/faker";
 import { _products } from "./products.js";
+import { _categories } from "./orders.js";
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const homeHandlers = [
@@ -19,12 +20,10 @@ export const homeHandlers = [
       // Le texte fixe (Modifiable en BDD)
       const missionText = "Rejoignez les entreprises du monde entier qui font confiance à Cyna pour leur cybersécurité. Une plateforme SaaS innovante pensée pour faciliter l'accès à nos services de pointe et protéger votre avenir numérique.";
 
-      // Les Catégories (Générées et triées !)
-      // On en crée 4, et on utilise la fonction JavaScript .sort() 
-      // pour les ordonner selon leur 'displayOrder', respectant ainsi le Cahier des charges
-      const categories = makeMany(4, makeCategory).sort(
-        (a, b) => a.displayOrder - b.displayOrder
-      );
+      // On réutilise les mêmes catégories que le catalogue pour que les filtres matchent
+      const categories = [..._categories]
+        .sort((a, b) => a.displayOrder - b.displayOrder)
+        .slice(0, 4);
       // Les Top Produits (On génère 4 produits "Featured")
       let featuredProducts = _products.filter(p => p.isFeatured);
       

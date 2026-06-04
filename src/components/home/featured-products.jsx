@@ -57,9 +57,11 @@ export function FeaturedProducts({ products }) {
                       <p className="text-primary font-extrabold text-lg">
                         {displayPrice}€ <span className="text-sm font-normal text-gray-500">{t("perMonth")}</span>
                       </p>
-                      <Button className="mt-4 w-full" variant="secondary">
-                        {t("addToCart")}
-                      </Button>
+                      <Link to={`/products/${product.id}`} className="block mt-4">
+                        <Button className="w-full" variant="secondary">
+                          {t("addToCart")}
+                        </Button>
+                      </Link>
                     </>
                   ) : (
                     <>

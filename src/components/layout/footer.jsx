@@ -30,7 +30,7 @@ export function Footer({ hideDescription = false, hideInfoSection = false, hideL
                   </Link>
                 </li>
                 <li>
-                  <Link to="#" className="hover:text-white transition">
+                  <Link to="/contact" className="hover:text-white transition">
                     Contactez-nous
                   </Link>
                 </li>
@@ -43,17 +43,17 @@ export function Footer({ hideDescription = false, hideInfoSection = false, hideL
               <h3 className="font-semibold text-white mb-4">LÉGAL</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="#" className="hover:text-white transition">
+                  <Link to="/mentions-legales" className="hover:text-white transition">
                     Mentions Légales
                   </Link>
                 </li>
                 <li>
-                  <Link to="#" className="hover:text-white transition">
+                  <Link to="/cgu" className="hover:text-white transition">
                     Conditions Générales (CGU)
                   </Link>
                 </li>
                 <li>
-                  <Link to="#" className="hover:text-white transition">
+                  <Link to="/privacy" className="hover:text-white transition">
                     Politique de confidentialité
                   </Link>
                 </li>

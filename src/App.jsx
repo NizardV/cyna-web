@@ -19,6 +19,10 @@ import { Checkout } from "./pages/checkout"
 import { OrderConfirmation } from "./pages/order-confirmation"
 import { Catalog } from "./pages/catalog"
 import { Product } from "./pages/product"
+import { Contact } from "./pages/contact"
+import { CGU } from "./pages/cgu"
+import { MentionsLegales } from "./pages/mentions-legales"
+import { Privacy } from "./pages/privacy"
 
 function App() {
   return (
@@ -37,6 +41,10 @@ function App() {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/order-confirmation" element={<OrderConfirmation />} />
           <Route path="/products/:id" element={<Product />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/cgu" element={<CGU />} />
+          <Route path="/mentions-legales" element={<MentionsLegales />} />
+          <Route path="/privacy" element={<Privacy />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
         </Routes>

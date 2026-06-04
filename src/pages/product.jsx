@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { getProduct, getSimilarProducts } from "@/api/products";
-import { Layout } from "@/components/ui/layout/layout";
+import { Layout } from "@/components/layout/layout";
 import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductInfo } from "@/components/product/product-info"; // <-- Nouvel import !
 import { FeaturedProducts } from "@/components/home/featured-products"; // <-- Réutilisation maline
@@ -52,7 +52,23 @@ export function Product() {
     );
   }
 
-  if (!product) return null;
+  if (!product) {
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
+          <p className="text-6xl">🔍</p>
+          <h1 className="text-2xl font-bold text-gray-900">Produit introuvable</h1>
+          <p className="text-gray-500">Ce produit n'existe pas ou a été supprimé.</p>
+          <Link
+            to="/catalog"
+            className="mt-2 text-sm font-medium text-primary underline underline-offset-4"
+          >
+            ← Retour au catalogue
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>

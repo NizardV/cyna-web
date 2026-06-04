@@ -1,4 +1,4 @@
-import { User, Lock } from "lucide-react";
+import { User, Lock, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/hooks/use-auth";
@@ -28,10 +28,10 @@ export function Header({ hideNav = false, hideUserSection = false }) {
             <Link to="/" className="text-sm font-medium text-gray-700 hover:text-gray-900">
               Accueil
             </Link>
-            <Link to="#" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              Catégories
+            <Link to="/catalog" className="text-sm font-medium text-gray-700 hover:text-gray-900">
+              Catalogue
             </Link>
-            <Link to="#" className="text-sm font-medium text-gray-700 hover:text-gray-900">
+            <Link to="/contact" className="text-sm font-medium text-gray-700 hover:text-gray-900">
               Contact
             </Link>
           </nav>
@@ -39,20 +39,24 @@ export function Header({ hideNav = false, hideUserSection = false }) {
 
         {!hideUserSection && (
           <div className="flex items-center gap-4 shrink-0">
+            <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition">
+              <ShoppingCart className="h-5 w-5 text-gray-700" />
+            </Link>
+
             {user ? (
-              <div className="flex items-center gap-3">
+              <Link to="/account/profile" className="flex items-center gap-3 hover:opacity-80 transition">
                 <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center">
                   <span className="text-white text-sm font-semibold">
                     {user.name?.charAt(0).toUpperCase() || "U"}
                   </span>
                 </div>
                 <span className="text-sm font-medium text-gray-900">{user.name}</span>
-              </div>
+              </Link>
             ) : (
               <>
-                <button className="p-2 hover:bg-gray-100 rounded-lg transition">
+                <Link to="/login" className="p-2 hover:bg-gray-100 rounded-lg transition">
                   <User className="h-5 w-5 text-gray-700" />
-                </button>
+                </Link>
                 <Link to="/login">
                   <Button className="bg-gray-900 text-white hover:bg-gray-800 gap-2">
                     <Lock className="h-4 w-4" />

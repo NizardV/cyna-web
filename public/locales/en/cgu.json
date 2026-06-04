@@ -1,0 +1,65 @@
+{
+  "title": "Terms of Service",
+  "lastUpdated": "Last updated: January 2025",
+  "sections": {
+    "object": {
+      "title": "1. Purpose",
+      "p1": "These Terms of Service (ToS) govern access to and use of the CYNA SaaS platform, published by CYNA SAS, as well as all cybersecurity services offered (SOC, EDR, XDR, SIEM, Zero Trust, MDM).",
+      "p2": "By accessing the platform, the user unconditionally accepts these ToS."
+    },
+    "access": {
+      "title": "2. Access to the service",
+      "p1": "Access to CYNA services is reserved for professionals with a valid account. Registration requires creating an account with a professional email address and a secure password.",
+      "p2": "The user is responsible for keeping their login credentials confidential. Any use of the service with their credentials is deemed to have been made by the user themselves."
+    },
+    "services": {
+      "title": "3. Service description",
+      "intro": "CYNA offers the following SaaS cybersecurity services:",
+      "soc": "SOC (Security Operations Center) — 24/7 security incident monitoring and analysis",
+      "edr": "EDR (Endpoint Detection & Response) — Endpoint threat detection and response",
+      "xdr": "XDR (Extended Detection & Response) — Extended multi-source threat correlation",
+      "siem": "SIEM — Centralized security log collection and analysis",
+      "zt": "Zero Trust — Zero-trust network access",
+      "mdm": "MDM (Mobile Device Management) — Mobile device management and security"
+    },
+    "billing": {
+      "title": "4. Subscriptions and billing",
+      "p1": "Services are offered as monthly or annual subscriptions. Prices are shown excluding taxes on the platform. Applicable VAT is added at the time of payment.",
+      "p2": "Subscriptions are automatically renewed at their expiry, unless cancelled by the user at least 30 days before the renewal date.",
+      "p3": "In case of non-payment, CYNA SAS reserves the right to suspend access to the service within 15 days of a formal notice."
+    },
+    "obligations": {
+      "title": "5. User obligations",
+      "intro": "The user agrees to:",
+      "i1": "Use the service in accordance with its purpose and applicable laws",
+      "i2": "Not attempt to bypass the platform's security measures",
+      "i3": "Not share credentials with unauthorised third parties",
+      "i4": "Report any anomaly or fraudulent use to contact@cyna.fr",
+      "i5": "Keep billing information up to date"
+    },
+    "availability": {
+      "title": "6. Service availability",
+      "p1": "CYNA SAS commits to maintaining platform availability of 99.5% per month (excluding planned maintenance notified 48 hours in advance).",
+      "p2": "If unavailability exceeds this threshold, the user may request a proportional credit on their next invoice."
+    },
+    "data": {
+      "title": "7. Personal data",
+      "p1": "The processing of personal data is detailed in our",
+      "link": "Privacy Policy",
+      "p2": ", in compliance with GDPR."
+    },
+    "termination": {
+      "title": "8. Termination",
+      "p1": "The user may cancel their subscription at any time from their account. Cancellation takes effect at the end of the current subscription period.",
+      "p2": "CYNA SAS reserves the right to terminate an account in the event of a breach of these ToS, without notice or refund."
+    },
+    "changes": {
+      "title": "9. Changes to ToS",
+      "p1": "CYNA SAS reserves the right to modify these ToS at any time. Users will be notified by email at least 30 days before the new conditions come into effect."
+    },
+    "law": {
+      "title": "10. Applicable law and disputes",
+      "p1": "These ToS are governed by French law. In the event of a dispute, the parties will endeavour to find an amicable solution before taking legal action. Failing that, the competent court will be that of Paris."
+    }
+  }
+}

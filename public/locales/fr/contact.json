@@ -1,0 +1,29 @@
+{
+  "title": "Contactez-nous",
+  "subtitle": "Notre équipe est disponible pour répondre à toutes vos questions.",
+  "cards": {
+    "email": {
+      "label": "Email",
+      "value": "contact@cyna.fr"
+    },
+    "phone": {
+      "label": "Téléphone",
+      "value": "+33 (0)1 00 00 00 00"
+    },
+    "address": {
+      "label": "Adresse",
+      "line1": "10 Rue de la Cybersécurité",
+      "line2": "75001 Paris, France"
+    },
+    "hours": {
+      "label": "Horaires",
+      "line1": "Lun – Ven : 9h – 18h",
+      "line2": "Support SOC : 24h/7j"
+    }
+  },
+  "support": {
+    "title": "Support technique",
+    "p1": "Pour toute question liée à votre abonnement ou à l'utilisation de nos services, connectez-vous à votre espace client ou écrivez-nous à",
+    "email": "support@cyna.fr"
+  }
+}
