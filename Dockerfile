@@ -4,8 +4,8 @@ WORKDIR /app
 
 # Copie des fichiers de dépendances
 COPY package*.json ./
-# ON AJOUTE LE FLAG POUR FORCER LES DEVDEPENDENCIES (VITE) :
-RUN npm install --legacy-peer-deps --include=dev
+# ON REMPLACE "RUN npm ci" PAR LA LIGNE CI-DESSOUS :
+RUN npm install --legacy-peer-deps
 
 # Copie du reste du code source et build
 COPY . .
