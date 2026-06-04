@@ -68,11 +68,12 @@ export function Header({ hideNav = false, hideUserSection = false }) {
                   <Link to="/login" className="p-2 hover:bg-gray-100 rounded-lg transition">
                     <User className="h-5 w-5 text-gray-700" />
                   </Link>
-                  <Link to="/login" className="hidden md:block">
-                    <Button className="bg-gray-900 text-white hover:bg-gray-800 gap-2">
-                      <Lock className="h-4 w-4" />
-                      Espace Client
-                    </Button>
+                  <Link
+                    to="/login"
+                    className="hidden md:inline-flex items-center gap-2 rounded-lg bg-[#7C3AED] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#6D28D9]"
+                  >
+                    <Lock className="h-4 w-4" />
+                    Espace Client
                   </Link>
                 </>
               )}
@@ -129,11 +130,13 @@ export function Header({ hideNav = false, hideUserSection = false }) {
           {/* Bouton Espace Client mobile */}
           {!hideUserSection && !user && (
             <div className="mt-3 border-t border-gray-100 pt-3">
-              <Link to="/login" onClick={() => setMenuOpen(false)} className="block">
-                <Button className="w-full bg-gray-900 text-white hover:bg-gray-800 gap-2">
-                  <Lock className="h-4 w-4" />
-                  Espace Client
-                </Button>
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#7C3AED] px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#6D28D9]"
+              >
+                <Lock className="h-4 w-4" />
+                Espace Client
               </Link>
             </div>
           )}

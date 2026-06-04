@@ -5,6 +5,7 @@
   "topProductsTitle": "Top Trending Products",
   "perMonth": "/user/month",
   "addToCart": "Add to cart",
+  "addedToCart": "Product added to cart",
   "unavailable": "Unavailable",
   "outOfStock": "Out of stock",
   "onEstimate": "On request"
