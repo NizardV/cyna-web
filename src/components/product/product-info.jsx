@@ -1,12 +1,15 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { addToCart } from "@/api/cart";
+import { toast } from "sonner";
 
 export function ProductInfo({ product }) {
   const { t } = useTranslation("product");
   
-  // Par défaut, on sélectionne l'abonnement mensuel
+  const navigate = useNavigate();
   const [billingPeriod, setBillingPeriod] = useState("monthly");
 
   if (!product) return null;
@@ -21,6 +24,18 @@ export function ProductInfo({ product }) {
   const currentPlan = billingPeriod === "monthly" ? monthlyPlan : yearlyPlan;
   const currentPrice = currentPlan ? currentPlan.price : "N/A";
   const yearlyDiscount = yearlyPlan ? yearlyPlan.discountPercent : 0;
+
+  const handleAddToCart = async () => {
+    await addToCart({
+      productId: product.id,
+      productName: product.name,
+      quantity: 1,
+      duration: billingPeriod,
+      unitPrice: currentPlan?.price ?? 0,
+    });
+    toast.success(t("addedToCart"));
+    navigate("/cart");
+  };
 
   return (
     <div className="w-full md:w-1/2 flex flex-col">
@@ -82,10 +97,10 @@ export function ProductInfo({ product }) {
         <div className="flex flex-col sm:flex-row gap-4">
           {isAvailable ? (
             <>
-              <Button size="lg" className="flex-1 h-14 text-lg rounded-xl shadow-lg shadow-primary/30">
+              <Button size="lg" className="flex-1 h-14 text-lg rounded-xl shadow-lg shadow-primary/30" onClick={handleAddToCart}>
                 {t("subscribeNow")}
               </Button>
-              <Button size="lg" variant="outline" className="px-8 h-14 text-base rounded-xl">
+              <Button size="lg" variant="outline" className="px-8 h-14 text-base rounded-xl" onClick={() => navigate("/contact")}>
                 {t("try14Days")}
               </Button>
             </>

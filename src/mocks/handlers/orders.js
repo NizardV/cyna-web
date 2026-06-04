@@ -33,7 +33,7 @@ let _cart = []
 const _subscriptions = makeMany(3, makeSubscription)
 
 /** @type {object[]} Catégories disponibles */
-const _categories = makeMany(6, makeCategory)
+export const _categories = makeMany(6, makeCategory)
 
 /**
  * Pool de 40 produits répartis aléatoirement entre les catégories.
@@ -99,13 +99,10 @@ export const cartHandlers = [
       if (existing) {
         existing.quantity += body.quantity ?? 1
         return existing
-        existing.quantity += body.quantity ?? 1
-        return existing
       }
       const item = {
         id: faker.string.uuid(),
         productId: body.productId,
-        productName: _products.find((p) => p.id === body.productId)?.name ?? "Inconnu",
         productName: _products.find((p) => p.id === body.productId)?.name ?? "Inconnu",
         quantity: body.quantity ?? 1,
         duration: body.duration ?? "monthly",

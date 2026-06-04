@@ -54,7 +54,7 @@ export function FilterSidebar({ categories, filters, onChange }) {
                 }}
                 className="accent-primary"
               />
-              {t("product.solutions")} {cat.name}
+              {cat.name}
             </Label>
           ))}
         </div>

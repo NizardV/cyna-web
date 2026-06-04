@@ -208,7 +208,7 @@ export function Cart() {
 
   return (
     <Layout>
-      <main className="py-8">
+      <main className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="mb-6 text-xl font-bold text-foreground">{t("title")}</h1>
 
         {loading && <CartSkeleton />}

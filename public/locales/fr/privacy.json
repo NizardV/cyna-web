@@ -1,0 +1,84 @@
+{
+  "title": "Politique de confidentialité",
+  "lastUpdated": "Dernière mise à jour : janvier 2025 — Conforme au RGPD",
+  "sections": {
+    "controller": {
+      "title": "1. Responsable du traitement",
+      "p1": "Le responsable du traitement des données personnelles est :",
+      "company": "CYNA SAS — 10 Rue de la Cybersécurité, 75001 Paris",
+      "dpo": "Email DPO : dpo@cyna.fr"
+    },
+    "data": {
+      "title": "2. Données collectées",
+      "intro": "Dans le cadre de l'utilisation de nos services, nous collectons les données suivantes :",
+      "identity": "Données d'identification : nom, prénom, adresse email",
+      "billing": "Données de facturation : adresse postale, informations de paiement (chiffrées)",
+      "connection": "Données de connexion : adresse IP, logs d'accès, navigateur",
+      "usage": "Données d'utilisation : services souscrits, historique des commandes",
+      "note": "Nous ne collectons aucune donnée sensible au sens de l'article 9 du RGPD."
+    },
+    "purposes": {
+      "title": "3. Finalités du traitement",
+      "intro": "Vos données sont collectées pour les finalités suivantes :",
+      "i1": "Création et gestion de votre compte client",
+      "i2": "Fourniture et facturation des services souscrits",
+      "i3": "Support technique et relation client",
+      "i4": "Envoi de communications liées à votre abonnement",
+      "i5": "Amélioration de nos services (données anonymisées)",
+      "i6": "Respect de nos obligations légales et comptables"
+    },
+    "basis": {
+      "title": "4. Base légale",
+      "intro": "Les traitements reposent sur les bases légales suivantes :",
+      "contract": "Exécution du contrat — pour la gestion de votre compte et la fourniture des services",
+      "legal": "Obligation légale — pour la conservation des données de facturation",
+      "interest": "Intérêt légitime — pour la sécurité de la plateforme et la prévention des fraudes",
+      "consent": "Consentement — pour les communications marketing (opt-in)"
+    },
+    "retention": {
+      "title": "5. Durée de conservation",
+      "account": "Données de compte : durée de la relation contractuelle + 3 ans",
+      "billing": "Données de facturation : 10 ans (obligation légale)",
+      "logs": "Logs de connexion : 12 mois",
+      "cookies": "Cookies : 13 mois maximum"
+    },
+    "sharing": {
+      "title": "6. Partage des données",
+      "intro": "Nous ne vendons jamais vos données personnelles. Elles peuvent être partagées uniquement avec :",
+      "stripe": "Notre prestataire de paiement (Stripe) — données de facturation uniquement",
+      "ovh": "Notre hébergeur (OVH) — dans le cadre de l'hébergement sécurisé",
+      "legal": "Les autorités compétentes, sur réquisition légale"
+    },
+    "rights": {
+      "title": "7. Vos droits (RGPD)",
+      "intro": "Conformément au RGPD, vous disposez des droits suivants :",
+      "access": "Droit d'accès — obtenir une copie de vos données",
+      "rectification": "Droit de rectification — corriger des données inexactes",
+      "erasure": "Droit à l'effacement — demander la suppression de vos données",
+      "portability": "Droit à la portabilité — recevoir vos données dans un format structuré",
+      "opposition": "Droit d'opposition — vous opposer à certains traitements",
+      "limitation": "Droit de limitation — limiter le traitement de vos données",
+      "contact": "Pour exercer vos droits, contactez-nous à",
+      "cnil": "Vous pouvez également introduire une réclamation auprès de la",
+      "cnilLink": "CNIL"
+    },
+    "cookies": {
+      "title": "8. Cookies",
+      "intro": "Le site utilise des cookies strictement nécessaires au fonctionnement de la plateforme :",
+      "session": "Session : maintien de votre connexion",
+      "prefs": "Préférences : langue, thème",
+      "security": "Sécurité : protection CSRF",
+      "note": "Aucun cookie publicitaire ou de tracking tiers n'est utilisé."
+    },
+    "security": {
+      "title": "9. Sécurité",
+      "p1": "En tant qu'entreprise de cybersécurité, la protection de vos données est au cœur de nos pratiques. Nous appliquons le chiffrement TLS, le hachage des mots de passe (bcrypt), des audits de sécurité réguliers et une politique d'accès aux données au strict nécessaire."
+    },
+    "contact": {
+      "title": "10. Contact",
+      "p1": "Pour toute question relative à cette politique :",
+      "link": "Nous contacter",
+      "or": "ou écrire à dpo@cyna.fr"
+    }
+  }
+}
