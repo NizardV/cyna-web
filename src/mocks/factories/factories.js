@@ -94,28 +94,91 @@ const PRODUCT_SUFFIXES = ["EDR Pro", "XDR Suite", "SOC Manager", "Zero Trust Gat
 export function makeProduct(overrides = {}) {
   const prefix = faker.helpers.arrayElement(PRODUCT_PREFIXES);
   const suffix = faker.helpers.arrayElement(PRODUCT_SUFFIXES);
-  const priceMonthly = faker.number.float({ min: 49, max: 999, fractionDigits: 2 });
+  const productName = `${prefix} ${suffix}`;
+  
+  const basePrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 })
+  const p = (n) => parseFloat(n.toFixed(2))
+
+  const planMonthly = {
+    id: faker.string.uuid(),
+    name: "Mensuel",
+    billingPeriod: "monthly",
+    discountPercent: 0,
+    maxUsersCheckout: 10,
+    maxDevicesCheckout: 100,
+    pricingTiers: [
+      { unitType: "user",   minQty: 1,  maxQty: 5,   unitPrice: p(basePrice) },
+      { unitType: "user",   minQty: 6,  maxQty: 10,  unitPrice: p(basePrice * 0.75) },
+      { unitType: "device", minQty: 1,  maxQty: 50,  unitPrice: p(basePrice * 0.12) },
+      { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 0.09) },
+    ],
+  }
+
+  const planYearly = {
+    id: faker.string.uuid(),
+    name: "Annuel",
+    billingPeriod: "yearly",
+    discountPercent: 15,
+    maxUsersCheckout: 10,
+    maxDevicesCheckout: 100,
+    pricingTiers: [
+      { unitType: "user",   minQty: 1,  maxQty: 5,   unitPrice: p(basePrice * 0.85) },
+      { unitType: "user",   minQty: 6,  maxQty: 10,  unitPrice: p(basePrice * 0.75 * 0.85) },
+      { unitType: "device", minQty: 1,  maxQty: 50,  unitPrice: p(basePrice * 0.12 * 0.85) },
+      { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 0.09 * 0.85) },
+    ],
+  }
+
+  const planLifetime = {
+    id: faker.string.uuid(),
+    name: "À vie",
+    billingPeriod: "lifetime",
+    discountPercent: 0,
+    maxUsersCheckout: 10,
+    maxDevicesCheckout: 100,
+    pricingTiers: [
+      { unitType: "user",   minQty: 1,  maxQty: 5,   unitPrice: p(basePrice * 36) },
+      { unitType: "user",   minQty: 6,  maxQty: 10,  unitPrice: p(basePrice * 36 * 0.75) },
+      { unitType: "device", minQty: 1,  maxQty: 50,  unitPrice: p(basePrice * 36 * 0.12) },
+      { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 36 * 0.09) },
+    ],
+  }
+
+  // Combinaisons possibles — chaque produit a sa propre combinaison de billing periods
+  const pricingPlans = faker.helpers.arrayElement([
+    [planMonthly],
+    [planYearly],
+    [planLifetime],
+    [planMonthly, planYearly],
+    [planMonthly, planLifetime],
+    [planYearly, planLifetime],
+    [planMonthly, planYearly, planLifetime],
+  ])
 
   return {
     id: faker.string.uuid(),
     categoryId: faker.string.uuid(),
+    slug: faker.helpers.slugify(productName).toLowerCase(),
     imageUrl: faker.image.url(),
-    name: `${prefix} ${suffix}`,
+    name: productName,
     description: faker.lorem.paragraphs(2),
-    priceMonthly,
-    priceYearly: parseFloat((priceMonthly * 10).toFixed(2)), // 2 months free
-    isAvailable: faker.datatype.boolean({ probability: 0.85 }),
-    priority: faker.number.int({ min: 0, max: 5 }),
+    status: faker.helpers.arrayElement(["available", "unavailable", "out_of_stock"]),
+    isFeatured: faker.datatype.boolean({ probability: 0.2 }),
+    pricingPlans,
+
     images: Array.from({ length: 3 }, (_, i) =>
       `https://picsum.photos/seed/${prefix}-${i}/800/600`
     ),
-    technicalSpecs: {
-      platforms: faker.helpers.arrayElements(["Windows", "macOS", "Linux", "Android", "iOS"], 3),
-      support: "24/7",
-      sla: `${faker.number.int({ min: 95, max: 99 })}% uptime`,
-      maxDevices: faker.number.int({ min: 10, max: 1000 }),
-    },
-    createdAt: faker.date.past().toISOString(),
+    // NOUVELLE VERSION : Un tableau dynamique de caractéristiques
+    technicalSpecs: faker.helpers.arrayElements([
+      "Protection multi-terminaux (Windows, macOS, Linux)",
+      "Isolation réseau automatique en cas d'infection",
+      "Support technique 24/7 inclus",
+      "SLA 99.9% avec temps de réponse garanti",
+      "Intégration native avec les outils SOC existants",
+      "Déploiement cloud instantané"
+    ], faker.number.int({ min: 3, max: 5 })), // Prend 3 à 5 phrases au hasard
+createdAt: faker.date.past().toISOString(),
     ...overrides,
   };
 }

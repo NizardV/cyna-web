@@ -1,0 +1,84 @@
+{
+  "title": "Privacy Policy",
+  "lastUpdated": "Last updated: January 2025 — GDPR compliant",
+  "sections": {
+    "controller": {
+      "title": "1. Data Controller",
+      "p1": "The data controller for personal data is:",
+      "company": "CYNA SAS — 10 Rue de la Cybersécurité, 75001 Paris",
+      "dpo": "DPO Email: dpo@cyna.fr"
+    },
+    "data": {
+      "title": "2. Data collected",
+      "intro": "As part of using our services, we collect the following data:",
+      "identity": "Identification data: last name, first name, email address",
+      "billing": "Billing data: postal address, payment information (encrypted)",
+      "connection": "Connection data: IP address, access logs, browser",
+      "usage": "Usage data: subscribed services, order history",
+      "note": "We do not collect any sensitive data within the meaning of Article 9 of the GDPR."
+    },
+    "purposes": {
+      "title": "3. Purposes of processing",
+      "intro": "Your data is collected for the following purposes:",
+      "i1": "Creation and management of your customer account",
+      "i2": "Provision and billing of subscribed services",
+      "i3": "Technical support and customer relations",
+      "i4": "Sending communications related to your subscription",
+      "i5": "Improvement of our services (anonymised data)",
+      "i6": "Compliance with our legal and accounting obligations"
+    },
+    "basis": {
+      "title": "4. Legal basis",
+      "intro": "Processing is based on the following legal grounds:",
+      "contract": "Performance of contract — for account management and service provision",
+      "legal": "Legal obligation — for billing data retention",
+      "interest": "Legitimate interest — for platform security and fraud prevention",
+      "consent": "Consent — for marketing communications (opt-in)"
+    },
+    "retention": {
+      "title": "5. Retention period",
+      "account": "Account data: duration of contractual relationship + 3 years",
+      "billing": "Billing data: 10 years (legal obligation)",
+      "logs": "Connection logs: 12 months",
+      "cookies": "Cookies: maximum 13 months"
+    },
+    "sharing": {
+      "title": "6. Data sharing",
+      "intro": "We never sell your personal data. It may only be shared with:",
+      "stripe": "Our payment provider (Stripe) — billing data only",
+      "ovh": "Our host (OVH) — for secure hosting purposes",
+      "legal": "Competent authorities, upon legal request"
+    },
+    "rights": {
+      "title": "7. Your rights (GDPR)",
+      "intro": "In accordance with the GDPR, you have the following rights:",
+      "access": "Right of access — obtain a copy of your data",
+      "rectification": "Right of rectification — correct inaccurate data",
+      "erasure": "Right to erasure — request deletion of your data",
+      "portability": "Right to portability — receive your data in a structured format",
+      "opposition": "Right to object — object to certain processing",
+      "limitation": "Right to restriction — restrict the processing of your data",
+      "contact": "To exercise your rights, contact us at",
+      "cnil": "You may also lodge a complaint with the",
+      "cnilLink": "CNIL"
+    },
+    "cookies": {
+      "title": "8. Cookies",
+      "intro": "The site uses cookies strictly necessary for platform operation:",
+      "session": "Session: keeping you logged in",
+      "prefs": "Preferences: language, theme",
+      "security": "Security: CSRF protection",
+      "note": "No advertising or third-party tracking cookies are used."
+    },
+    "security": {
+      "title": "9. Security",
+      "p1": "As a cybersecurity company, protecting your data is at the heart of our practices. We apply TLS encryption, password hashing (bcrypt), regular security audits and a strict need-to-know data access policy."
+    },
+    "contact": {
+      "title": "10. Contact",
+      "p1": "For any questions regarding this policy:",
+      "link": "Contact us",
+      "or": "or write to dpo@cyna.fr"
+    }
+  }
+}

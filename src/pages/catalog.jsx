@@ -14,7 +14,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
-import { Layout } from "@/components/ui/layout/layout"
+import { Layout } from "@/components/layout/layout"
 import { getCatalogProducts, getCategories } from "@/api/catalog.js"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -76,7 +76,7 @@ export function Catalog() {
   // --- État des filtres (recherche en direct, reste debounced pour l'API) ---
   const [filters, setFilters] = useState({
     search: searchParams.get("q") || "",
-    categories: [],
+    categories: searchParams.get("category") ? [searchParams.get("category")] : [],
     maxPrice: "",
     onlyAvailable: false,
   })

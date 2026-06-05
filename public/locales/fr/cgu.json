@@ -1,0 +1,65 @@
+{
+  "title": "Conditions Générales d'Utilisation",
+  "lastUpdated": "Dernière mise à jour : janvier 2025",
+  "sections": {
+    "object": {
+      "title": "1. Objet",
+      "p1": "Les présentes Conditions Générales d'Utilisation (CGU) régissent l'accès et l'utilisation de la plateforme SaaS CYNA, éditée par CYNA SAS, ainsi que l'ensemble des services de cybersécurité proposés (SOC, EDR, XDR, SIEM, Zero Trust, MDM).",
+      "p2": "En accédant à la plateforme, l'utilisateur accepte sans réserve les présentes CGU."
+    },
+    "access": {
+      "title": "2. Accès au service",
+      "p1": "L'accès aux services CYNA est réservé aux professionnels disposant d'un compte valide. L'inscription est soumise à la création d'un compte avec une adresse email professionnelle et un mot de passe sécurisé.",
+      "p2": "L'utilisateur est responsable de la confidentialité de ses identifiants de connexion. Toute utilisation du service avec ses identifiants est réputée effectuée par l'utilisateur lui-même."
+    },
+    "services": {
+      "title": "3. Description des services",
+      "intro": "CYNA propose les services SaaS de cybersécurité suivants :",
+      "soc": "SOC (Security Operations Center) — Supervision et analyse des incidents de sécurité 24/7",
+      "edr": "EDR (Endpoint Detection & Response) — Détection et réponse aux menaces sur les postes de travail",
+      "xdr": "XDR (Extended Detection & Response) — Corrélation étendue des menaces multi-sources",
+      "siem": "SIEM — Centralisation et analyse des journaux de sécurité",
+      "zt": "Zero Trust — Accès réseau à confiance zéro",
+      "mdm": "MDM (Mobile Device Management) — Gestion et sécurisation des appareils mobiles"
+    },
+    "billing": {
+      "title": "4. Abonnements et facturation",
+      "p1": "Les services sont proposés sous forme d'abonnements mensuels ou annuels. Les tarifs sont indiqués hors taxes sur la plateforme. La TVA applicable est ajoutée au moment du paiement.",
+      "p2": "Les abonnements sont renouvelés automatiquement à leur échéance, sauf résiliation de la part de l'utilisateur au moins 30 jours avant la date de renouvellement.",
+      "p3": "En cas de non-paiement, CYNA SAS se réserve le droit de suspendre l'accès au service dans un délai de 15 jours suivant la mise en demeure."
+    },
+    "obligations": {
+      "title": "5. Obligations de l'utilisateur",
+      "intro": "L'utilisateur s'engage à :",
+      "i1": "Utiliser le service conformément à sa destination et aux lois en vigueur",
+      "i2": "Ne pas tenter de contourner les mesures de sécurité de la plateforme",
+      "i3": "Ne pas partager ses identifiants avec des tiers non autorisés",
+      "i4": "Signaler toute anomalie ou utilisation frauduleuse à contact@cyna.fr",
+      "i5": "Maintenir à jour ses informations de facturation"
+    },
+    "availability": {
+      "title": "6. Disponibilité du service",
+      "p1": "CYNA SAS s'engage à maintenir une disponibilité de la plateforme de 99,5 % par mois (hors maintenances planifiées notifiées 48h à l'avance).",
+      "p2": "En cas d'indisponibilité dépassant ce seuil, l'utilisateur pourra demander un avoir proportionnel sur sa prochaine facture."
+    },
+    "data": {
+      "title": "7. Données personnelles",
+      "p1": "Le traitement des données personnelles est détaillé dans notre",
+      "link": "Politique de confidentialité",
+      "p2": ", conforme au RGPD."
+    },
+    "termination": {
+      "title": "8. Résiliation",
+      "p1": "L'utilisateur peut résilier son abonnement à tout moment depuis son espace client. La résiliation prend effet à la fin de la période d'abonnement en cours.",
+      "p2": "CYNA SAS se réserve le droit de résilier un compte en cas de violation des présentes CGU, sans préavis ni remboursement."
+    },
+    "changes": {
+      "title": "9. Modification des CGU",
+      "p1": "CYNA SAS se réserve le droit de modifier les présentes CGU à tout moment. Les utilisateurs seront notifiés par email au moins 30 jours avant l'entrée en vigueur des nouvelles conditions."
+    },
+    "law": {
+      "title": "10. Droit applicable et litiges",
+      "p1": "Les présentes CGU sont soumises au droit français. En cas de litige, les parties s'efforceront de trouver une solution amiable avant tout recours judiciaire. À défaut, le tribunal compétent sera celui de Paris."
+    }
+  }
+}

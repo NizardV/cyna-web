@@ -1,0 +1,32 @@
+{
+  "availableImmediately": "Disponible immédiatement",
+  "serviceUnavailable": "Service momentanément indisponible",
+  "technicalSpecsTitle": "Caractéristiques Techniques",
+  "subscribeNow": "S'ABONNER MAINTENANT",
+  "buyNow": "ACHETER MAINTENANT",
+  "tryNow": "ESSAYER MAINTENANT",
+  "serviceUnavailableBtn": "SERVICE INDISPONIBLE",
+  "try14Days": "Essayer (14 jours)",
+  "similarServicesTitle": "Services similaires",
+  "addedToCart": "Produit ajouté au panier",
+  "billing": {
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "lifetime": "Définitif"
+  },
+  "billingLabel": {
+    "monthly": "mois",
+    "yearly": "an",
+    "lifetime": "paiement unique"
+  },
+  "users": "Utilisateurs",
+  "devices": "Appareils",
+  "tiersTitle": "Grille de tarification",
+  "tiersUnitHeader": "Prix / unité",
+  "tiersUpTo": "jusqu'à {{max}}",
+  "tiersFrom": "à partir de {{min}}",
+  "perUnit": "{{price}} / {{unit}}",
+  "overLimit": "Limite dépassée → devis",
+  "requestQuote": "CONTACTER L'ÉQUIPE COMMERCIALE",
+  "quoteInfo": "Au-delà des limites en ligne, contactez-nous pour un devis personnalisé."
+}

@@ -20,19 +20,6 @@ export function getYear(isoDate) {
 }
 
 /**
- * Formate un prix mensuel en euros.
- * @param {number} price
- * @returns {string}
- */
-export function formatMonthlyPrice(price) {
-  return new Intl.NumberFormat("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-    maximumFractionDigits: 0,
-  }).format(price)
-}
-
-/**
  * Construit la liste des numéros de pages à afficher dans la pagination.
  * Insère `null` pour représenter les ellipses.
  *
@@ -56,4 +43,16 @@ export function buildPageRange(current, total) {
   }
 
   return result
+}
+
+export function getStatusBadge(status) {
+  switch (status) {
+    case "available":
+      return { variant: "default", labelKey: "product.available" }
+    case "out_of_stock":
+      return { variant: "outline", labelKey: "product.outOfStock" }
+    case "unavailable":
+    default:
+      return { variant: "destructive", labelKey: "product.unavailable" }
+  }
 }

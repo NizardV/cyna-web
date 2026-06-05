@@ -1,0 +1,37 @@
+{
+  "title": "Votre Panier",
+  "empty": "Votre panier est vide",
+  "emptyHint": "Ajoutez des services depuis le catalogue pour commencer",
+  "backHome": "Retour à l'accueil",
+  "header": {
+    "service": "Service SaaS",
+    "licenses": "Licences",
+    "total": "Total"
+  },
+  "item": {
+    "remove": "Supprimer",
+    "quoteRequired": "Devis requis",
+    "quoteWarning": "Un ou plusieurs articles nécessitent un devis.",
+    "quoteContact": "Contactez-nous",
+    "users": "Utilisateurs",
+    "devices": "Appareils",
+    "billing": {
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "lifetime": "Définitif"
+    }
+  },
+  "summary": {
+    "title": "Résumé de la commande",
+    "subtotal": "Sous-total HT",
+    "vat": "TVA (20%)",
+    "total": "Total TTC",
+    "loginHintBefore": "Vous possédez déjà un compte ?",
+    "loginHintLink": "Connectez-vous",
+    "loginHintAfter": "pour retrouver vos informations.",
+    "checkout": "PASSER À LA CAISSE"
+  },
+  "toast": {
+    "removed": "Service retiré du panier"
+  }
+}

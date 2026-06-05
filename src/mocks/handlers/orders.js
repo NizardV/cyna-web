@@ -3,6 +3,9 @@
  * @description Handlers mock pour les commandes, le panier, les abonnements,
  * la recherche, les catégories, le carrousel et le tableau de bord admin.
  * Toutes les données sont générées aléatoirement via Faker au démarrage.
+ * @description Handlers mock pour les commandes, le panier, les abonnements,
+ * la recherche, les catégories, le carrousel et le tableau de bord admin.
+ * Toutes les données sont générées aléatoirement via Faker au démarrage.
  */
 
 import { faker } from "@faker-js/faker"
@@ -10,10 +13,9 @@ import {
   makeMany,
   makeOrder,
   makeSubscription,
-  makeProduct,
   makeCarouselItem,
-  makeCategory,
 } from "../factories/factories.js"
+import { _categories, _products } from "../store.js"
 
 // ---------------------------------------------------------------------------
 // Stores en mémoire — initialisés une fois au démarrage
@@ -28,22 +30,11 @@ let _cart = []
 /** @type {object[]} Abonnements de l'utilisateur */
 const _subscriptions = makeMany(3, makeSubscription)
 
-/** @type {object[]} Catégories disponibles */
-const _categories = makeMany(6, makeCategory)
-
-/**
- * Pool de 40 produits répartis aléatoirement entre les catégories.
- * Taille volontairement grande pour permettre une vraie pagination.
- * @type {object[]}
- */
-const _products = makeMany(40, () =>
-  makeProduct({ categoryId: faker.helpers.arrayElement(_categories).id })
-)
-
 /** @type {object[]} Éléments du carrousel */
 const _carousel = makeMany(3, (_, i) => makeCarouselItem({ displayOrder: i }))
 
 // ---------------------------------------------------------------------------
+// Handlers de commandes
 // Handlers de commandes
 // ---------------------------------------------------------------------------
 
@@ -71,7 +62,9 @@ export const orderHandlers = [
   },
 ]
 
+
 // ---------------------------------------------------------------------------
+// Handlers du panier
 // Handlers du panier
 // ---------------------------------------------------------------------------
 
@@ -127,7 +120,9 @@ export const cartHandlers = [
   },
 ]
 
+
 // ---------------------------------------------------------------------------
+// Handlers des abonnements
 // Handlers des abonnements
 // ---------------------------------------------------------------------------
 
@@ -146,6 +141,7 @@ export const subscriptionHandlers = [
   },
 ]
 
+
 // ---------------------------------------------------------------------------
 // Handlers du catalogue — filtrage, tri et pagination côté serveur
 // ---------------------------------------------------------------------------
@@ -158,49 +154,53 @@ const CATALOG_PAGE_SIZE = 9
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const catalogHandlers = [
-  /**
-   * GET /catalog/products
-   * Supporte les paramètres :
-   *   - q           : recherche textuelle
-   *   - categoryIds : liste d'IDs séparés par des virgules
-   *   - maxPrice    : prix mensuel maximum
-   *   - available   : "true" pour filtrer les services disponibles uniquement
-   *   - sortBy      : "relevance" | "price_asc" | "price_desc" | "name"
-   *   - page        : numéro de page (base 1)
-   *   - pageSize    : nombre d'éléments par page
-   */
   {
     method: "GET",
     path: "/catalog/products",
     resolver: ({ params }) => {
-      const q          = (params.q ?? "").toLowerCase()
-      const catIds     = params.categoryIds
+      const q        = (params.q ?? "").toLowerCase()
+      const catIds   = params.categoryIds
         ? params.categoryIds.split(",").filter(Boolean)
         : []
-      const maxPrice   = params.maxPrice ? parseFloat(params.maxPrice) : null
-      const available  = params.available === "true"
-      const sortBy     = params.sortBy ?? "relevance"
-      const page       = Math.max(1, parseInt(params.page ?? "1", 10))
-      const pageSize   = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
+      const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null
+      const available = params.available === "true"
+      const sortBy   = params.sortBy ?? "relevance"
+      const page     = Math.max(1, parseInt(params.page ?? "1", 10))
+      const pageSize = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
+
+      // Prix d'entrée mensuel = tier le moins cher avec minQty=1
+      const getMonthlyPrice = (p) => {
+        const plan = p.pricingPlans?.find(pl => pl.billingPeriod === "monthly")
+        const entryTiers = plan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
+        return entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : 0
+      }
 
       // --- Filtrage ---
       let filtered = _products.filter((p) => {
-        if (q && !p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q)) {
+        if (q && !p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q))
           return false
-        }
-        if (catIds.length > 0 && !catIds.includes(p.categoryId)) return false
-        if (maxPrice !== null && p.priceMonthly > maxPrice) return false
-        if (available && !p.isAvailable) return false
+
+        if (catIds.length > 0 && !catIds.includes(p.categoryId))
+          return false
+
+        // ✅ pricingPlans au lieu de priceMonthly
+        if (maxPrice !== null && getMonthlyPrice(p) > maxPrice)
+          return false
+
+        // ✅ status au lieu de isAvailable
+        if (available && p.status !== "available")
+          return false
+
         return true
       })
 
       // --- Tri ---
       filtered = [...filtered].sort((a, b) => {
         switch (sortBy) {
-          case "price_asc":  return a.priceMonthly - b.priceMonthly
-          case "price_desc": return b.priceMonthly - a.priceMonthly
+          case "price_asc":  return getMonthlyPrice(a) - getMonthlyPrice(b)  // ✅
+          case "price_desc": return getMonthlyPrice(b) - getMonthlyPrice(a)  // ✅
           case "name":       return a.name.localeCompare(b.name)
-          default:           return 0 // pertinence : ordre naturel
+          default:           return 0
         }
       })
 
@@ -235,6 +235,7 @@ export const categoryHandlers = [
 ]
 
 // ---------------------------------------------------------------------------
+// Handlers du carrousel (CMS admin)
 // Handlers du carrousel (CMS admin)
 // ---------------------------------------------------------------------------
 

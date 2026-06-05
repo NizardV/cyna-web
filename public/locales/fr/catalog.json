@@ -25,7 +25,11 @@
   "product": {
     "available": "Disponible",
     "unavailable": "Indisponible",
+    "outOfStock": "Rupture de stock",
+    "from": "À partir de",
     "perMonth": "/mois",
+    "perYear": "/an",
+    "perLifetime": "paiement unique",
     "details": "Détails",
     "solutions": "Solutions"
   },

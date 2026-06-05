@@ -1,13 +1,12 @@
 import { Header } from "./header"
 import { Footer } from "./footer"
 
-export function Layout({
-  children,
-}) {
+export function Layout({ children }) {
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
-      <main className="flex-1 container mx-auto px-4 py-8">
+      {/* Plus de container ici ! Juste flex-1 pour pousser le footer en bas */}
+      <main className="flex-1">
         {children}
       </main>
       <Footer />

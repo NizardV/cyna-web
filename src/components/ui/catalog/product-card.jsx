@@ -1,10 +1,10 @@
 import { useTranslation } from "react-i18next"
+import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
-import { formatMonthlyPrice } from "@/lib/utils"
+import { cn, getStatusBadge, formatPrice } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
 // ProductCard — carte d'un service du catalogue
@@ -18,55 +18,65 @@ import { formatMonthlyPrice } from "@/lib/utils"
 export function ProductCard({ product }) {
   const { t } = useTranslation("catalog")
 
+  const isAvailable = product.status === "available"
+
+  const bestPlan = ["monthly", "yearly", "lifetime"]
+    .map(period => product.pricingPlans?.find(p => p.billingPeriod === period))
+    .find(Boolean)
+  const entryTiers    = bestPlan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
+  const startingPrice = entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : null
+  const periodKey     = { monthly: "perMonth", yearly: "perYear", lifetime: "perLifetime" }[bestPlan?.billingPeriod] ?? "perMonth"
+  const { variant: badgeVariant, labelKey } = getStatusBadge(product.status)
+
   return (
-    <Card
-      className={cn(
-        "flex flex-col transition-colors hover:ring-primary",
-        !product.isAvailable && "opacity-75"
-      )}
-    >
-      {/* Vignette du produit */}
-      <img
-        src={product.imageUrl}
-        alt={product.name}
+    <Link to={`/products/${product.id}`} className="block">
+      <Card
         className={cn(
-          "relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40",
-          product.isAvailable ? "bg-muted text-primary" : "bg-muted/50 text-muted-foreground"
+          "flex flex-col transition-colors hover:ring-1 hover:ring-primary cursor-pointer",
+          !isAvailable && "opacity-75"
         )}
-      />
+      >
+        {/* Vignette du produit */}
+        <img
+          src={product.imageUrl}
+          alt={product.name}
+          className={cn(
+            "relative z-20 aspect-video w-full object-cover brightness-60 grayscale dark:brightness-40",
+            isAvailable ? "bg-muted text-primary" : "bg-muted/50 text-muted-foreground"
+          )}
+        />
 
-      <CardContent className="flex flex-1 flex-col gap-2 pt-3">
-        <h3 className="text-xs font-bold text-foreground">{product.name}</h3>
-        <p className="line-clamp-2 text-xs text-muted-foreground">{product.description}</p>
+        <CardContent className="flex flex-1 flex-col gap-2 pt-3">
+          <h3 className="text-xs font-bold text-foreground">{product.name}</h3>
+          <p className="line-clamp-2 text-xs text-muted-foreground">{product.description}</p>
 
-        <div className="mt-auto flex items-end justify-between pt-3">
-          <div className="flex flex-col gap-1">
-            {product.isAvailable ? (
-              <>
-                <Badge className="bg-green-50 text-green-700 dark:bg-green-950 dark:text-green-300">
-                  {t("product.available")}
-                </Badge>
+          <div className="mt-auto flex items-end justify-between pt-3">
+            <div className="flex flex-col gap-1">
+              <Badge variant={badgeVariant}>
+                {t(labelKey)}
+              </Badge>
+              {isAvailable && (
                 <p className="text-sm font-extrabold text-primary">
-                  {formatMonthlyPrice(product.priceMonthly)}{" "}
+                  {t("product.from")} {formatPrice(startingPrice)}{" "}
                   <span className="text-xs font-normal text-muted-foreground">
-                    {t("product.perMonth")}
+                    {t(`product.${periodKey}`)}
                   </span>
                 </p>
-              </>
-            ) : (
-              <Badge variant="destructive">{t("product.unavailable")}</Badge>
-            )}
+              )}
+            </div>
+
+            <Button
+              size="sm"
+              disabled={!isAvailable}
+              variant={isAvailable ? "default" : "outline"}
+              tabIndex={-1}
+            >
+              {t("product.details")}
+            </Button>
           </div>
-          <Button
-            size="sm"
-            disabled={!product.isAvailable}
-            variant={product.isAvailable ? "default" : "outline"}
-          >
-            {t("product.details")}
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+    </Link>
   )
 }
 
