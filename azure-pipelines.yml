@@ -99,7 +99,7 @@ stages:
     - task: SSH@0
       displayName: 'Deploy sur OVH'
       inputs:
-        sshEndpoint: 'OVH-SSH-Connection'   # Service connection SSH à créer
+        sshEndpoint: 'OVH-SSH-Connection'
         runOptions: 'inline'
         inline: |
           echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
@@ -109,5 +109,5 @@ stages:
           docker run -d \
             --name cyna-web-$(envName) \
             --restart unless-stopped \
-            -p 80:80 \
+            -p 127.0.0.1:3000:80 \
             ghcr.io/nizardv/cyna-frontend:$(envName)
