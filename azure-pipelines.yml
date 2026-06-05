@@ -6,14 +6,21 @@ pool:
   name: 'CyanPool'
 
 variables:
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-    envName: 'production'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
-    envName: 'staging'
-  GHCR_REGISTRY: 'ghcr.io'
-  GHCR_NAMESPACE: 'nizardv'   # <-- à adapter
-  IMAGE_NAME: 'cyna-frontend'
-  FULL_IMAGE: '$(GHCR_REGISTRY)/$(GHCR_NAMESPACE)/$(IMAGE_NAME)'
+  - group: 'GHCR'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - name: envName
+        value: 'production'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
+      - name: envName
+        value: 'staging'
+  - name: GHCR_REGISTRY
+    value: 'ghcr.io'
+  - name: GHCR_NAMESPACE
+    value: 'nizardv'
+  - name: IMAGE_NAME
+    value: 'cyna-frontend'
+  - name: FULL_IMAGE
+    value: '$(GHCR_REGISTRY)/$(GHCR_NAMESPACE)/$(IMAGE_NAME)'
 
 stages:
 - stage: CI_CD_MultiEnv
