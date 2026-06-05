@@ -1,16 +1,26 @@
 trigger:
   branches:
-    include: [ "main", "dev" ] # Le pipeline se déclenche sur les deux branches
+    include: [ "main", "dev" ]
 
 pool:
-  name: 'Default' # Ton agent local
+  name: 'CyanPool'
 
 variables:
-  # On définit dynamiquement le nom de l'environnement selon la branche
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-    envName: 'production'
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
-    envName: 'staging'
+  - group: 'GHCR'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - name: envName
+        value: 'production'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
+      - name: envName
+        value: 'staging'
+  - name: GHCR_REGISTRY
+    value: 'ghcr.io'
+  - name: GHCR_NAMESPACE
+    value: 'nizardv'
+  - name: IMAGE_NAME
+    value: 'cyna-frontend'
+  - name: FULL_IMAGE
+    value: '$(GHCR_REGISTRY)/$(GHCR_NAMESPACE)/$(IMAGE_NAME)'
 
 stages:
 - stage: CI_CD_MultiEnv
@@ -18,6 +28,7 @@ stages:
   jobs:
   - job: Build_And_Deploy
     steps:
+
     # 1. Analyse statique SonarCloud
     - task: SonarCloudPrepare@3
       inputs:
@@ -33,40 +44,70 @@ stages:
           sonar.test.inclusions=**/*.test.tsx,**/*.test.ts,**/*.spec.ts
           sonar.javascript.lcov.reportPaths=coverage/lcov.info
 
-#    - script: npm ci && npm run test -- --watch=false --watchAll=false --run
-#      displayName: 'Tests Unitaires'
-#      env:
-#        CI: 'true'
-#      continueOnError: true
     - task: SonarCloudAnalyze@3
       displayName: 'Run SonarCloud Analysis'
-      
+
     - task: SonarCloudPublish@3
       displayName: 'Publish Quality Gate'
       inputs:
         pollingTimeoutSec: '300'
       continueOnError: true
 
-    # 2. Build Docker adapté à l'environnement (Staging ou Production)
+    # 2. Login to GitHub Container Registry
+    - task: Docker@2
+      displayName: 'Login to GHCR'
+      inputs:
+        command: login
+        containerRegistry: 'GHCR-Cyna-Connection'   # Nom de ta service connection
+
+    # 3. Build de l'image (une seule fois, tous les tags)
     - script: |
-        docker build -t cyna-frontend:$(envName) .
+        docker build \
+          -t $(FULL_IMAGE):$(envName) \
+          -t $(FULL_IMAGE):latest \
+          -t $(FULL_IMAGE):sha-$(Build.SourceVersion) \
+          -t $(FULL_IMAGE):build-$(Build.BuildId) \
+          -t $(FULL_IMAGE):$(Build.SourceBranchName) \
+          .
       displayName: 'Docker Build [ $(envName) ]'
 
-# 3. CD : Simulation de mise à disposition de l'environnement sur ton PC
-    - task: bash@3
+    # 4. Run local sur l'agent
+    - script: |
+        docker stop cyna-web-$(envName) 2>/dev/null || true
+        docker rm   cyna-web-$(envName) 2>/dev/null || true
+
+        if [ "$(envName)" = "production" ]; then
+          echo "Démarrage de la PRODUCTION sur le port 8080..."
+          docker run -d --name cyna-web-production -p 8080:80 \
+            $(FULL_IMAGE):production
+        else
+          echo "Démarrage du STAGING sur le port 8081..."
+          docker run -d --name cyna-web-staging -p 8081:80 \
+            $(FULL_IMAGE):staging
+        fi
       displayName: 'CD : Run Conteneur [ $(envName) ]'
+
+    # 5. Push vers GHCR
+    - script: |
+        docker push $(FULL_IMAGE):$(envName)
+        docker push $(FULL_IMAGE):latest
+        docker push $(FULL_IMAGE):sha-$(Build.SourceVersion)
+        docker push $(FULL_IMAGE):build-$(Build.BuildId)
+        docker push $(FULL_IMAGE):$(Build.SourceBranchName)
+      displayName: 'Push Docker Image → GHCR [ $(envName) ]'
+
+    - task: SSH@0
+      displayName: 'Deploy sur OVH'
       inputs:
-        targetType: 'inline'
-        script: |
-          # On nettoie le conteneur existant s'il y en a un
+        sshEndpoint: 'OVH-SSH-Connection'
+        runOptions: 'inline'
+        inline: |
+          echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
+          docker pull ghcr.io/nizardv/cyna-frontend:$(envName)
           docker stop cyna-web-$(envName) 2>/dev/null || true
-          docker rm cyna-web-$(envName) 2>/dev/null || true
-          
-          # Choix du port selon l'environnement
-          if [ "$(envName)" = "production" ]; then
-            echo "Démarrage de la PRODUCTION sur le port 8080..."
-            docker run -d --name cyna-web-production -p 8080:80 cyna-frontend:production
-          else
-            echo "Démarrage du STAGING sur le port 8081..."
-            docker run -d --name cyna-web-staging -p 8081:80 cyna-frontend:staging
-          fi
+          docker rm   cyna-web-$(envName) 2>/dev/null || true
+          docker run -d \
+            --name cyna-web-$(envName) \
+            --restart unless-stopped \
+            -p 127.0.0.1:3000:80 \
+            ghcr.io/nizardv/cyna-frontend:$(envName)
