@@ -106,8 +106,15 @@ stages:
           docker pull ghcr.io/nizardv/cyna-frontend:$(envName)
           docker stop cyna-web-$(envName) 2>/dev/null || true
           docker rm   cyna-web-$(envName) 2>/dev/null || true
+
+          if [ "$(envName)" = "production" ]; then
+            PORT=3000
+          else
+            PORT=3001
+          fi
+
           docker run -d \
             --name cyna-web-$(envName) \
             --restart unless-stopped \
-            -p 127.0.0.1:3000:80 \
+            -p 127.0.0.1:$PORT:80 \
             ghcr.io/nizardv/cyna-frontend:$(envName)
