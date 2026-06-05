@@ -2,12 +2,31 @@
   "availableImmediately": "Available immediately",
   "serviceUnavailable": "Service temporarily unavailable",
   "technicalSpecsTitle": "Technical Specifications",
-  "perUserMonth": "per user / month",
-  "perUserYear": "per user / year (-{{discount}}%)",
   "subscribeNow": "SUBSCRIBE NOW",
+  "buyNow": "BUY NOW",
   "tryNow": "TRY NOW",
   "serviceUnavailableBtn": "SERVICE UNAVAILABLE",
   "try14Days": "Try (14 days)",
   "similarServicesTitle": "Similar Services",
-  "addedToCart": "Product added to cart"
+  "addedToCart": "Product added to cart",
+  "billing": {
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "lifetime": "Definitive"
+  },
+  "billingLabel": {
+    "monthly": "month",
+    "yearly": "year",
+    "lifetime": "one-time"
+  },
+  "users": "Users",
+  "devices": "Devices",
+  "tiersTitle": "Pricing grid",
+  "tiersUnitHeader": "Price / unit",
+  "tiersUpTo": "up to {{max}}",
+  "tiersFrom": "from {{min}}",
+  "perUnit": "{{price}} / {{unit}}",
+  "overLimit": "Limit exceeded → quote required",
+  "requestQuote": "CONTACT SALES TEAM",
+  "quoteInfo": "Beyond online limits, contact us for a custom quote."
 }

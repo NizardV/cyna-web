@@ -13,13 +13,11 @@ import {
   makeMany,
   makeOrder,
   makeSubscription,
-  makeProduct,
   makeCarouselItem,
-  makeCategory,
 } from "../factories/factories.js"
+import { _categories, _products } from "../store.js"
 
 // ---------------------------------------------------------------------------
-// Stores en mémoire — initialisés une fois au démarrage
 // Stores en mémoire — initialisés une fois au démarrage
 // ---------------------------------------------------------------------------
 
@@ -31,18 +29,6 @@ let _cart = []
 
 /** @type {object[]} Abonnements de l'utilisateur */
 const _subscriptions = makeMany(3, makeSubscription)
-
-/** @type {object[]} Catégories disponibles */
-export const _categories = makeMany(6, makeCategory)
-
-/**
- * Pool de 40 produits répartis aléatoirement entre les catégories.
- * Taille volontairement grande pour permettre une vraie pagination.
- * @type {object[]}
- */
-const _products = makeMany(40, () =>
-  makeProduct({ categoryId: faker.helpers.arrayElement(_categories).id })
-)
 
 /** @type {object[]} Éléments du carrousel */
 const _carousel = makeMany(3, (_, i) => makeCarouselItem({ displayOrder: i }))
@@ -182,9 +168,12 @@ export const catalogHandlers = [
       const page     = Math.max(1, parseInt(params.page ?? "1", 10))
       const pageSize = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
 
-      // Helper — prix mensuel depuis pricingPlans
-      const getMonthlyPrice = (p) =>
-        p.pricingPlans?.find((pl) => pl.billingPeriod === "monthly")?.price ?? 0
+      // Prix d'entrée mensuel = tier le moins cher avec minQty=1
+      const getMonthlyPrice = (p) => {
+        const plan = p.pricingPlans?.find(pl => pl.billingPeriod === "monthly")
+        const entryTiers = plan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
+        return entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : 0
+      }
 
       // --- Filtrage ---
       let filtered = _products.filter((p) => {

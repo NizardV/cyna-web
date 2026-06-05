@@ -5,14 +5,20 @@
   "backHome": "Retour à l'accueil",
   "header": {
     "service": "Service SaaS",
-    "quantity": "Quantité",
+    "licenses": "Licences",
     "total": "Total"
   },
   "item": {
     "remove": "Supprimer",
-    "duration": {
-      "monthly": "Abonnement Mensuel",
-      "yearly": "Abonnement Annuel"
+    "quoteRequired": "Devis requis",
+    "quoteWarning": "Un ou plusieurs articles nécessitent un devis.",
+    "quoteContact": "Contactez-nous",
+    "users": "Utilisateurs",
+    "devices": "Appareils",
+    "billing": {
+      "monthly": "Mensuel",
+      "yearly": "Annuel",
+      "lifetime": "Définitif"
     }
   },
   "summary": {

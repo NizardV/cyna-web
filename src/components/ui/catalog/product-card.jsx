@@ -19,7 +19,13 @@ export function ProductCard({ product }) {
   const { t } = useTranslation("catalog")
 
   const isAvailable = product.status === "available"
-  const priceMonthly = product.pricingPlans?.find(pl => pl.billingPeriod === "monthly")?.price ?? 0
+
+  const bestPlan = ["monthly", "yearly", "lifetime"]
+    .map(period => product.pricingPlans?.find(p => p.billingPeriod === period))
+    .find(Boolean)
+  const entryTiers    = bestPlan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
+  const startingPrice = entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : null
+  const periodKey     = { monthly: "perMonth", yearly: "perYear", lifetime: "perLifetime" }[bestPlan?.billingPeriod] ?? "perMonth"
   const { variant: badgeVariant, labelKey } = getStatusBadge(product.status)
 
   return (
@@ -51,9 +57,9 @@ export function ProductCard({ product }) {
               </Badge>
               {isAvailable && (
                 <p className="text-sm font-extrabold text-primary">
-                  {formatPrice(priceMonthly)}{" "}
+                  {t("product.from")} {formatPrice(startingPrice)}{" "}
                   <span className="text-xs font-normal text-muted-foreground">
-                    {t("product.perMonth")}
+                    {t(`product.${periodKey}`)}
                   </span>
                 </p>
               )}

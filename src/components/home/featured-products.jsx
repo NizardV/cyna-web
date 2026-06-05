@@ -1,24 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { addToCart } from "@/api/cart";
-import { toast } from "sonner";
+import { cn, formatPrice } from "@/lib/utils";
 
 export function FeaturedProducts({ products }) {
   const { t } = useTranslation("home");
 
   if (!products || products.length === 0) return null;
-
-  const handleAddToCart = async (product, monthlyPlan) => {
-    await addToCart({
-      productId: product.id,
-      productName: product.name,
-      quantity: 1,
-      duration: "monthly",
-      unitPrice: monthlyPlan?.price ?? 0,
-    });
-    toast.success(t("addedToCart"));
-  };
 
   return (
     <section className="bg-white py-16 border-t border-gray-100">
@@ -29,8 +16,12 @@ export function FeaturedProducts({ products }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {products.map((product) => {
-            const monthlyPlan = product.pricingPlans?.find(plan => plan.billingPeriod === "monthly") || product.pricingPlans?.[0];
-            const displayPrice = monthlyPlan ? monthlyPlan.price : "N/A";
+            const bestPlan = ["monthly", "yearly", "lifetime"]
+              .map(period => product.pricingPlans?.find(p => p.billingPeriod === period))
+              .find(Boolean)
+            const entryTiers    = bestPlan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
+            const startingPrice = entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : null
+            const periodKey     = { monthly: "perMonth", yearly: "perYear", lifetime: "perLifetime" }[bestPlan?.billingPeriod] ?? "perMonth"
 
             return (
               <div
@@ -63,14 +54,17 @@ export function FeaturedProducts({ products }) {
                   {product.status === "available" ? (
                     <>
                       <p className="text-primary font-extrabold text-lg">
-                        {displayPrice}€ <span className="text-sm font-normal text-gray-500">{t("perMonth")}</span>
+                        {startingPrice !== null
+                          ? <>{t("from")} {formatPrice(startingPrice)} <span className="text-sm font-normal text-gray-500">{t(periodKey)}</span></>
+                          : <span className="text-gray-400 text-sm">{t("onEstimate")}</span>
+                        }
                       </p>
-                      <button
-                        onClick={() => handleAddToCart(product, monthlyPlan)}
-                        className="mt-4 w-full rounded-lg bg-[#7C3AED] py-2.5 text-sm font-medium text-white transition hover:bg-[#6D28D9] active:scale-95"
+                      <Link
+                        to={`/products/${product.id}`}
+                        className="mt-4 block w-full rounded-lg bg-[#7C3AED] py-2.5 text-sm font-medium text-white text-center transition hover:bg-[#6D28D9] active:scale-95"
                       >
-                        {t("addToCart")}
-                      </button>
+                        {t("discover")}
+                      </Link>
                     </>
                   ) : (
                     <>
