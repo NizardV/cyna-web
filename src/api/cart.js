@@ -22,22 +22,28 @@ const writeCart = (items) => {
 /** Récupère tous les articles du panier. */
 export const getCart = () => Promise.resolve(readCart())
 
-/** Ajoute un article ou incrémente la quantité si déjà présent. */
+/** Ajoute un article au panier. Si le plan existe déjà, remplace les quantités et les prix. */
 export const addToCart = (item) => {
   const cart = readCart()
-  const existing = cart.find(
-    (i) => i.productId === item.productId && i.duration === item.duration
-  )
+  const existing = cart.find(i => i.pricingPlanId === item.pricingPlanId)
   if (existing) {
-    existing.quantity += item.quantity ?? 1
+    existing.quantityUsers    = item.quantityUsers    ?? existing.quantityUsers
+    existing.quantityDevices  = item.quantityDevices  ?? existing.quantityDevices
+    existing.unitPriceUsers   = item.unitPriceUsers   ?? existing.unitPriceUsers
+    existing.unitPriceDevices = item.unitPriceDevices ?? existing.unitPriceDevices
   } else {
     cart.push({
-      id: crypto.randomUUID(),
-      productId: item.productId,
-      productName: item.productName,
-      quantity: item.quantity ?? 1,
-      duration: item.duration ?? "monthly",
-      unitPrice: item.unitPrice ?? 0,
+      id:               crypto.randomUUID(),
+      pricingPlanId:    item.pricingPlanId,
+      productName:      item.productName,
+      billingPeriod:    item.billingPeriod,
+      quantityUsers:    item.quantityUsers      ?? 0,
+      quantityDevices:  item.quantityDevices    ?? 0,
+      unitPriceUsers:   item.unitPriceUsers     ?? 0,
+      unitPriceDevices: item.unitPriceDevices   ?? 0,
+      pricingTiers:     item.pricingTiers       ?? [],  // nécessaire pour recalculer les tiers dans le panier
+      maxUsersCheckout:   item.maxUsersCheckout   ?? Infinity,
+      maxDevicesCheckout: item.maxDevicesCheckout ?? Infinity,
     })
   }
   writeCart(cart)

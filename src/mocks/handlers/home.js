@@ -1,7 +1,6 @@
 import { makeMany, makeCarouselItem } from "../factories/factories.js";
 import { faker } from "@faker-js/faker";
-import { _products } from "./products.js";
-import { _categories } from "./orders.js";
+import { _products, _categories } from "../store.js";
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const homeHandlers = [
