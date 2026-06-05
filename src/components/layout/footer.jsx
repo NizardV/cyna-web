@@ -52,8 +52,8 @@ export function Footer({
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0" />
                 <div>
-                  <p>10 rue de Penthièvre, 75008 Paris</p>
-                  <p>6 Rue Petit, 92110 Clichy</p>
+                  <p>67 rue de Penthièvre, 75028 Paris</p>
+                  <p>69 Rue Aristide Briand, 21000 Dijon</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -62,7 +62,7 @@ export function Footer({
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="h-4 w-4 shrink-0" />
-                <a href="mailto:contact@cyna.fr" className="hover:text-white transition">contact@cyna.fr</a>
+                <a href="mailto:contact@cyna.fr" className="hover:text-white transition">contact@cyna-diiage.fr</a>
               </div>
             </div>
           </div>
@@ -122,7 +122,7 @@ export function Footer({
 
         {/* ── Barre copyright ── */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-sm">CYNA-IT SAS. © 2025 Tous droits réservés.</p>
+          <p className="text-gray-500 text-sm">CYNA PROJET DIIAGE. © 2025 Tous droits réservés.</p>
 
           {!hideSocial && (
             <div className="flex items-center gap-5">
