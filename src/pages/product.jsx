@@ -4,43 +4,64 @@ import { useTranslation } from "react-i18next";
 import { getProduct, getSimilarProducts } from "@/api/products";
 import { Layout } from "@/components/layout/layout";
 import { ProductGallery } from "@/components/product/product-gallery";
-import { ProductInfo } from "@/components/product/product-info"; // <-- Nouvel import !
-import { FeaturedProducts } from "@/components/home/featured-products"; // <-- Réutilisation maline
+import { ProductInfo } from "@/components/product/product-info";
+import { PricingTiersTable } from "@/components/product/pricing-tiers-table";
+import { ProductPricing } from "@/components/product/product-pricing";
+import { FeaturedProducts } from "@/components/home/featured-products";
+import { findTier, UnitType } from "@/lib/pricing";
 
 export function Product() {
   const { id } = useParams();
   const { t } = useTranslation("product");
-  
+
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [billingPeriod, setBillingPeriod] = useState(null);
+  const [quantityUsers, setQuantityUsers] = useState(1);
+  const [quantityDevices, setQuantityDevices] = useState(0);
 
   useEffect(() => {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        // On exécute nos deux mocks (Détails + Similaires) en parallèle
         const [productData, similarData] = await Promise.all([
           getProduct(id),
-          getSimilarProducts(id)
+          getSimilarProducts(id),
         ]);
-        
         setProduct(productData);
         setSimilarProducts(similarData);
+        setBillingPeriod(productData?.pricingPlans?.[0]?.billingPeriod ?? null);
       } catch (error) {
         console.error("Erreur lors du chargement du produit", error);
       } finally {
         setIsLoading(false);
       }
     };
-
     if (id) loadData();
   }, [id]);
 
-  // Si on passe d'un produit à un autre via les recommandations, on veut remonter en haut de page
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [id]);
+  useEffect(() => { window.scrollTo(0, 0); }, [id]);
+
+  // Dérivé du state — recalculé à chaque changement de période ou quantité
+  const currentPlan    = product?.pricingPlans?.find(p => p.billingPeriod === billingPeriod);
+  const hasUserTiers   = currentPlan?.pricingTiers?.some(t => t.unitType === UnitType.USER);
+  const hasDeviceTiers = currentPlan?.pricingTiers?.some(t => t.unitType === UnitType.DEVICE);
+  const tierUser       = hasUserTiers   ? findTier(currentPlan.pricingTiers, UnitType.USER,   quantityUsers)   : null;
+  const tierDevice     = hasDeviceTiers ? findTier(currentPlan.pricingTiers, UnitType.DEVICE, quantityDevices) : null;
+  const totalPrice     = (tierUser   ? tierUser.unitPrice   * quantityUsers   : 0)
+                       + (tierDevice ? tierDevice.unitPrice * quantityDevices : 0);
+  const isQuoteRequired = currentPlan && (
+    (hasUserTiers   && quantityUsers   > currentPlan.maxUsersCheckout)   ||
+    (hasDeviceTiers && quantityDevices > currentPlan.maxDevicesCheckout)
+  );
+
+  const handleBillingPeriodChange = (period) => {
+    setBillingPeriod(period);
+    setQuantityUsers(1);
+    setQuantityDevices(0);
+  };
 
   if (isLoading) {
     return (
@@ -73,13 +94,47 @@ export function Product() {
   return (
     <Layout>
       <main className="p-8 max-w-7xl mx-auto w-full py-12">
-        
-        {/* Le bloc principal : Galerie (gauche) + Infos (droite) */}
-        <div className="flex flex-col md:flex-row gap-12 w-full mb-24">
+
+        {/* Galerie (gauche) + Info haut : badge, titre, specs, toggle (droite) */}
+        <div className="flex flex-col md:flex-row gap-12 w-full mb-8">
           <ProductGallery images={product.images} productName={product.name} />
-          
-          <ProductInfo product={product} /> {/* <-- Intégration du composant */}
+          <ProductInfo
+            product={product}
+            billingPeriod={billingPeriod}
+            onBillingPeriodChange={handleBillingPeriodChange}
+          />
         </div>
+
+        {/* Grille de tarification — pleine largeur */}
+        {currentPlan && (
+          <div className="mb-6">
+            <PricingTiersTable
+              tiers={currentPlan.pricingTiers}
+              activeTierUser={tierUser}
+              activeTierDevice={tierDevice}
+            />
+          </div>
+        )}
+
+        {/* Compteurs + prix + CTA — pleine largeur */}
+        {currentPlan && (
+          <div className="mb-24">
+            <ProductPricing
+              currentPlan={currentPlan}
+              billingPeriod={billingPeriod}
+              quantityUsers={quantityUsers}
+              quantityDevices={quantityDevices}
+              onUsersChange={setQuantityUsers}
+              onDevicesChange={setQuantityDevices}
+              tierUser={tierUser}
+              tierDevice={tierDevice}
+              totalPrice={totalPrice}
+              isQuoteRequired={isQuoteRequired}
+              productName={product.name}
+              isAvailable={product.status === "available"}
+            />
+          </div>
+        )}
 
       </main>
 

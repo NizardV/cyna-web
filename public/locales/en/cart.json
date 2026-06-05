@@ -5,14 +5,20 @@
   "backHome": "Back to home",
   "header": {
     "service": "SaaS Service",
-    "quantity": "Quantity",
+    "licenses": "Licenses",
     "total": "Total"
   },
   "item": {
     "remove": "Remove",
-    "duration": {
-      "monthly": "Monthly Subscription",
-      "yearly": "Yearly Subscription"
+    "quoteRequired": "Quote required",
+    "quoteWarning": "One or more items require a quote.",
+    "quoteContact": "Contact us",
+    "users": "Users",
+    "devices": "Devices",
+    "billing": {
+      "monthly": "Monthly",
+      "yearly": "Yearly",
+      "lifetime": "Definitive"
     }
   },
   "summary": {

@@ -96,38 +96,75 @@ export function makeProduct(overrides = {}) {
   const suffix = faker.helpers.arrayElement(PRODUCT_SUFFIXES);
   const productName = `${prefix} ${suffix}`;
   
-  // Génération d'un prix de base pour créer nos plans tarifaires
-  const basePrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 });
+  const basePrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 })
+  const p = (n) => parseFloat(n.toFixed(2))
+
+  const planMonthly = {
+    id: faker.string.uuid(),
+    name: "Mensuel",
+    billingPeriod: "monthly",
+    discountPercent: 0,
+    maxUsersCheckout: 10,
+    maxDevicesCheckout: 100,
+    pricingTiers: [
+      { unitType: "user",   minQty: 1,  maxQty: 5,   unitPrice: p(basePrice) },
+      { unitType: "user",   minQty: 6,  maxQty: 10,  unitPrice: p(basePrice * 0.75) },
+      { unitType: "device", minQty: 1,  maxQty: 50,  unitPrice: p(basePrice * 0.12) },
+      { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 0.09) },
+    ],
+  }
+
+  const planYearly = {
+    id: faker.string.uuid(),
+    name: "Annuel",
+    billingPeriod: "yearly",
+    discountPercent: 15,
+    maxUsersCheckout: 10,
+    maxDevicesCheckout: 100,
+    pricingTiers: [
+      { unitType: "user",   minQty: 1,  maxQty: 5,   unitPrice: p(basePrice * 0.85) },
+      { unitType: "user",   minQty: 6,  maxQty: 10,  unitPrice: p(basePrice * 0.75 * 0.85) },
+      { unitType: "device", minQty: 1,  maxQty: 50,  unitPrice: p(basePrice * 0.12 * 0.85) },
+      { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 0.09 * 0.85) },
+    ],
+  }
+
+  const planLifetime = {
+    id: faker.string.uuid(),
+    name: "À vie",
+    billingPeriod: "lifetime",
+    discountPercent: 0,
+    maxUsersCheckout: 10,
+    maxDevicesCheckout: 100,
+    pricingTiers: [
+      { unitType: "user",   minQty: 1,  maxQty: 5,   unitPrice: p(basePrice * 36) },
+      { unitType: "user",   minQty: 6,  maxQty: 10,  unitPrice: p(basePrice * 36 * 0.75) },
+      { unitType: "device", minQty: 1,  maxQty: 50,  unitPrice: p(basePrice * 36 * 0.12) },
+      { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 36 * 0.09) },
+    ],
+  }
+
+  // Combinaisons possibles — chaque produit a sa propre combinaison de billing periods
+  const pricingPlans = faker.helpers.arrayElement([
+    [planMonthly],
+    [planYearly],
+    [planLifetime],
+    [planMonthly, planYearly],
+    [planMonthly, planLifetime],
+    [planYearly, planLifetime],
+    [planMonthly, planYearly, planLifetime],
+  ])
 
   return {
     id: faker.string.uuid(),
     categoryId: faker.string.uuid(),
-    slug: faker.helpers.slugify(productName).toLowerCase(), 
+    slug: faker.helpers.slugify(productName).toLowerCase(),
     imageUrl: faker.image.url(),
     name: productName,
     description: faker.lorem.paragraphs(2),
-    
-    // Correspondance exacte avec la BDD :
-    status: faker.helpers.arrayElement(["available", "unavailable", "out_of_stock"]), 
-    isFeatured: faker.datatype.boolean({ probability: 0.2 }), 
-    
-    // Remplacement des prix plats par le tableau de pricing_plans de la BDD !
-    pricingPlans: [
-      {
-        id: faker.string.uuid(),
-        name: "Mensuel",
-        billingPeriod: "monthly",
-        price: basePrice,
-        discountPercent: 0,
-      },
-      {
-        id: faker.string.uuid(),
-        name: "Annuel",
-        billingPeriod: "yearly",
-        price: parseFloat((basePrice * 12).toFixed(2)),
-        discountPercent: 15, // Reflète la colonne discount_percent de ta BDD
-      }
-    ],
+    status: faker.helpers.arrayElement(["available", "unavailable", "out_of_stock"]),
+    isFeatured: faker.datatype.boolean({ probability: 0.2 }),
+    pricingPlans,
 
     images: Array.from({ length: 3 }, (_, i) =>
       `https://picsum.photos/seed/${prefix}-${i}/800/600`
