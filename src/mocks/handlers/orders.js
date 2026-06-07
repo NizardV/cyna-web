@@ -2,10 +2,14 @@
  * @file handlers/orders.js
  * @description Handlers mock pour les commandes, le panier, les abonnements,
  * la recherche, les catégories, le carrousel et le tableau de bord admin.
- * Toutes les données sont générées aléatoirement via Faker au démarrage.
- * @description Handlers mock pour les commandes, le panier, les abonnements,
- * la recherche, les catégories, le carrousel et le tableau de bord admin.
- * Toutes les données sont générées aléatoirement via Faker au démarrage.
+ *
+ * Routes v1 modifiées :
+ *   GET /recherche/catalog     (ex /catalog/products)
+ *   GET /recherche/categories  (ex /categories)
+ *   GET /user/subscriptions    → déplacé dans handlers/user.js
+ *
+ * Tous les autres handlers (orders, cart, carousel, admin) conservent
+ * leurs routes internes non exposées dans le contrat v1.
  */
 
 import { faker } from "@faker-js/faker"
@@ -18,24 +22,16 @@ import {
 import { _categories, _products } from "../store.js"
 
 // ---------------------------------------------------------------------------
-// Stores en mémoire — initialisés une fois au démarrage
+// Stores en mémoire
 // ---------------------------------------------------------------------------
 
-/** @type {object[]} Commandes existantes */
 let _orders = makeMany(5, makeOrder)
-
-/** @type {object[]} Contenu du panier courant */
 let _cart = []
-
-/** @type {object[]} Abonnements de l'utilisateur */
 const _subscriptions = makeMany(3, makeSubscription)
-
-/** @type {object[]} Éléments du carrousel */
 const _carousel = makeMany(3, (_, i) => makeCarouselItem({ displayOrder: i }))
 
 // ---------------------------------------------------------------------------
-// Handlers de commandes
-// Handlers de commandes
+// Handlers de commandes (internes)
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
@@ -48,13 +44,13 @@ export const orderHandlers = [
   {
     method: "GET",
     path: "/orders/:id",
-    resolver: ({ params }) => _orders.find((o) => o.id === params.id) ?? null,
+    resolver: ({ params }) => _orders.find((o) => String(o.id) === params.id) ?? null,
   },
   {
     method: "POST",
     path: "/orders",
     resolver: ({ body }) => {
-      const order = makeOrder({ ...body, status: "paid" })
+      const order = makeOrder({ ...body, status: "Paid" })
       _orders.push(order)
       return order
     },
@@ -62,10 +58,8 @@ export const orderHandlers = [
   },
 ]
 
-
 // ---------------------------------------------------------------------------
-// Handlers du panier
-// Handlers du panier
+// Handlers du panier (internes)
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
@@ -120,10 +114,9 @@ export const cartHandlers = [
   },
 ]
 
-
 // ---------------------------------------------------------------------------
-// Handlers des abonnements
-// Handlers des abonnements
+// Handlers des abonnements (ancienne route interne — conservée pour /profile)
+// La route v1 GET /user/subscriptions est gérée dans handlers/user.js
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
@@ -141,64 +134,56 @@ export const subscriptionHandlers = [
   },
 ]
 
-
 // ---------------------------------------------------------------------------
-// Handlers du catalogue — filtrage, tri et pagination côté serveur
+// Handlers du catalogue  →  GET /recherche/catalog  (v1)
+//
+// Paramètres supportés :
+//   q, categoryIds, maxPrice, available, sortBy, page, pageSize, locale (ignoré)
+//
+// Filtrage par `status` : "Active" = disponible (ex isAvailable)
+// Filtrage par `price`  : prix unitaire du ProductDto (ex priceMonthly)
 // ---------------------------------------------------------------------------
 
-/**
- * Taille de page par défaut pour le catalogue.
- * @type {number}
- */
 const CATALOG_PAGE_SIZE = 9
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const catalogHandlers = [
   {
     method: "GET",
-    path: "/catalog/products",
+    path: "/recherche/catalog",
     resolver: ({ params }) => {
-      const q        = (params.q ?? "").toLowerCase()
-      const catIds   = params.categoryIds
-        ? params.categoryIds.split(",").filter(Boolean)
+      const q         = (params.q ?? "").toLowerCase()
+      const catIds    = params.categoryIds
+        ? params.categoryIds.split(",").map(Number).filter(Boolean)
         : []
-      const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null
-      const available = params.available === "true"
-      const sortBy   = params.sortBy ?? "relevance"
-      const page     = Math.max(1, parseInt(params.page ?? "1", 10))
-      const pageSize = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
-
-      // Prix d'entrée mensuel = tier le moins cher avec minQty=1
-      const getMonthlyPrice = (p) => {
-        const plan = p.pricingPlans?.find(pl => pl.billingPeriod === "monthly")
-        const entryTiers = plan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
-        return entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : 0
-      }
+      const maxPrice  = params.maxPrice ? parseFloat(params.maxPrice) : null
+      // "available" param is boolean string — filter to status === "Active"
+      const onlyAvail = params.available === "true"
+      const sortBy    = params.sortBy ?? "relevance"
+      const page      = Math.max(1, parseInt(params.page ?? "1", 10))
+      const pageSize  = Math.max(1, parseInt(params.pageSize ?? String(CATALOG_PAGE_SIZE), 10))
+      // locale is accepted but ignored in mock
 
       // --- Filtrage ---
       let filtered = _products.filter((p) => {
         if (q && !p.name.toLowerCase().includes(q) && !p.description.toLowerCase().includes(q))
           return false
-
         if (catIds.length > 0 && !catIds.includes(p.categoryId))
           return false
-
-        // ✅ pricingPlans au lieu de priceMonthly
-        if (maxPrice !== null && getMonthlyPrice(p) > maxPrice)
+        // ProductDto.price replaces priceMonthly
+        if (maxPrice !== null && p.price > maxPrice)
           return false
-
-        // ✅ status au lieu de isAvailable
-        if (available && p.status !== "available")
+        // ProductDto.status "Active" replaces isAvailable
+        if (onlyAvail && p.status !== "Active")
           return false
-
         return true
       })
 
       // --- Tri ---
       filtered = [...filtered].sort((a, b) => {
         switch (sortBy) {
-          case "price_asc":  return getMonthlyPrice(a) - getMonthlyPrice(b)  // ✅
-          case "price_desc": return getMonthlyPrice(b) - getMonthlyPrice(a)  // ✅
+          case "price_asc":  return a.price - b.price
+          case "price_desc": return b.price - a.price
           case "name":       return a.name.localeCompare(b.name)
           default:           return 0
         }
@@ -210,33 +195,35 @@ export const catalogHandlers = [
       const offset     = (safePage - 1) * pageSize
       const items      = filtered.slice(offset, offset + pageSize)
 
+      // Return CatalogPageDto shape
       return { items, total, page: safePage, pageSize, totalPages }
     },
   },
 ]
 
 // ---------------------------------------------------------------------------
-// Handlers des catégories
+// Handlers des catégories  →  GET /recherche/categories  (v1)
+// CategoryDto : { id: int, slug, name, description, imageUrl, displayOrder }
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
 export const categoryHandlers = [
   {
     method: "GET",
-    path: "/categories",
+    path: "/recherche/categories",
     resolver: () => _categories,
+    // locale param accepted and ignored
   },
   {
     method: "GET",
-    path: "/categories/:id",
+    path: "/recherche/categories/:id",
     resolver: ({ params }) =>
-      _categories.find((c) => c.id === params.id) ?? null,
+      _categories.find((c) => String(c.id) === params.id) ?? null,
   },
 ]
 
 // ---------------------------------------------------------------------------
-// Handlers du carrousel (CMS admin)
-// Handlers du carrousel (CMS admin)
+// Handlers du carrousel (CMS admin — route interne)
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
@@ -259,7 +246,7 @@ export const carouselHandlers = [
 ]
 
 // ---------------------------------------------------------------------------
-// Handlers du tableau de bord admin
+// Handlers du tableau de bord admin (route interne)
 // ---------------------------------------------------------------------------
 
 /** @type {import("../registry.js").MockHandler[]} */
