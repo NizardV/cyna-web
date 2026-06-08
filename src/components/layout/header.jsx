@@ -58,10 +58,10 @@ export function Header({ hideNav = false, hideUserSection = false }) {
                 <Link to="/account/profile" className="hidden md:flex items-center gap-2 hover:opacity-80 transition">
                   <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center">
                     <span className="text-white text-sm font-semibold">
-                      {user.name?.charAt(0).toUpperCase() || "U"}
+                      {`${user.firstName} ${user.lastName}`?.charAt(0).toUpperCase() || "U"}
                     </span>
                   </div>
-                  <span className="text-sm font-medium text-gray-900">{user.name}</span>
+                  <span className="text-sm font-medium text-gray-900">{`${user.firstName} ${user.lastName}`}</span>
                 </Link>
               ) : (
                 <>
@@ -151,10 +151,10 @@ export function Header({ hideNav = false, hideUserSection = false }) {
               >
                 <div className="w-8 h-8 rounded-full bg-[#7C3AED] flex items-center justify-center shrink-0">
                   <span className="text-white text-sm font-semibold">
-                    {user.name?.charAt(0).toUpperCase() || "U"}
+                    {`${user.firstName} ${user.lastName}`?.charAt(0).toUpperCase() || "U"}
                   </span>
                 </div>
-                <span className="text-sm font-medium text-gray-900">{user.name}</span>
+                <span className="text-sm font-medium text-gray-900">{`${user.firstName} ${user.lastName}`}</span>
               </Link>
             </div>
           )}

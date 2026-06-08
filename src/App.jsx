@@ -3,13 +3,7 @@
  * @description Routeur principal de l'application Cyna.
  */
 
-import { Suspense } from "react"
-import { BrowserRouter, Route, Routes } from "react-router-dom"
-import NotFound from "./pages/specials/not-found"
 import { Home } from "./pages/home"
-import { Unauthorized } from "./pages/specials/unauthorized"
-import Loading from "./pages/specials/loading"
-import { MockDemo } from "./pages/mock-demo"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
 import { LoginPage } from "./pages/login-page"
@@ -23,6 +17,11 @@ import { Contact } from "./pages/contact"
 import { CGU } from "./pages/cgu"
 import { MentionsLegales } from "./pages/mentions-legales"
 import { Privacy } from "./pages/privacy"
+import { Unauthorized } from "./pages/specials/unauthorized"
+import NotFound from "./pages/specials/not-found"
+import Loading from "./pages/specials/loading"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
+import { Suspense } from "react"
 
 function App() {
   return (
@@ -33,7 +32,6 @@ function App() {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/loading" element={<Loading />} />
-          <Route path="/mock-demo" element={<MockDemo />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/account/profile" element={<Profile />} />
           <Route path="/account/orders" element={<OrderHistory />} />

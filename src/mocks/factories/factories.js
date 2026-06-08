@@ -2,14 +2,20 @@
  * @file factories.js
  * @description Data factories using @faker-js/faker.
  *
- * Each factory generates a realistic mock object matching the .NET API DTOs.
- * Use `make<Entity>(overrides)` to create one item.
- * Use `makeMany<Entity>(n, overrides)` to create a list.
+ * Each factory matches the .NET v1 API DTOs exactly.
+ * Non-API entities (Address, PaymentMethod, Order, CarouselItem, AuthResponse)
+ * keep their own shape for internal mock use.
  *
- * Install: npm install --save-dev @faker-js/faker
+ * DTO alignment:
+ *   makeUser()         → UserProfileDto
+ *   makeCategory()     → CategoryDto
+ *   makeProduct()      → ProductDto  (catalog / search)
+ *   makeOrderItem()    → OrderItemDto
+ *   makeSubscription() → SubscriptionDto
+ *   makeOrder()        → OrderSummaryDto
  */
 
-import { faker } from "@faker-js/faker";
+import { faker } from "@faker-js/faker"
 
 // ---------------------------------------------------------------------------
 // Utility
@@ -17,88 +23,86 @@ import { faker } from "@faker-js/faker";
 
 /**
  * Generate `n` items using a factory function.
- *
  * @template T
  * @param {number} n
  * @param {() => T} factory
  * @returns {T[]}
  */
 export function makeMany(n, factory) {
-  return Array.from({ length: n }, factory);
+  return Array.from({ length: n }, factory)
 }
 
 // ---------------------------------------------------------------------------
-// User
+// User  →  UserProfileDto
+// { id: int, email, firstName, lastName, role, isEmailVerified, createdAt }
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a mock user object.
- *
  * @param {Partial<object>} overrides
- * @returns {object}
- *
- * @example
- * const user = makeUser({ role: "admin" });
+ * @returns {object} UserProfileDto
  */
 export function makeUser(overrides = {}) {
   return {
-    id: faker.string.uuid(),
+    id: faker.number.int({ min: 1, max: 9999 }),
     email: faker.internet.email(),
-    name: faker.person.fullName(),
+    firstName: faker.person.firstName(),
+    lastName: faker.person.lastName(),
     role: "user",
-    isConfirmed: true,
-    is2faEnabled: false,
+    isEmailVerified: true,
     createdAt: faker.date.past().toISOString(),
     ...overrides,
-  };
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Category
+// Category  →  CategoryDto
+// { id: int, slug, name, description, imageUrl, displayOrder }
 // ---------------------------------------------------------------------------
 
-const CATEGORY_NAMES = ["SOC", "EDR", "XDR", "SIEM", "Zero Trust", "MDM"];
+const CATEGORY_NAMES = ["SOC", "EDR", "XDR", "SIEM", "Zero Trust", "MDM"]
 
 /**
- * Generate a mock category.
- *
  * @param {Partial<object>} overrides
- * @returns {object}
+ * @returns {object} CategoryDto
  */
 export function makeCategory(overrides = {}) {
-  const name = faker.helpers.arrayElement(CATEGORY_NAMES);
+  const name = faker.helpers.arrayElement(CATEGORY_NAMES)
+  const slug = name.toLowerCase().replace(/\s+/g, "-")
   return {
-    id: faker.string.uuid(),
+    id: faker.number.int({ min: 1, max: 999 }),
+    slug,
     name,
     description: faker.lorem.sentence(),
-    image: `https://picsum.photos/seed/${name}/800/400`,
+    imageUrl: `https://picsum.photos/seed/${name}/800/400`,
     displayOrder: faker.number.int({ min: 0, max: 10 }),
-    createdAt: faker.date.past().toISOString(),
     ...overrides,
-  };
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Product
+// Product  →  ProductDto  (used by /recherche/catalog and /products)
+// { id: int, name, description, status, imageUrl, price }
+//
+// NOTE: The full product page still needs pricingPlans, images, technicalSpecs,
+// categoryId, slug, isFeatured — those are kept for internal mock use by
+// /products/:id and /home. The catalog DTO shape (ProductDto) is a subset.
 // ---------------------------------------------------------------------------
 
-const PRODUCT_PREFIXES = ["Cyna", "Shield", "Guard", "Sentinel", "Apex"];
-const PRODUCT_SUFFIXES = ["EDR Pro", "XDR Suite", "SOC Manager", "Zero Trust Gateway", "SIEM Core"];
+const PRODUCT_PREFIXES = ["Cyna", "Shield", "Guard", "Sentinel", "Apex"]
+const PRODUCT_SUFFIXES = ["EDR Pro", "XDR Suite", "SOC Manager", "Zero Trust Gateway", "SIEM Core"]
 
 /**
- * Generate a mock SaaS product.
- *
  * @param {Partial<object>} overrides
- * @returns {object}
+ * @returns {object} ProductDto (+ internal fields for detail / home pages)
  */
 export function makeProduct(overrides = {}) {
-  const prefix = faker.helpers.arrayElement(PRODUCT_PREFIXES);
-  const suffix = faker.helpers.arrayElement(PRODUCT_SUFFIXES);
-  const productName = `${prefix} ${suffix}`;
-  
+  const prefix = faker.helpers.arrayElement(PRODUCT_PREFIXES)
+  const suffix = faker.helpers.arrayElement(PRODUCT_SUFFIXES)
+  const productName = `${prefix} ${suffix}`
   const basePrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 })
   const p = (n) => parseFloat(n.toFixed(2))
 
+  // Pricing plans — kept for product detail page (not in ProductDto)
   const planMonthly = {
     id: faker.string.uuid(),
     name: "Mensuel",
@@ -113,7 +117,6 @@ export function makeProduct(overrides = {}) {
       { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 0.09) },
     ],
   }
-
   const planYearly = {
     id: faker.string.uuid(),
     name: "Annuel",
@@ -128,7 +131,6 @@ export function makeProduct(overrides = {}) {
       { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 0.09 * 0.85) },
     ],
   }
-
   const planLifetime = {
     id: faker.string.uuid(),
     name: "À vie",
@@ -143,53 +145,126 @@ export function makeProduct(overrides = {}) {
       { unitType: "device", minQty: 51, maxQty: 100, unitPrice: p(basePrice * 36 * 0.09) },
     ],
   }
-
-  // Combinaisons possibles — chaque produit a sa propre combinaison de billing periods
   const pricingPlans = faker.helpers.arrayElement([
     [planMonthly],
     [planYearly],
-    [planLifetime],
     [planMonthly, planYearly],
-    [planMonthly, planLifetime],
-    [planYearly, planLifetime],
     [planMonthly, planYearly, planLifetime],
   ])
 
   return {
-    id: faker.string.uuid(),
-    categoryId: faker.string.uuid(),
-    slug: faker.helpers.slugify(productName).toLowerCase(),
-    imageUrl: faker.image.url(),
+    // --- ProductDto fields (v1 API) ---
+    id: faker.number.int({ min: 1, max: 9999 }),
     name: productName,
     description: faker.lorem.paragraphs(2),
-    status: faker.helpers.arrayElement(["available", "unavailable", "out_of_stock"]),
+    // "Active" | "Inactive" | "Archived" maps to the available/unavailable UI logic
+    status: faker.helpers.arrayElement(["Active", "Inactive", "Archived"]),
+    imageUrl: faker.image.url(),
+    price: p(basePrice),
+
+    // --- Internal fields (used by product detail page + home, not in ProductDto) ---
+    categoryId: faker.number.int({ min: 1, max: 999 }),
+    slug: faker.helpers.slugify(productName).toLowerCase(),
     isFeatured: faker.datatype.boolean({ probability: 0.2 }),
     pricingPlans,
-
     images: Array.from({ length: 3 }, (_, i) =>
       `https://picsum.photos/seed/${prefix}-${i}/800/600`
     ),
-    // NOUVELLE VERSION : Un tableau dynamique de caractéristiques
     technicalSpecs: faker.helpers.arrayElements([
       "Protection multi-terminaux (Windows, macOS, Linux)",
       "Isolation réseau automatique en cas d'infection",
       "Support technique 24/7 inclus",
       "SLA 99.9% avec temps de réponse garanti",
       "Intégration native avec les outils SOC existants",
-      "Déploiement cloud instantané"
-    ], faker.number.int({ min: 3, max: 5 })), // Prend 3 à 5 phrases au hasard
-createdAt: faker.date.past().toISOString(),
+      "Déploiement cloud instantané",
+    ], faker.number.int({ min: 3, max: 5 })),
+    createdAt: faker.date.past().toISOString(),
+
     ...overrides,
-  };
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Address
+// OrderItem  →  OrderItemDto
+// { id: int, productNameSnapshot, planNameSnapshot, quantityUsers, quantityDevices }
+// ---------------------------------------------------------------------------
+
+const PLAN_NAMES = ["Mensuel", "Annuel", "Starter", "Pro", "Enterprise"]
+
+/**
+ * @param {Partial<object>} overrides
+ * @returns {object} OrderItemDto
+ */
+export function makeOrderItem(overrides = {}) {
+  return {
+    id: faker.number.int({ min: 1, max: 9999 }),
+    productNameSnapshot: makeProduct().name,
+    planNameSnapshot: faker.helpers.arrayElement(PLAN_NAMES),
+    quantityUsers: faker.number.int({ min: 1, max: 50 }),
+    quantityDevices: faker.number.int({ min: 0, max: 200 }),
+    ...overrides,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Order  →  OrderSummaryDto
+// { id: int, status, totalAmount, createdAt, invoiceUrl, items: OrderItemDto[] }
+// ---------------------------------------------------------------------------
+
+const ORDER_STATUSES = ["Pending", "Paid", "Failed", "Refunded"]
+
+/**
+ * @param {Partial<object>} overrides
+ * @returns {object} OrderSummaryDto
+ */
+export function makeOrder(overrides = {}) {
+  const items = makeMany(faker.number.int({ min: 1, max: 3 }), makeOrderItem)
+
+  return {
+    id: faker.number.int({ min: 1, max: 9999 }),
+    status: faker.helpers.arrayElement(ORDER_STATUSES),
+    totalAmount: faker.number.float({ min: 49, max: 2400, fractionDigits: 2 }),
+    createdAt: faker.date.past().toISOString(),
+    invoiceUrl: faker.datatype.boolean({ probability: 0.7 }) ? "#" : null,
+    items,
+    ...overrides,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Subscription  →  SubscriptionDto
+// { id: int, status, productName, planName,
+//   currentPeriodStart, currentPeriodEnd, autoRenew }
+// ---------------------------------------------------------------------------
+
+const SUBSCRIPTION_STATUSES = ["Active", "Cancelled", "Expired"]
+
+/**
+ * @param {Partial<object>} overrides
+ * @returns {object} SubscriptionDto
+ */
+export function makeSubscription(overrides = {}) {
+  const start = faker.date.past()
+  const end = new Date(start)
+  end.setMonth(end.getMonth() + 1)
+
+  return {
+    id: faker.number.int({ min: 1, max: 9999 }),
+    status: faker.helpers.arrayElement(SUBSCRIPTION_STATUSES),
+    productName: makeProduct().name,
+    planName: faker.helpers.arrayElement(PLAN_NAMES),
+    currentPeriodStart: start.toISOString(),
+    currentPeriodEnd: end.toISOString(),
+    autoRenew: faker.datatype.boolean(),
+    ...overrides,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Address — internal only (checkout / order detail), not in v1 OpenAPI spec
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a mock billing address.
- *
  * @param {Partial<object>} overrides
  * @returns {object}
  */
@@ -209,16 +284,14 @@ export function makeAddress(overrides = {}) {
     isDefault: false,
     createdAt: faker.date.past().toISOString(),
     ...overrides,
-  };
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Payment Method
+// PaymentMethod — internal only
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a mock saved payment method (Stripe reference only — no real data).
- *
  * @param {Partial<object>} overrides
  * @returns {object}
  */
@@ -234,109 +307,14 @@ export function makePaymentMethod(overrides = {}) {
     isDefault: false,
     createdAt: faker.date.past().toISOString(),
     ...overrides,
-  };
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Order Item
+// CarouselItem — internal only (home page CMS)
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a mock order item.
- *
- * @param {Partial<object>} overrides
- * @returns {object}
- */
-export function makeOrderItem(overrides = {}) {
-  const unitPrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 });
-  const quantity = faker.number.int({ min: 1, max: 5 });
-
-  return {
-    id: faker.string.uuid(),
-    orderId: faker.string.uuid(),
-    productId: faker.string.uuid(),
-    productName: makeProduct().name,
-    quantity,
-    duration: faker.helpers.arrayElement(["monthly", "yearly"]),
-    unitPrice,
-    totalPrice: parseFloat((unitPrice * quantity).toFixed(2)),
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Order
-// ---------------------------------------------------------------------------
-
-const ORDER_STATUSES = ["pending", "paid", "failed", "refunded"];
-
-/**
- * Generate a mock order with items.
- *
- * @param {Partial<object>} overrides
- * @returns {object}
- */
-export function makeOrder(overrides = {}) {
-  const items = makeMany(faker.number.int({ min: 1, max: 3 }), makeOrderItem);
-  const total = items.reduce((sum, item) => sum + item.totalPrice, 0);
-
-  return {
-    id: faker.string.uuid(),
-    userId: faker.string.uuid(),
-    status: faker.helpers.arrayElement(ORDER_STATUSES),
-    total: parseFloat(total.toFixed(2)),
-    stripePaymentIntentId: `pi_${faker.string.alphanumeric(24)}`,
-    invoiceUrl: null,
-    items,
-    address: makeAddress(),
-    createdAt: faker.date.past().toISOString(),
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Subscription
-// ---------------------------------------------------------------------------
-
-const SUBSCRIPTION_STATUSES = ["active", "cancelled", "expired", "renewed"];
-
-/**
- * Generate a mock subscription.
- *
- * @param {Partial<object>} overrides
- * @returns {object}
- */
-export function makeSubscription(overrides = {}) {
-  const startsAt = faker.date.past();
-  const endsAt = new Date(startsAt);
-  endsAt.setMonth(endsAt.getMonth() + 1);
-
-  return {
-    id: faker.string.uuid(),
-    userId: faker.string.uuid(),
-    productId: faker.string.uuid(),
-    productName: makeProduct().name,
-    stripeSubscriptionId: `sub_${faker.string.alphanumeric(24)}`,
-    status: faker.helpers.arrayElement(SUBSCRIPTION_STATUSES),
-    duration: faker.helpers.arrayElement(["monthly", "yearly"]),
-    quantity: faker.number.int({ min: 1, max: 10 }),
-    unitPrice: faker.number.float({ min: 49, max: 999, fractionDigits: 2 }),
-    startsAt: startsAt.toISOString(),
-    endsAt: endsAt.toISOString(),
-    renewedAt: null,
-    cancelledAt: null,
-    createdAt: startsAt.toISOString(),
-    ...overrides,
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Carousel Item
-// ---------------------------------------------------------------------------
-
-/**
- * Generate a mock carousel item.
- *
  * @param {Partial<object>} overrides
  * @returns {object}
  */
@@ -350,16 +328,14 @@ export function makeCarouselItem(overrides = {}) {
     displayOrder: faker.number.int({ min: 0, max: 5 }),
     isActive: true,
     ...overrides,
-  };
+  }
 }
 
 // ---------------------------------------------------------------------------
-// Auth responses
+// AuthResponse — internal only (login / register)
 // ---------------------------------------------------------------------------
 
 /**
- * Generate a mock login/register success response.
- *
  * @param {Partial<object>} userOverrides
  * @returns {{ token: string, user: object }}
  */
@@ -367,5 +343,5 @@ export function makeAuthResponse(userOverrides = {}) {
   return {
     token: `eyJ.${faker.string.alphanumeric(64)}.mock`,
     user: makeUser(userOverrides),
-  };
+  }
 }

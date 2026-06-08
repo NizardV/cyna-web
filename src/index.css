@@ -49,13 +49,6 @@
     --font-sans: 'Geist Variable', sans-serif;
 }
 
-/* ============================================================
-   Palette Cyna — inspirée de cyna-it.fr
-   Accent violet électrique (#6C3BF5) sur fond sombre anthracite.
-   Mode clair : surfaces blanches cassées, accent violet affirmé.
-   Mode sombre : fond quasi-noir, surfaces gris profond, violet lumineux.
-   ============================================================ */
-
 :root {
     /* --- Fond & surfaces --- */
     --background: oklch(1 0 0);   /* blanc légèrement teinté bleu-violet */
