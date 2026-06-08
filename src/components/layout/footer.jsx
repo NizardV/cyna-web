@@ -89,6 +89,11 @@ export function Footer({
                     Contactez-nous
                   </Link>
                 </li>
+                <li>
+                  <Link to="/downloads" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
+                    Application Android
+                  </Link>
+                </li>
               </ul>
             </div>
           )}

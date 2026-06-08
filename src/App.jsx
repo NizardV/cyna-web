@@ -22,6 +22,7 @@ import NotFound from "./pages/specials/not-found"
 import Loading from "./pages/specials/loading"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
+import { Downloads } from "./pages/downloads"
 
 function App() {
   return (
@@ -43,6 +44,7 @@ function App() {
           <Route path="/cgu" element={<CGU />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
