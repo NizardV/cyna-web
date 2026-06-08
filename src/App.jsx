@@ -23,6 +23,7 @@ import { Contact } from "./pages/contact"
 import { CGU } from "./pages/cgu"
 import { MentionsLegales } from "./pages/mentions-legales"
 import { Privacy } from "./pages/privacy"
+import { Downloads } from "./pages/downloads"
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
           <Route path="/cgu" element={<CGU />} />
           <Route path="/mentions-legales" element={<MentionsLegales />} />
           <Route path="/privacy" element={<Privacy />} />
+          <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
