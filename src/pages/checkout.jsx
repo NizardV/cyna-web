@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Card, CardContent } from "@/components/ui/card"
@@ -80,23 +80,22 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
 
           {/* Liste des articles */}
           <div className="space-y-2">
-            {items.map((item) => (
-              <div key={item.id} className="flex justify-between gap-2 text-xs">
-                <div className="min-w-0">
-                  <p className="truncate font-medium text-foreground">
-                    {item.productName}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {t(`summary.duration.${item.duration}`, { defaultValue: item.duration })}
-                    {" • "}
-                    {t("summary.users", { count: item.quantity })}
-                  </p>
+            {items.map((item) => {
+              const lineTotal = item.lineTotal ?? 0
+              return (
+                <div key={item.id} className="flex justify-between gap-2 text-xs">
+                  <div className="min-w-0">
+                    <p className="truncate font-medium text-foreground">{item.productName}</p>
+                    <p className="text-muted-foreground">
+                      {t(`summary.duration.${item.billingPeriod}`, { defaultValue: item.billingPeriod })}
+                      {item.quantityUsers  > 0 && ` • ${item.quantityUsers} utilisateur${item.quantityUsers > 1 ? "s" : ""}`}
+                      {item.quantityDevices > 0 && ` • ${item.quantityDevices} appareil${item.quantityDevices > 1 ? "s" : ""}`}
+                    </p>
+                  </div>
+                  <span className="shrink-0 font-medium tabular-nums">{formatPrice(lineTotal)}</span>
                 </div>
-                <span className="shrink-0 font-medium tabular-nums">
-                  {formatPrice(item.unitPrice * item.quantity)}
-                </span>
-              </div>
-            ))}
+              )
+            })}
           </div>
 
           {/* Sous-totaux */}
@@ -149,33 +148,64 @@ export function Checkout() {
   const [items, setItems] = useState([])
   const [user, setUser] = useState(null)
   const [submitting, setSubmitting] = useState(false)
+  const [backendSummary, setBackendSummary] = useState(null)
+  const initialized = useRef(false)
 
-  const [address, setAddress] = useState({
-    firstName: "",
-    lastName: "",
-    line1: "",
-    postalCode: "",
-    city: "",
-    country: "France",
-  })
+  const [address, setAddress] = useState(
+    import.meta.env.DEV
+      ? { firstName: "Jean", lastName: "Dupont", line1: "12 rue de la Paix", postalCode: "75001", city: "Paris", country: "France" }
+      : { firstName: "", lastName: "", line1: "", postalCode: "", city: "", country: "France" }
+  )
 
-  const [payment, setPayment] = useState({
-    cardName: "",
-    cardNumber: "",
-    expiry: "",
-    cvv: "",
-  })
+  const [payment, setPayment] = useState(
+    import.meta.env.DEV
+      ? { cardName: "JEAN DUPONT", cardNumber: "4242 4242 4242 4242", expiry: "12/28", cvv: "123" }
+      : { cardName: "", cardNumber: "", expiry: "", cvv: "" }
+  )
 
   useEffect(() => {
-    getCart().then(setItems)
-    if (localStorage.getItem("cyna_token")) {
-      getMe().then(setUser).catch(() => {})
+    if (initialized.current) return
+    initialized.current = true
+
+    const init = async () => {
+      const cartItems = await getCart()
+      setItems(cartItems)
+
+      if (localStorage.getItem("cyna_token")) {
+        getMe().then(setUser).catch(() => {})
+      }
+
+      if (cartItems.length > 0) {
+        try {
+          const enriched = []
+          let lastCartSummary = null
+          for (const item of cartItems) {
+            const result = await apiClient.post("/cart", {
+              pricingPlanId:   item.pricingPlanId,
+              quantityUsers:   item.quantityUsers,
+              quantityDevices: item.quantityDevices,
+            })
+            enriched.push({
+              ...item,
+              lineTotal:        result.item?.lineTotal,
+              unitPriceUsers:   result.item?.unitPriceUsers   ?? item.unitPriceUsers,
+              unitPriceDevices: result.item?.unitPriceDevices ?? item.unitPriceDevices,
+            })
+            if (result?.cartSummary) lastCartSummary = result.cartSummary
+          }
+          if (enriched.length > 0) setItems(enriched)
+          if (lastCartSummary)     setBackendSummary(lastCartSummary)
+        } catch {
+          // Backend indisponible → prix à 0
+        }
+      }
     }
+    init()
   }, [])
 
-  const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
-  const tva = subtotal * 0.2
-  const total = subtotal + tva
+  const subtotal = backendSummary?.subtotal  ?? 0
+  const tva      = backendSummary?.taxAmount ?? 0
+  const total    = backendSummary?.total     ?? 0
 
   const handleConfirm = async () => {
     if (!address.firstName || !address.lastName || !address.line1 || !address.postalCode || !address.city) {
@@ -189,7 +219,18 @@ export function Checkout() {
 
     setSubmitting(true)
     try {
-      const order = await apiClient.post("/orders", { items, address, total })
+      const order = await apiClient.post("/orders", {
+        items: items.map(i => ({
+          pricingPlanId:    i.pricingPlanId,
+          productName:      i.productName,
+          billingPeriod:    i.billingPeriod,
+          quantityUsers:    i.quantityUsers,
+          quantityDevices:  i.quantityDevices,
+        })),
+        address,
+        total,
+        stripePaymentIntentId: `pi_mock_${crypto.randomUUID()}`,
+      })
       await clearCart()
       toast.success(t("toast.success"))
       navigate("/order-confirmation", { state: { order, total } })

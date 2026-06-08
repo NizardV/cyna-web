@@ -82,19 +82,4 @@ export const authHandlers = [
     path: "/auth/reset-password",
     resolver: () => ({ message: "Mot de passe réinitialisé avec succès." }),
   },
-
-  // -------------------------------------------------------------------------
-  // GET /auth/me — Profil de l'utilisateur connecté (données fixes pour la démo)
-  // -------------------------------------------------------------------------
-  {
-    method: "GET",
-    path: "/auth/me",
-    resolver: () =>
-      makeUser({
-        email: "jean.dupont@entreprise.com",
-        name: "Jean Dupont",
-        role: "user",
-        isConfirmed: true,
-      }),
-  },
 ]

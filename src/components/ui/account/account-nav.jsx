@@ -83,7 +83,7 @@ export function AccountNav({ user }) {
               ? "bg-primary/10 text-primary" 
               : "bg-muted text-muted-foreground"
           )}>
-            {user ? getInitials(user.name) : "?"}
+            {user ? getInitials(`${user.firstName} ${user.lastName}`) : "?"}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
