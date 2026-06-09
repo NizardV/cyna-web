@@ -7,64 +7,62 @@
  * - Recherche textuelle debouncée
  * - Tri par colonne
  * - Squelettes de chargement
- * - Dialog création / édition (formulaire inline)
+ * - Dialog création / édition avec onglets FR / EN (CategoryTranslationDto)
  * - Dialog de confirmation suppression
  * - Toasts de feedback
- * - i18n complet (namespace "admin-categories")
+ * - i18n complet (namespace "categories")
+ * - Aligné sur LocaleLang enum .NET : Fr=0 → "fr" | En=1 → "en"
  */
 
 import { useEffect, useState, useCallback } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
-import { PlusIcon, Pencil, Trash2, Search, ArrowUpDown, ArrowUp, ArrowDown, ImageOff } from "lucide-react"
+import {
+  PlusIcon, Pencil, Trash2, Search,
+  ArrowUpDown, ArrowUp, ArrowDown, ImageOff,
+} from "lucide-react"
 
 import {
   searchCategories,
   createCategory,
   updateCategory,
   deleteCategory,
+  buildTranslationsPayload,
+  extractTranslationsFromDto,
 } from "@/api/categories.js"
 import { useDebounce } from "@/hooks/useDebounce.js"
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
+import { Button }   from "@/components/ui/button"
+import { Input }    from "@/components/ui/input"
+import { Badge }    from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead,
+  TableHeader, TableRow,
 } from "@/components/ui/table"
 import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+  DialogDescription, DialogFooter,
 } from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
+import { Label }    from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
+  Pagination, PaginationContent, PaginationItem,
+  PaginationLink, PaginationNext, PaginationPrevious,
   PaginationEllipsis,
 } from "@/components/ui/pagination"
 import { buildPageRange } from "@/lib/utils"
-import { Layout } from "@/components/layout/layout"
+import { Layout }   from "@/components/layout/layout"
 
 // ---------------------------------------------------------------------------
 // Constants
 // ---------------------------------------------------------------------------
 
 const PAGE_SIZE = 5
+
+/** LocaleLang enum values (matches .NET) */
+const LOCALES = /** @type {const} */ (["fr", "en"])
 
 const SORT_COLS = {
   displayOrder: { asc: "displayOrder", desc: "displayOrder_desc" },
@@ -73,12 +71,34 @@ const SORT_COLS = {
 }
 
 // ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function toggleSort(col, current) {
+  const { asc, desc } = SORT_COLS[col]
+  return current === asc ? desc : asc
+}
+
+/**
+ * Empty translation entries for both locales.
+ * @returns {{ fr: { name: string; description: string }; en: { name: string; description: string } }}
+ */
+const emptyTranslations = () => ({
+  fr: { name: "", description: "" },
+  en: { name: "", description: "" },
+})
+
+const emptyForm = () => ({
+  slug:         "",
+  imageUrl:     "",
+  displayOrder: "",
+  translations: emptyTranslations(),
+})
+
+// ---------------------------------------------------------------------------
 // Sub-components
 // ---------------------------------------------------------------------------
 
-/**
- * Icône de tri pour un en-tête de colonne.
- */
 function SortIcon({ col, sortBy }) {
   const asc  = SORT_COLS[col]?.asc
   const desc = SORT_COLS[col]?.desc
@@ -87,9 +107,6 @@ function SortIcon({ col, sortBy }) {
   return <ArrowUpDown className="ml-1 inline size-3 opacity-40" />
 }
 
-/**
- * Ligne squelette pour le tableau.
- */
 function TableRowSkeleton() {
   return (
     <TableRow>
@@ -109,31 +126,102 @@ function TableRowSkeleton() {
   )
 }
 
+// ---------------------------------------------------------------------------
+// TranslationFields — champs nom + description pour une locale
+// ---------------------------------------------------------------------------
+
 /**
- * Formulaire réutilisé dans Dialog création et édition.
+ * @param {{
+ *   locale: "fr"|"en",
+ *   values: { name: string; description: string },
+ *   onChange: (locale: string, field: string, value: string) => void,
+ *   errors: { name?: string }
+ * }} props
  */
-function CategoryForm({ values, onChange, errors }) {
+function TranslationFields({ locale, values, onChange, errors }) {
   const { t } = useTranslation("categories")
+  const flag = locale === "fr" ? "🇫🇷" : "🇬🇧"
 
   return (
     <div className="flex flex-col gap-4">
       {/* Nom */}
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="cat-name">
-          {t("form.name")}{" "}
-          <span className="text-destructive">{t("form.nameRequired")}</span>
+        <Label htmlFor={`cat-name-${locale}`}>
+          {flag} {t("form.name")}{" "}
+          {locale === "fr" && (
+            <span className="text-destructive">{t("form.nameRequired")}</span>
+          )}
+          {locale === "en" && (
+            <span className="text-xs font-normal text-muted-foreground">
+              {t("form.nameOptional", { defaultValue: "(optionnel)" })}
+            </span>
+          )}
         </Label>
         <Input
-          id="cat-name"
+          id={`cat-name-${locale}`}
           value={values.name}
-          onChange={(e) => onChange("name", e.target.value)}
+          onChange={(e) => onChange(locale, "name", e.target.value)}
           placeholder={t("form.namePlaceholder")}
-          aria-invalid={!!errors.name}
+          aria-invalid={!!errors?.name}
         />
-        {errors.name && <p className="text-xs text-destructive">{errors.name}</p>}
+        {errors?.name && (
+          <p className="text-xs text-destructive">{errors.name}</p>
+        )}
       </div>
 
-      {/* Slug */}
+      {/* Description */}
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor={`cat-desc-${locale}`}>{t("form.description")}</Label>
+        <Textarea
+          id={`cat-desc-${locale}`}
+          value={values.description}
+          onChange={(e) => onChange(locale, "description", e.target.value)}
+          placeholder={t("form.descriptionPlaceholder")}
+          rows={3}
+        />
+      </div>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// CategoryForm — formulaire complet avec onglets de traduction
+// ---------------------------------------------------------------------------
+
+/**
+ * @param {{
+ *   values: ReturnType<typeof emptyForm>,
+ *   onChange: (field: string, value: any) => void,
+ *   onTranslationChange: (locale: string, field: string, value: string) => void,
+ *   errors: Record<string, string>
+ * }} props
+ */
+function CategoryForm({ values, onChange, onTranslationChange, errors }) {
+  const { t } = useTranslation("categories")
+
+  return (
+    <div className="flex flex-col gap-5">
+
+      {/* ── Traductions (onglets FR / EN) ── */}
+      <Tabs defaultValue="fr">
+        <TabsList className="mb-2">
+          <TabsTrigger value="fr">🇫🇷 Français</TabsTrigger>
+          <TabsTrigger value="en">🇬🇧 English</TabsTrigger>
+        </TabsList>
+
+        {LOCALES.map((locale) => (
+          <TabsContent key={locale} value={locale}>
+            <TranslationFields
+              locale={locale}
+              values={values.translations[locale]}
+              onChange={onTranslationChange}
+              errors={locale === "fr" ? { name: errors["translations.fr.name"] } : {}}
+            />
+          </TabsContent>
+        ))}
+      </Tabs>
+
+      {/* ── Slug ── */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="cat-slug">
           {t("form.slug")}{" "}
@@ -149,19 +237,7 @@ function CategoryForm({ values, onChange, errors }) {
         />
       </div>
 
-      {/* Description */}
-      <div className="flex flex-col gap-1.5">
-        <Label htmlFor="cat-desc">{t("form.description")}</Label>
-        <Textarea
-          id="cat-desc"
-          value={values.description}
-          onChange={(e) => onChange("description", e.target.value)}
-          placeholder={t("form.descriptionPlaceholder")}
-          rows={3}
-        />
-      </div>
-
-      {/* Image URL */}
+      {/* ── Image URL ── */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="cat-img">{t("form.imageUrl")}</Label>
         <Input
@@ -173,7 +249,7 @@ function CategoryForm({ values, onChange, errors }) {
         />
       </div>
 
-      {/* Ordre d'affichage */}
+      {/* ── Ordre d'affichage ── */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="cat-order">{t("form.displayOrder")}</Label>
         <Input
@@ -187,24 +263,6 @@ function CategoryForm({ values, onChange, errors }) {
       </div>
     </div>
   )
-}
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-const emptyForm = () => ({
-  name:         "",
-  slug:         "",
-  description:  "",
-  imageUrl:     "",
-  displayOrder: "",
-})
-
-function toggleSort(col, current) {
-  const { asc, desc } = SORT_COLS[col]
-  if (current === asc) return desc
-  return asc
 }
 
 // ---------------------------------------------------------------------------
@@ -243,7 +301,9 @@ export function AdminCategories() {
 
   const validateForm = useCallback((values) => {
     const errors = {}
-    if (!values.name.trim()) errors.name = t("form.nameError")
+    if (!values.translations.fr.name.trim()) {
+      errors["translations.fr.name"] = t("form.nameError")
+    }
     return errors
   }, [t])
 
@@ -274,15 +334,47 @@ export function AdminCategories() {
   }, [page, sortBy, debouncedSearch, t])
 
   useEffect(() => { load() }, [load])
-
-  // Reset page on filter/sort change
   useEffect(() => { setPage(1) }, [debouncedSearch, sortBy])
 
   // ---------------------------------------------------------------------------
-  // Tri par colonne
+  // Tri
   // ---------------------------------------------------------------------------
 
   const handleSort = (col) => setSortBy((prev) => toggleSort(col, prev))
+
+  // ---------------------------------------------------------------------------
+  // Helpers formulaire
+  // ---------------------------------------------------------------------------
+
+  /** Modifie un champ de premier niveau (slug, imageUrl, displayOrder) */
+  const handleFormChange = (field, value) => {
+    setFormValues((prev) => ({ ...prev, [field]: value }))
+    if (formErrors[field]) setFormErrors((prev) => ({ ...prev, [field]: undefined }))
+  }
+
+  /** Modifie un champ à l'intérieur d'une locale (translations.fr.name, etc.) */
+  const handleTranslationChange = (locale, field, value) => {
+    setFormValues((prev) => ({
+      ...prev,
+      translations: {
+        ...prev.translations,
+        [locale]: { ...prev.translations[locale], [field]: value },
+      },
+    }))
+    const errKey = `translations.${locale}.${field}`
+    if (formErrors[errKey]) setFormErrors((prev) => ({ ...prev, [errKey]: undefined }))
+  }
+
+  /**
+   * Construit le DTO à envoyer à l'API depuis les valeurs du formulaire.
+   * @param {ReturnType<typeof emptyForm>} values
+   */
+  const buildDto = (values) => ({
+    slug:         values.slug.trim() || undefined,
+    imageUrl:     values.imageUrl.trim() || undefined,
+    displayOrder: values.displayOrder !== "" ? Number(values.displayOrder) : undefined,
+    translations: buildTranslationsPayload(values.translations),
+  })
 
   // ---------------------------------------------------------------------------
   // Création
@@ -299,11 +391,8 @@ export function AdminCategories() {
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return }
     setSaving(true)
     try {
-      await createCategory({
-        ...formValues,
-        displayOrder: formValues.displayOrder !== "" ? Number(formValues.displayOrder) : undefined,
-      })
-      toast.success(t("toast.created", { name: formValues.name }))
+      await createCategory(buildDto(formValues))
+      toast.success(t("toast.created", { name: formValues.translations.fr.name }))
       setCreateOpen(false)
       load()
     } catch {
@@ -320,11 +409,15 @@ export function AdminCategories() {
   const openEdit = (cat) => {
     setEditTarget(cat)
     setFormValues({
-      name:         cat.name         ?? "",
       slug:         cat.slug         ?? "",
-      description:  cat.description  ?? "",
       imageUrl:     cat.imageUrl     ?? "",
       displayOrder: cat.displayOrder != null ? String(cat.displayOrder) : "",
+      translations: cat.translations?.length
+        ? extractTranslationsFromDto(cat)
+        : {
+            fr: { name: cat.name ?? "", description: cat.description ?? "" },
+            en: { name: "", description: "" },
+          },
     })
     setFormErrors({})
   }
@@ -334,11 +427,8 @@ export function AdminCategories() {
     if (Object.keys(errors).length > 0) { setFormErrors(errors); return }
     setSaving(true)
     try {
-      await updateCategory(editTarget.id, {
-        ...formValues,
-        displayOrder: formValues.displayOrder !== "" ? Number(formValues.displayOrder) : undefined,
-      })
-      toast.success(t("toast.updated", { name: formValues.name }))
+      await updateCategory(editTarget.id, buildDto(formValues))
+      toast.success(t("toast.updated", { name: formValues.translations.fr.name }))
       setEditTarget(null)
       load()
     } catch {
@@ -367,15 +457,6 @@ export function AdminCategories() {
   }
 
   // ---------------------------------------------------------------------------
-  // Helpers formulaire
-  // ---------------------------------------------------------------------------
-
-  const handleFormChange = (field, value) => {
-    setFormValues((prev) => ({ ...prev, [field]: value }))
-    if (formErrors[field]) setFormErrors((prev) => ({ ...prev, [field]: undefined }))
-  }
-
-  // ---------------------------------------------------------------------------
   // Render
   // ---------------------------------------------------------------------------
 
@@ -385,17 +466,13 @@ export function AdminCategories() {
     <Layout>
       <div className="flex flex-col gap-6 p-6">
 
-        {/* ------------------------------------------------------------------ */}
-        {/* En-tête                                                              */}
-        {/* ------------------------------------------------------------------ */}
+        {/* En-tête */}
         <div className="flex flex-col gap-1">
           <h1 className="text-lg font-semibold text-foreground">{t("title")}</h1>
           <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
         </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* Barre outils                                                         */}
-        {/* ------------------------------------------------------------------ */}
+        {/* Barre outils */}
         <div className="flex items-center justify-between gap-4">
           <div className="relative w-full max-w-sm">
             <Search className="pointer-events-none absolute left-2.5 top-1/2 size-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -406,16 +483,13 @@ export function AdminCategories() {
               className="pl-8"
             />
           </div>
-
           <Button onClick={openCreate} size="sm">
             <PlusIcon />
             {t("newCategory")}
           </Button>
         </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* Compteur                                                             */}
-        {/* ------------------------------------------------------------------ */}
+        {/* Compteur */}
         {!loading && (
           <p className="text-xs text-muted-foreground">
             {search
@@ -424,9 +498,7 @@ export function AdminCategories() {
           </p>
         )}
 
-        {/* ------------------------------------------------------------------ */}
-        {/* Tableau                                                              */}
-        {/* ------------------------------------------------------------------ */}
+        {/* Tableau */}
         <div className="rounded-xl ring-1 ring-foreground/10 overflow-hidden">
           <Table>
             <TableHeader>
@@ -469,7 +541,10 @@ export function AdminCategories() {
                 ))
               ) : rows.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="py-16 text-center text-sm text-muted-foreground">
+                  <TableCell
+                    colSpan={7}
+                    className="py-16 text-center text-sm text-muted-foreground"
+                  >
                     {t("empty.noResults")}
                     {search && (
                       <button
@@ -500,7 +575,7 @@ export function AdminCategories() {
                       )}
                     </TableCell>
 
-                    {/* Nom */}
+                    {/* Nom (résolu depuis fr translation) */}
                     <TableCell className="font-medium text-foreground">
                       {cat.name}
                     </TableCell>
@@ -556,9 +631,7 @@ export function AdminCategories() {
           </Table>
         </div>
 
-        {/* ------------------------------------------------------------------ */}
-        {/* Pagination                                                           */}
-        {/* ------------------------------------------------------------------ */}
+        {/* Pagination */}
         {!loading && totalPages > 1 && (
           <div className="flex flex-col items-center gap-2">
             <Pagination>
@@ -607,17 +680,22 @@ export function AdminCategories() {
           </div>
         )}
 
-        {/* ================================================================== */}
-        {/* Dialog — Création                                                   */}
-        {/* ================================================================== */}
+        {/* ================================================================ */}
+        {/* Dialog — Création                                                 */}
+        {/* ================================================================ */}
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogContent>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{t("dialogs.create.title")}</DialogTitle>
               <DialogDescription>{t("dialogs.create.description")}</DialogDescription>
             </DialogHeader>
 
-            <CategoryForm values={formValues} onChange={handleFormChange} errors={formErrors} />
+            <CategoryForm
+              values={formValues}
+              onChange={handleFormChange}
+              onTranslationChange={handleTranslationChange}
+              errors={formErrors}
+            />
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={saving}>
@@ -630,17 +708,22 @@ export function AdminCategories() {
           </DialogContent>
         </Dialog>
 
-        {/* ================================================================== */}
-        {/* Dialog — Édition                                                    */}
-        {/* ================================================================== */}
+        {/* ================================================================ */}
+        {/* Dialog — Édition                                                  */}
+        {/* ================================================================ */}
         <Dialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)}>
-          <DialogContent>
+          <DialogContent className="max-w-lg">
             <DialogHeader>
               <DialogTitle>{t("dialogs.edit.title")}</DialogTitle>
               <DialogDescription>{t("dialogs.edit.description")}</DialogDescription>
             </DialogHeader>
 
-            <CategoryForm values={formValues} onChange={handleFormChange} errors={formErrors} />
+            <CategoryForm
+              values={formValues}
+              onChange={handleFormChange}
+              onTranslationChange={handleTranslationChange}
+              errors={formErrors}
+            />
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setEditTarget(null)} disabled={saving}>
@@ -653,9 +736,9 @@ export function AdminCategories() {
           </DialogContent>
         </Dialog>
 
-        {/* ================================================================== */}
-        {/* Dialog — Confirmation suppression                                   */}
-        {/* ================================================================== */}
+        {/* ================================================================ */}
+        {/* Dialog — Confirmation suppression                                 */}
+        {/* ================================================================ */}
         <Dialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
           <DialogContent>
             <DialogHeader>
@@ -664,12 +747,16 @@ export function AdminCategories() {
                 <div>
                   <span
                     dangerouslySetInnerHTML={{
-                      __html: t("dialogs.delete.description", { name: deleteTarget?.name ?? "" }),
+                      __html: t("dialogs.delete.description", {
+                        name: deleteTarget?.name ?? "",
+                      }),
                     }}
                   />{" "}
                   {deleteTarget?.productCount > 0 ? (
                     <span className="text-destructive">
-                      {t("dialogs.delete.warningProducts", { count: deleteTarget.productCount })}
+                      {t("dialogs.delete.warningProducts", {
+                        count: deleteTarget.productCount,
+                      })}
                     </span>
                   ) : (
                     <span>{t("dialogs.delete.warningNoProducts")}</span>
@@ -679,10 +766,18 @@ export function AdminCategories() {
             </DialogHeader>
 
             <DialogFooter>
-              <Button variant="outline" onClick={() => setDeleteTarget(null)} disabled={deleting}>
+              <Button
+                variant="outline"
+                onClick={() => setDeleteTarget(null)}
+                disabled={deleting}
+              >
                 {t("dialogs.delete.cancel")}
               </Button>
-              <Button variant="destructive" onClick={handleDelete} disabled={deleting}>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                disabled={deleting}
+              >
                 {deleting ? t("dialogs.delete.submitting") : t("dialogs.delete.submit")}
               </Button>
             </DialogFooter>

@@ -45,17 +45,27 @@ const CATEGORY_NAMES = ["SOC", "EDR", "XDR", "SIEM", "Zero Trust", "MDM"]
 export function makeCategory(overrides = {}) {
   const name = faker.helpers.arrayElement(CATEGORY_NAMES)
   const slug = name.toLowerCase().replace(/\s+/g, "-")
+  const description = faker.lorem.sentence()
+ 
   return {
     id: faker.number.int({ min: 1, max: 999 }),
     slug,
+    // Flat fields kept for backwards-compat with home / catalog handlers
+    // that read name/description directly off the object.
     name,
-    description: faker.lorem.sentence(),
+    description,
     imageUrl: `https://picsum.photos/seed/${name}/800/400`,
     displayOrder: faker.number.int({ min: 0, max: 10 }),
     productCount: faker.number.int({ min: 0, max: 25 }),
+    // ── v1 translation array (mirrors CreateCategoryDto / UpdateCategoryDto) ──
+    translations: [
+      { locale: "fr", name, description },
+      { locale: "en", name, description: faker.lorem.sentence() },
+    ],
     ...overrides,
   }
 }
+
 
 // ---------------------------------------------------------------------------
 // Product  →  ProductDto
