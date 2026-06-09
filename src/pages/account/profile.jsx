@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useState } from "react"
+import { useAuth } from "@/hooks/use-auth"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
@@ -62,6 +63,8 @@ function ProfileSkeleton() {
 export function Profile() {
   const { t } = useTranslation("profile")
 
+  const {setUser: setGlobalUser } = useAuth()
+
   const [user, setUser] = useState(null)
   const [loadingUser, setLoadingUser] = useState(true)
 
@@ -106,6 +109,11 @@ export function Profile() {
     try {
       const updated = await updateProfile(profileForm)
       setUser(updated)
+
+      if (setGlobalUser) {
+        setGlobalUser(updated)
+      }
+
       toast.success(t("personalInfo.success"))
     } catch (err) {
       toast.error(err.message || t("personalInfo.error"))

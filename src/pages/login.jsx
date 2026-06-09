@@ -45,7 +45,7 @@ export function Login() {
 
     try {
       const response = await loginUser({ email: formData.email, password: formData.password });
-      login(response.token, response.refreshToken);
+      login();
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || t("login.error"));

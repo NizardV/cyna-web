@@ -1,93 +1,60 @@
 import { createContext, useState, useEffect, useCallback } from "react";
-import { loginUser, logout as logoutApi, refreshToken as refreshTokenApi } from "@/api/auth";
+import { apiClient } from "@/api/client"; // Import direct pour appeler /auth/me et /auth/logout
 
 export const AuthContext = createContext();
 
-function parseJwt(token) {
-  try {
-    const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
-    return JSON.parse(atob(base64));
-  } catch {
-    return null;
-  }
-}
-
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Rehydratation au reload
+  // 1. Rehydratation au reload (F5) via le cookie sécurisé
   useEffect(() => {
-    const savedToken = localStorage.getItem("cyna_token");
-    const savedRefresh = localStorage.getItem("cyna_refresh_token");
-
-    if (savedToken && savedRefresh) {
-      const payload = parseJwt(savedToken);
-    if (payload && payload.exp * 1000 > Date.now()) {
-      setToken(savedToken);
-      setUser({
-        id: payload?.id,
-        firstName: payload?.firstName,
-        lastName: payload?.lastName,
-        email: payload?.email,
-        role: payload?.role
+    apiClient.get("/auth/me")
+      .then((userData) => {
+        // Si l'API renvoie les infos, le cookie est valide !
+        setUser(userData);
+      })
+      .catch(() => {
+        // Si l'appel échoue (401), c'est que le cookie est absent ou expiré
+        setUser(null);
+      })
+      .finally(() => {
+        setLoading(false);
       });
-    } else {
-        // Token expiré → tente un refresh
-        refreshTokenApi({ refreshToken: savedRefresh })
-          .then((res) => {
-            _applySession(res.token, res.refreshToken);
-          })
-          .catch(() => _clearSession());
-      }
-    }
-    setLoading(false);
   }, []);
 
-const _applySession = (newToken, newRefreshToken) => {
-  const payload = parseJwt(newToken);
-  setToken(newToken);
-
-  setUser({
-    id: payload?.id,
-    firstName: payload?.firstName,
-    lastName: payload?.lastName,
-    email: payload?.email,
-    role: payload?.role
-  });
-
-  localStorage.setItem("cyna_token", newToken);
-  localStorage.setItem("cyna_refresh_token", newRefreshToken);
-};
-
-  const _clearSession = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem("cyna_token");
-    localStorage.removeItem("cyna_refresh_token");
+  // 2. Appel après un Login réussi
+  const login = () => {
+    // Comme le contrôleur a déjà déposé les cookies, on récupère juste le profil
+    setLoading(true);
+    apiClient.get("/auth/me")
+      .then((userData) => setUser(userData))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
   };
 
-  const login = (newToken, newRefreshToken) => {
-    _applySession(newToken, newRefreshToken);
-  };
-
+  // 3. Déconnexion
   const logout = useCallback(async () => {
-    const savedRefresh = localStorage.getItem("cyna_refresh_token");
-    if (savedRefresh) {
-      await logoutApi({ refreshToken: savedRefresh }).catch(() => {});
+    try {
+      // Appelle POST /auth/logout qui va détruire les cookies côté serveur
+      await apiClient.post("/auth/logout", {});
+    } catch (err) {
+      console.warn("Erreur logout serveur", err);
+    } finally {
+      // On vide l'état front dans tous les cas et on redirige
+      setUser(null);
+      window.location.href = "/login";
     }
-    _clearSession();
   }, []);
 
   const value = {
     user,
-    token,
+    setUser,
     loading,
     setLoading,
     login,
     logout,
-    isAuthenticated: !!user && !!token,
+    isAuthenticated: !!user,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

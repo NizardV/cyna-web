@@ -69,7 +69,7 @@ export function Register() {
         email: formData.email,
         password: formData.password
       });
-      if (response.success) {
+      if (response) {
         setSuccess(true);
       }
     } catch (err) {
