@@ -127,6 +127,45 @@ function TableRowSkeleton() {
 }
 
 // ---------------------------------------------------------------------------
+// ImagePreview — aperçu de l'URL image avec skeleton de chargement
+// ---------------------------------------------------------------------------
+
+function ImagePreview({ src }) {
+  const [status, setStatus] = useState("idle") // "idle" | "loading" | "loaded" | "error"
+
+  useEffect(() => {
+    if (!src) { setStatus("idle"); return }
+    setStatus("loading")
+  }, [src])
+
+  if (!src) return null
+
+  return (
+    <div className="relative size-20 shrink-0 rounded-lg overflow-hidden ring-1 ring-foreground/10">
+      {status === "loading" && (
+        <Skeleton className="absolute inset-0 rounded-lg" />
+      )}
+      <img
+        src={src}
+        alt=""
+        className={[
+          "size-full object-cover transition-opacity duration-200 w-2xs",
+          status === "loaded" ? "opacity-100" : "opacity-0",
+        ].join(" ")}
+        onLoad={() => setStatus("loaded")}
+        onError={() => setStatus("error")}
+      />
+      {status === "error" && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-muted text-muted-foreground">
+          <ImageOff className="size-5" />
+          <span className="text-[10px] px-1 text-center leading-tight">URL invalide</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // TranslationFields — champs nom + description pour une locale
 // ---------------------------------------------------------------------------
 
@@ -240,13 +279,17 @@ function CategoryForm({ values, onChange, onTranslationChange, errors }) {
       {/* ── Image URL ── */}
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="cat-img">{t("form.imageUrl")}</Label>
-        <Input
-          id="cat-img"
-          value={values.imageUrl}
-          onChange={(e) => onChange("imageUrl", e.target.value)}
-          placeholder={t("form.imageUrlPlaceholder")}
-          type="url"
-        />
+        <div className="flex items-center flex-col gap-3">
+          <Input
+            id="cat-img"
+            value={values.imageUrl}
+            onChange={(e) => onChange("imageUrl", e.target.value)}
+            placeholder={t("form.imageUrlPlaceholder")}
+            type="url"
+            className="flex-1"
+          />
+          <ImagePreview src={values.imageUrl} />
+        </div>
       </div>
 
       {/* ── Ordre d'affichage ── */}
@@ -684,18 +727,20 @@ export function AdminCategories() {
         {/* Dialog — Création                                                 */}
         {/* ================================================================ */}
         <Dialog open={createOpen} onOpenChange={setCreateOpen}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>{t("dialogs.create.title")}</DialogTitle>
               <DialogDescription>{t("dialogs.create.description")}</DialogDescription>
             </DialogHeader>
 
-            <CategoryForm
-              values={formValues}
-              onChange={handleFormChange}
-              onTranslationChange={handleTranslationChange}
-              errors={formErrors}
-            />
+            <div className="overflow-y-auto flex-1 px-1">   {/* ← wrapper scrollable */}
+              <CategoryForm
+                values={formValues}
+                onChange={handleFormChange}
+                onTranslationChange={handleTranslationChange}
+                errors={formErrors}
+              />
+            </div>
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setCreateOpen(false)} disabled={saving}>
@@ -712,18 +757,20 @@ export function AdminCategories() {
         {/* Dialog — Édition                                                  */}
         {/* ================================================================ */}
         <Dialog open={!!editTarget} onOpenChange={(open) => !open && setEditTarget(null)}>
-          <DialogContent className="max-w-lg">
+          <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
             <DialogHeader>
               <DialogTitle>{t("dialogs.edit.title")}</DialogTitle>
               <DialogDescription>{t("dialogs.edit.description")}</DialogDescription>
             </DialogHeader>
 
-            <CategoryForm
-              values={formValues}
-              onChange={handleFormChange}
-              onTranslationChange={handleTranslationChange}
-              errors={formErrors}
-            />
+            <div className="overflow-y-auto flex-1 px-1">   {/* ← wrapper scrollable */}
+              <CategoryForm
+                values={formValues}
+                onChange={handleFormChange}
+                onTranslationChange={handleTranslationChange}
+                errors={formErrors}
+              />
+            </div>
 
             <DialogFooter>
               <Button variant="outline" onClick={() => setEditTarget(null)} disabled={saving}>
