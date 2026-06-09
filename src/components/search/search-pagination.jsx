@@ -24,7 +24,7 @@ import { buildPageRange } from "@/lib/utils"
  * }} props
  */
 export function SearchPagination({ currentPage, totalPages, onPageChange }) {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
 
   if (totalPages <= 1) return null
 

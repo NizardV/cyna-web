@@ -8,14 +8,14 @@
  * - Pagination côté API avec le composant Pagination
  * - Combobox pour le tri (remplace Select)
  * - Debounce sur le champ de recherche textuelle
- * - Internationalisation complète (namespace "catalog")
+ * - Internationalisation complète (namespace "search")
  */
 
 import { useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
-import { getCatalogProducts } from "@/api/catalog.js"
+import { getCatalogProducts } from "@/api/search.js"
 import { getCategories } from "@/api/categories.js"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -60,7 +60,7 @@ const SORT_OPTIONS = [
  * Tous les filtres, le tri et la pagination sont délégués à l'API.
  */
 export function Search() {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
   const [searchParams] = useSearchParams()
 
   // --- État des produits et pagination ---

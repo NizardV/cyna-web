@@ -47,7 +47,7 @@ function resolveStatusBadge(status) {
  * @param {{ product: object }} props
  */
 export function ProductCard({ product }) {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
 
   const { variant: badgeVariant, labelKey, isAvailable } = resolveStatusBadge(product.status)
 

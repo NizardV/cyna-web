@@ -147,7 +147,7 @@ const CATALOG_PAGE_SIZE = 9
 export const catalogHandlers = [
   {
     method: "GET",
-    path: "/recherche",
+    path: "/search",
     resolver: ({ params }) => {
       const q         = (params.q ?? "").toLowerCase()
       const catIds    = params.categoryIds

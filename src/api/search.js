@@ -27,4 +27,4 @@ import { apiClient } from "./client.js"
  * }>}
  */
 export const getCatalogProducts = (params = {}) =>
-  apiClient.get("/recherche", { params: { locale: "fr", ...params } })
+  apiClient.get("/search", { params: { locale: "fr", ...params } })

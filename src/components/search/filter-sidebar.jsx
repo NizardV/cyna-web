@@ -28,7 +28,7 @@ import {
  * }} props
  */
 export function FilterContent({ categories, filters, onChange }) {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
 
   return (
     <div className="space-y-4">
@@ -99,7 +99,7 @@ export function FilterContent({ categories, filters, onChange }) {
 
 // Sidebar desktop — inchangée
 export function FilterSidebar({ categories, filters, onChange }) {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
 
   return (
     <aside className="w-56 shrink-0">
@@ -111,7 +111,7 @@ export function FilterSidebar({ categories, filters, onChange }) {
 
 // Bouton + Sheet pour mobile
 export function FilterDrawer({ categories, filters, onChange }) {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
   const [open, setOpen] = useState(false)
 
   const activeCount = [

@@ -20,7 +20,8 @@
     "categories": "Categories",
     "budget": "Budget (Monthly)",
     "budgetMax": "max",
-    "onlyAvailable": "Available only"
+    "onlyAvailable": "Available only",
+    "apply": "Show results"
   },
   "product": {
     "available": "Available",

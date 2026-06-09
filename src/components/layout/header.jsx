@@ -32,7 +32,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
             <Link to="/" className="text-sm font-medium text-gray-700 hover:text-gray-900">
               Accueil
             </Link>
-            <Link to="/catalog" className="text-sm font-medium text-gray-700 hover:text-gray-900">
+            <Link to="/search" className="text-sm font-medium text-gray-700 hover:text-gray-900">
               Catalogue
             </Link>
             <Link to="/contact" className="text-sm font-medium text-gray-700 hover:text-gray-900">
