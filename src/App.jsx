@@ -6,8 +6,8 @@
 import { Home } from "./pages/home"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
-import { LoginPage } from "./pages/login-page"
-import { RegisterPage } from "./pages/register-page"
+import { Login } from "./pages/login"
+import { Register } from "./pages/register"
 import { Cart } from "./pages/cart"
 import { Checkout } from "./pages/checkout"
 import { OrderConfirmation } from "./pages/order-confirmation"
@@ -30,8 +30,8 @@ function App() {
       <Suspense fallback={<Loading />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/account/profile" element={<Profile />} />

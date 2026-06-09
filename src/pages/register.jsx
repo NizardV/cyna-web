@@ -17,7 +17,7 @@ const PASSWORD_RULES = [
   { id: "special", label: "password.special", test: (pwd) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) },
 ];
 
-export function RegisterPage() {
+export function Register() {
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const { login, setLoading } = useAuth();
@@ -58,14 +58,10 @@ export function RegisterPage() {
     setError("");
 
     try {
-      const response = await registerUser({
-        fullName: formData.fullName,
-        email: formData.email,
-        password: formData.password,
-      });
-
-      login(response.user, response.token);
-      setSuccess(true);
+      const response = await registerUser({ fullName: formData.fullName, email: formData.email, password: formData.password });
+      if (response.success) {
+        setSuccess(true);
+      }
     } catch (err) {
       setError(err.response?.data?.message || t("register.error"));
     } finally {
