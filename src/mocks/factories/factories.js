@@ -2,11 +2,7 @@
  * @file factories.js
  * @description Data factories using @faker-js/faker.
  *
- * Each factory matches the .NET v1 API DTOs exactly.
- * Non-API entities (Address, PaymentMethod, Order, CarouselItem, AuthResponse)
- * keep their own shape for internal mock use.
- *
- * DTO alignment:
+ * Alignés sur les DTOs .NET v1 :
  *   makeUser()         → UserProfileDto
  *   makeCategory()     → CategoryDto
  *   makeProduct()      → ProductDto  (catalog / search)
@@ -17,30 +13,15 @@
 
 import { faker } from "@faker-js/faker"
 
-// ---------------------------------------------------------------------------
-// Utility
-// ---------------------------------------------------------------------------
-
-/**
- * Generate `n` items using a factory function.
- * @template T
- * @param {number} n
- * @param {() => T} factory
- * @returns {T[]}
- */
 export function makeMany(n, factory) {
   return Array.from({ length: n }, factory)
 }
 
 // ---------------------------------------------------------------------------
 // User  →  UserProfileDto
-// { id: int, email, firstName, lastName, role, isEmailVerified, createdAt }
+// { id, email, firstName, lastName, role, isEmailVerified, createdAt }
 // ---------------------------------------------------------------------------
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object} UserProfileDto
- */
 export function makeUser(overrides = {}) {
   return {
     id: faker.number.int({ min: 1, max: 9999 }),
@@ -56,15 +37,11 @@ export function makeUser(overrides = {}) {
 
 // ---------------------------------------------------------------------------
 // Category  →  CategoryDto
-// { id: int, slug, name, description, imageUrl, displayOrder }
+// { id, slug, name, description, imageUrl, displayOrder }
 // ---------------------------------------------------------------------------
 
 const CATEGORY_NAMES = ["SOC", "EDR", "XDR", "SIEM", "Zero Trust", "MDM"]
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object} CategoryDto
- */
 export function makeCategory(overrides = {}) {
   const name = faker.helpers.arrayElement(CATEGORY_NAMES)
   const slug = name.toLowerCase().replace(/\s+/g, "-")
@@ -75,26 +52,26 @@ export function makeCategory(overrides = {}) {
     description: faker.lorem.sentence(),
     imageUrl: `https://picsum.photos/seed/${name}/800/400`,
     displayOrder: faker.number.int({ min: 0, max: 10 }),
+    productCount: faker.number.int({ min: 0, max: 25 }),
     ...overrides,
   }
 }
 
 // ---------------------------------------------------------------------------
-// Product  →  ProductDto  (used by /recherche/catalog and /products)
-// { id: int, name, description, status, imageUrl, price }
+// Product  →  ProductDto
+// { id, name, description, status, imageUrl, price }
 //
-// NOTE: The full product page still needs pricingPlans, images, technicalSpecs,
-// categoryId, slug, isFeatured — those are kept for internal mock use by
-// /products/:id and /home. The catalog DTO shape (ProductDto) is a subset.
+// IMPORTANT : status suit exactement les valeurs de l'enum .NET :
+//   "Active" | "Inactive" | "Archived"
+//
+// Les champs supplémentaires (pricingPlans, images, technicalSpecs…) sont
+// conservés pour la page produit et la home — ils ne font PAS partie du
+// ProductDto retourné par /recherche/catalog.
 // ---------------------------------------------------------------------------
 
 const PRODUCT_PREFIXES = ["Cyna", "Shield", "Guard", "Sentinel", "Apex"]
 const PRODUCT_SUFFIXES = ["EDR Pro", "XDR Suite", "SOC Manager", "Zero Trust Gateway", "SIEM Core"]
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object} ProductDto (+ internal fields for detail / home pages)
- */
 export function makeProduct(overrides = {}) {
   const prefix = faker.helpers.arrayElement(PRODUCT_PREFIXES)
   const suffix = faker.helpers.arrayElement(PRODUCT_SUFFIXES)
@@ -102,7 +79,6 @@ export function makeProduct(overrides = {}) {
   const basePrice = faker.number.float({ min: 49, max: 999, fractionDigits: 2 })
   const p = (n) => parseFloat(n.toFixed(2))
 
-  // Pricing plans — kept for product detail page (not in ProductDto)
   const planMonthly = {
     id: faker.string.uuid(),
     name: "Mensuel",
@@ -157,12 +133,16 @@ export function makeProduct(overrides = {}) {
     id: faker.number.int({ min: 1, max: 9999 }),
     name: productName,
     description: faker.lorem.paragraphs(2),
-    // "Active" | "Inactive" | "Archived" maps to the available/unavailable UI logic
-    status: faker.helpers.arrayElement(["Active", "Inactive", "Archived"]),
+    // Valeurs PascalCase identiques à l'enum .NET ProductStatus
+    status: faker.helpers.weightedArrayElement([
+      { weight: 6, value: "Active" },
+      { weight: 2, value: "Inactive" },
+      { weight: 1, value: "Archived" },
+    ]),
     imageUrl: faker.image.url(),
     price: p(basePrice),
 
-    // --- Internal fields (used by product detail page + home, not in ProductDto) ---
+    // --- Internal fields (page produit + home) ---
     categoryId: faker.number.int({ min: 1, max: 999 }),
     slug: faker.helpers.slugify(productName).toLowerCase(),
     isFeatured: faker.datatype.boolean({ probability: 0.2 }),
@@ -186,15 +166,11 @@ export function makeProduct(overrides = {}) {
 
 // ---------------------------------------------------------------------------
 // OrderItem  →  OrderItemDto
-// { id: int, productNameSnapshot, planNameSnapshot, quantityUsers, quantityDevices }
+// { id, productNameSnapshot, planNameSnapshot, quantityUsers, quantityDevices }
 // ---------------------------------------------------------------------------
 
 const PLAN_NAMES = ["Mensuel", "Annuel", "Starter", "Pro", "Enterprise"]
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object} OrderItemDto
- */
 export function makeOrderItem(overrides = {}) {
   return {
     id: faker.number.int({ min: 1, max: 9999 }),
@@ -208,15 +184,12 @@ export function makeOrderItem(overrides = {}) {
 
 // ---------------------------------------------------------------------------
 // Order  →  OrderSummaryDto
-// { id: int, status, totalAmount, createdAt, invoiceUrl, items: OrderItemDto[] }
+// { id, status, totalAmount, createdAt, invoiceUrl, items: OrderItemDto[] }
 // ---------------------------------------------------------------------------
 
+// Valeurs PascalCase identiques à l'enum .NET OrderStatus
 const ORDER_STATUSES = ["Pending", "Paid", "Failed", "Refunded"]
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object} OrderSummaryDto
- */
 export function makeOrder(overrides = {}) {
   const items = makeMany(faker.number.int({ min: 1, max: 3 }), makeOrderItem)
 
@@ -233,16 +206,13 @@ export function makeOrder(overrides = {}) {
 
 // ---------------------------------------------------------------------------
 // Subscription  →  SubscriptionDto
-// { id: int, status, productName, planName,
+// { id, status, productName, planName,
 //   currentPeriodStart, currentPeriodEnd, autoRenew }
 // ---------------------------------------------------------------------------
 
+// Valeurs PascalCase identiques à l'enum .NET SubscriptionStatus
 const SUBSCRIPTION_STATUSES = ["Active", "Cancelled", "Expired"]
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object} SubscriptionDto
- */
 export function makeSubscription(overrides = {}) {
   const start = faker.date.past()
   const end = new Date(start)
@@ -261,13 +231,9 @@ export function makeSubscription(overrides = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// Address — internal only (checkout / order detail), not in v1 OpenAPI spec
+// Address — internal only
 // ---------------------------------------------------------------------------
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object}
- */
 export function makeAddress(overrides = {}) {
   return {
     id: faker.string.uuid(),
@@ -291,10 +257,6 @@ export function makeAddress(overrides = {}) {
 // PaymentMethod — internal only
 // ---------------------------------------------------------------------------
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object}
- */
 export function makePaymentMethod(overrides = {}) {
   return {
     id: faker.string.uuid(),
@@ -311,13 +273,9 @@ export function makePaymentMethod(overrides = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// CarouselItem — internal only (home page CMS)
+// CarouselItem — internal only (home CMS)
 // ---------------------------------------------------------------------------
 
-/**
- * @param {Partial<object>} overrides
- * @returns {object}
- */
 export function makeCarouselItem(overrides = {}) {
   return {
     id: faker.string.uuid(),
@@ -332,13 +290,9 @@ export function makeCarouselItem(overrides = {}) {
 }
 
 // ---------------------------------------------------------------------------
-// AuthResponse — internal only (login / register)
+// AuthResponse — internal only
 // ---------------------------------------------------------------------------
 
-/**
- * @param {Partial<object>} userOverrides
- * @returns {{ token: string, user: object }}
- */
 export function makeAuthResponse(userOverrides = {}) {
   return {
     token: `eyJ.${faker.string.alphanumeric(64)}.mock`,

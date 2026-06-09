@@ -1,32 +1,55 @@
+/**
+ * @file components/ui/catalog/product-card.jsx
+ *
+ * ProductDto (v1) : { id, name, description, status, imageUrl, price }
+ * status : "Active" | "Inactive" | "Archived"  (PascalCase, enum .NET)
+ *
+ * La card affiche le prix `price` directement — pas de pricingPlans
+ * sur le DTO catalogue.
+ */
+
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
-import { cn, getStatusBadge, formatPrice } from "@/lib/utils"
+import { cn, formatPrice } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
-// ProductCard — carte d'un service du catalogue
+// Helpers — status PascalCase → badge
 // ---------------------------------------------------------------------------
 
 /**
- * Carte de présentation d'un produit SaaS.
- *
+ * Mappe les valeurs de l'enum ProductStatus (.NET) vers les props de Badge.
+ * @param {"Active"|"Inactive"|"Archived"|string} status
+ * @returns {{ variant: string, labelKey: string, isAvailable: boolean }}
+ */
+function resolveStatusBadge(status) {
+  switch (status) {
+    case "Available":
+      return { variant: "default",     labelKey: "product.available", isAvailable: true }
+    case "Unavailable":
+      return { variant: "secondary",   labelKey: "product.unavailable",  isAvailable: false }
+    case "OutOfStock":
+      return { variant: "destructive", labelKey: "product.outOfStock",  isAvailable: false }
+    default:
+      return { variant: "secondary",   labelKey: "product.inactive",  isAvailable: false }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// ProductCard
+// ---------------------------------------------------------------------------
+
+/**
+ * Carte de présentation d'un produit SaaS (shape ProductDto v1).
  * @param {{ product: object }} props
  */
 export function ProductCard({ product }) {
-  const { t } = useTranslation("catalog")
+  const { t } = useTranslation("search")
 
-  const isAvailable = product.status === "available"
-
-  const bestPlan = ["monthly", "yearly", "lifetime"]
-    .map(period => product.pricingPlans?.find(p => p.billingPeriod === period))
-    .find(Boolean)
-  const entryTiers    = bestPlan?.pricingTiers?.filter(t => t.minQty === 1) ?? []
-  const startingPrice = entryTiers.length > 0 ? Math.min(...entryTiers.map(t => t.unitPrice)) : null
-  const periodKey     = { monthly: "perMonth", yearly: "perYear", lifetime: "perLifetime" }[bestPlan?.billingPeriod] ?? "perMonth"
-  const { variant: badgeVariant, labelKey } = getStatusBadge(product.status)
+  const { variant: badgeVariant, labelKey, isAvailable } = resolveStatusBadge(product.status)
 
   return (
     <Link to={`/products/${product.id}`} className="block">
@@ -36,7 +59,7 @@ export function ProductCard({ product }) {
           !isAvailable && "opacity-75"
         )}
       >
-        {/* Vignette du produit */}
+        {/* Vignette */}
         <img
           src={product.imageUrl}
           alt={product.name}
@@ -53,13 +76,15 @@ export function ProductCard({ product }) {
           <div className="mt-auto flex items-end justify-between pt-3">
             <div className="flex flex-col gap-1">
               <Badge variant={badgeVariant}>
-                {t(labelKey)}
+                {t(labelKey, { defaultValue: product.status })}
               </Badge>
-              {isAvailable && (
+
+              {/* Prix depuis ProductDto.price — toujours présent */}
+              {isAvailable && product.price != null && (
                 <p className="text-sm font-extrabold text-primary">
-                  {t("product.from")} {formatPrice(startingPrice)}{" "}
+                  {t("product.from")} {formatPrice(product.price)}{" "}
                   <span className="text-xs font-normal text-muted-foreground">
-                    {t(`product.${periodKey}`)}
+                    {t("product.perMonth")}
                   </span>
                 </p>
               )}
@@ -81,10 +106,9 @@ export function ProductCard({ product }) {
 }
 
 // ---------------------------------------------------------------------------
-// ProductCardSkeleton — squelette de chargement d'une carte produit
+// Squelette
 // ---------------------------------------------------------------------------
 
-/** Squelette de chargement pour une carte produit. */
 export function ProductCardSkeleton() {
   return (
     <Card className="flex flex-col">

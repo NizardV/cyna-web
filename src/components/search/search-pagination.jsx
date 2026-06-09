@@ -11,11 +11,11 @@ import { useTranslation } from "react-i18next"
 import { buildPageRange } from "@/lib/utils"
 
 // ---------------------------------------------------------------------------
-// CatalogPagination — composant de pagination
-// ---------------------------------------------------------------------------
+// SearchPagination — composant de pagination
+// ---------------------------------------------------------------------------catalog-pagination
 
 /**
- * Pagination du catalogue.
+ * Pagination de la recherche.
  *
  * @param {{
  *   currentPage: number,
@@ -23,8 +23,8 @@ import { buildPageRange } from "@/lib/utils"
  *   onPageChange: (page: number) => void
  * }} props
  */
-export function CatalogPagination({ currentPage, totalPages, onPageChange }) {
-  const { t } = useTranslation("catalog")
+export function SearchPagination({ currentPage, totalPages, onPageChange }) {
+  const { t } = useTranslation("search")
 
   if (totalPages <= 1) return null
 

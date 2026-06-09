@@ -98,6 +98,14 @@ stages:
 
     - task: SSH@0
       displayName: 'Deploy sur OVH'
+      condition: >
+        and(
+          succeeded(),
+          or(
+            eq(variables['Build.SourceBranch'], 'refs/heads/main'),
+            eq(variables['Build.SourceBranch'], 'refs/heads/dev')
+          )
+        )
       inputs:
         sshEndpoint: 'OVH-SSH-Connection'
         runOptions: 'inline'

@@ -1,6 +1,6 @@
 /**
- * @file pages/catalog.jsx
- * @description Page catalogue des services SaaS.
+ * @file pages/search.jsx
+ * @description Page search des services SaaS.
  *
  * Fonctionnalités :
  * - Filtres (recherche, catégories, budget, disponibilité) tous envoyés à l'API
@@ -8,14 +8,15 @@
  * - Pagination côté API avec le composant Pagination
  * - Combobox pour le tri (remplace Select)
  * - Debounce sur le champ de recherche textuelle
- * - Internationalisation complète (namespace "catalog")
+ * - Internationalisation complète (namespace "search")
  */
 
 import { useEffect, useState, useCallback } from "react"
 import { useSearchParams } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
-import { getCatalogProducts, getCategories } from "@/api/catalog.js"
+import { getCatalogProducts } from "@/api/search.js"
+import { getCategories } from "@/api/categories.js"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import {
@@ -27,9 +28,9 @@ import {
   ComboboxEmpty,
 } from "@/components/ui/combobox"
 import { useDebounce } from "@/hooks/useDebounce.js"
-import { CatalogPagination } from "@/components/ui/catalog/catalog-pagination"
-import { FilterSidebar, FilterSidebarSkeleton } from "@/components/ui/catalog/filter-sidebar"
-import { ProductCard, ProductCardSkeleton } from "@/components/ui/catalog/product-card"
+import { SearchPagination } from "@/components/search/search-pagination"
+import { FilterSidebar, FilterSidebarSkeleton, FilterDrawer } from "@/components/search/filter-sidebar"
+import { ProductCard, ProductCardSkeleton } from "@/components/search/product-card"
 
 // ---------------------------------------------------------------------------
 // Constante — nombre d'éléments par page
@@ -51,15 +52,15 @@ const SORT_OPTIONS = [
 ]
 
 // ---------------------------------------------------------------------------
-// Page principale — Catalog
+// Page principale — Search
 // ---------------------------------------------------------------------------
 
 /**
  * Page catalogue des services SaaS.
  * Tous les filtres, le tri et la pagination sont délégués à l'API.
  */
-export function Catalog() {
-  const { t } = useTranslation("catalog")
+export function Search() {
+  const { t } = useTranslation("search")
   const [searchParams] = useSearchParams()
 
   // --- État des produits et pagination ---
@@ -162,9 +163,9 @@ export function Catalog() {
         {/* Zone de résultats */}
         <div className="min-w-0 flex-1">
 
-          {/* En-tête : total + Combobox de tri */}
-          <div className="mb-5 flex items-center justify-between">
-            <h1 className="text-sm font-bold text-foreground">
+          {/* En-tête : total + tri + bouton filtres mobile */}
+          <div className="mb-5 flex items-center justify-between gap-2 md:flex-row flex-col">
+            <h1 className="shrink-0 text-sm font-bold text-foreground">
               {t("resultsLabel")}{" "}
               {!loadingProducts && (
                 <span className="font-normal text-muted-foreground">
@@ -173,33 +174,46 @@ export function Catalog() {
               )}
             </h1>
 
-            {/* Combobox de tri — remplace le Select */}
-            <Combobox
-              value={sortBy}
-              onValueChange={(val) => {
-                if (val) {
-                  setSortBy(val)
-                  setCurrentPage(1)
-                }
-              }}
-            >
-              <ComboboxInput
-                showClear={false}
-                placeholder={t("sortBy")}
-                className="w-52"
-                readOnly
-              />
-              <ComboboxContent>
-                <ComboboxList>
-                  {SORT_OPTIONS.map((opt) => (
-                    <ComboboxItem key={opt.value} value={opt.value}>
-                      {t(opt.labelKey)}
-                    </ComboboxItem>
-                  ))}
-                  <ComboboxEmpty>{t("noResults")}</ComboboxEmpty>
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
+            <div className="flex items-center gap-2">
+              {/* Bouton filtres — mobile uniquement */}
+              {!loadingCategories && (
+                <div className="md:hidden">
+                  <FilterDrawer
+                    categories={categories}
+                    filters={filters}
+                    onChange={handleFilterChange}
+                  />
+                </div>
+              )}
+
+              {/* Combobox de tri */}
+              <Combobox
+                value={sortBy}
+                onValueChange={(val) => {
+                  if (val) {
+                    setSortBy(val)
+                    setCurrentPage(1)
+                  }
+                }}
+              >
+                <ComboboxInput
+                  showClear={false}
+                  placeholder={t("sortBy")}
+                  className="w-40 md:w-52"
+                  readOnly
+                />
+                <ComboboxContent>
+                  <ComboboxList>
+                    {SORT_OPTIONS.map((opt) => (
+                      <ComboboxItem key={opt.value} value={opt.value}>
+                        {t(opt.labelKey)}
+                      </ComboboxItem>
+                    ))}
+                    <ComboboxEmpty>{t("noResults")}</ComboboxEmpty>
+                  </ComboboxList>
+                </ComboboxContent>
+              </Combobox>
+            </div>
           </div>
 
           {/* Grille de produits — squelette ou résultats */}
@@ -236,7 +250,7 @@ export function Catalog() {
               </div>
 
               {/* Pagination */}
-              <CatalogPagination
+              <SearchPagination
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={(page) => {

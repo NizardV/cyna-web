@@ -1,7 +1,7 @@
 /**
  * @file api/catalog.js
  * @description Appels API pour le catalogue de produits et la recherche.
- * Routes v1 : GET /recherche/catalog et GET /recherche/categories
+ * Routes v1 : /recherche
  */
 
 import { apiClient } from "./client.js"
@@ -27,12 +27,4 @@ import { apiClient } from "./client.js"
  * }>}
  */
 export const getCatalogProducts = (params = {}) =>
-  apiClient.get("/recherche/catalog", { params: { locale: "fr", ...params } })
-
-/**
- * Récupère toutes les catégories disponibles.
- * @param {{ locale?: string }} [params]
- * @returns {Promise<object[]>}
- */
-export const getCategories = (params = {}) =>
-  apiClient.get("/recherche/categories", { params: { locale: "fr", ...params } })
+  apiClient.get("/search", { params: { locale: "fr", ...params } })

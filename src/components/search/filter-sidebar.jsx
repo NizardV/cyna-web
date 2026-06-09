@@ -1,7 +1,18 @@
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { SlidersHorizontal } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetFooter,
+  SheetClose,
+} from "@/components/ui/sheet"
 
 // ---------------------------------------------------------------------------
 // FilterSidebar — panneau de filtres latéral
@@ -16,15 +27,12 @@ import { Skeleton } from "@/components/ui/skeleton"
  *   onChange: (patch: object) => void
  * }} props
  */
-export function FilterSidebar({ categories, filters, onChange }) {
-  const { t } = useTranslation("catalog")
+export function FilterContent({ categories, filters, onChange }) {
+  const { t } = useTranslation("search")
 
   return (
-    <aside className="w-56 shrink-0">
-      <h2 className="mb-4 text-sm font-bold text-foreground">{t("filter.title")}</h2>
-
-      {/* Recherche textuelle */}
-      <div className="mb-4 border-b border-border pb-4">
+    <div className="space-y-4">
+      <div className="border-b border-border pb-4">
         <p className="mb-2 text-xs font-semibold text-foreground">{t("filter.search")}</p>
         <Input
           type="search"
@@ -34,8 +42,7 @@ export function FilterSidebar({ categories, filters, onChange }) {
         />
       </div>
 
-      {/* Filtrage par catégorie */}
-      <div className="mb-4 border-b border-border pb-4">
+      <div className="border-b border-border pb-4">
         <p className="mb-2 text-xs font-semibold text-foreground">{t("filter.categories")}</p>
         <div className="flex flex-col gap-1.5">
           {categories.map((cat) => (
@@ -60,8 +67,7 @@ export function FilterSidebar({ categories, filters, onChange }) {
         </div>
       </div>
 
-      {/* Filtre budget */}
-      <div className="mb-4 border-b border-border pb-4">
+      <div className="border-b border-border pb-4">
         <p className="mb-2 text-xs font-semibold text-foreground">{t("filter.budget")}</p>
         <input
           type="range"
@@ -78,7 +84,6 @@ export function FilterSidebar({ categories, filters, onChange }) {
         </div>
       </div>
 
-      {/* Filtre disponibilité */}
       <Label className="flex cursor-pointer items-center gap-2 font-medium">
         <input
           type="checkbox"
@@ -88,15 +93,72 @@ export function FilterSidebar({ categories, filters, onChange }) {
         />
         {t("filter.onlyAvailable")}
       </Label>
+    </div>
+  )
+}
+
+// Sidebar desktop — inchangée
+export function FilterSidebar({ categories, filters, onChange }) {
+  const { t } = useTranslation("search")
+
+  return (
+    <aside className="w-56 shrink-0">
+      <h2 className="mb-4 text-sm font-bold text-foreground">{t("filter.title")}</h2>
+      <FilterContent categories={categories} filters={filters} onChange={onChange} />
     </aside>
   )
 }
 
-// ---------------------------------------------------------------------------
-// FilterSidebarSkeleton — squelette de chargement du panneau de filtres
-// ---------------------------------------------------------------------------
+// Bouton + Sheet pour mobile
+export function FilterDrawer({ categories, filters, onChange }) {
+  const { t } = useTranslation("search")
+  const [open, setOpen] = useState(false)
 
-/** Squelette de chargement du panneau de filtres. */
+  const activeCount = [
+    filters.search,
+    ...filters.categories,
+    filters.maxPrice && filters.maxPrice !== "1000" ? filters.maxPrice : null,
+    filters.onlyAvailable || null,
+  ].filter(Boolean).length
+
+  return (
+    <Sheet open={open} onOpenChange={setOpen}>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setOpen(true)}
+        className="flex items-center gap-1.5"
+      >
+        <SlidersHorizontal className="h-4 w-4" />
+        {t("filter.title")}
+        {activeCount > 0 && (
+          <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            {activeCount}
+          </span>
+        )}
+      </Button>
+
+      <SheetContent side="bottom" className="max-h-[85vh] overflow-y-auto rounded-t-xl">
+        <SheetHeader>
+          <SheetTitle>{t("filter.title")}</SheetTitle>
+        </SheetHeader>
+
+        <div className="mt-4 px-1">
+          <FilterContent categories={categories} filters={filters} onChange={onChange} />
+        </div>
+
+        <SheetFooter className="mt-6">
+          <SheetClose asChild>
+            <Button className="w-full">
+              {t("filter.apply", { defaultValue: "Voir les résultats" })}
+            </Button>
+          </SheetClose>
+        </SheetFooter>
+      </SheetContent>
+    </Sheet>
+  )
+}
+
 export function FilterSidebarSkeleton() {
   return (
     <aside className="hidden w-56 shrink-0 space-y-3 md:block">
