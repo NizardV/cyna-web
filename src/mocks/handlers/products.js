@@ -29,7 +29,7 @@ export const productHandlers = [
     method: "GET",
     path: "/products/:id",
     resolver: ({ params }) => {
-      const product = _products.find((p) => p.id === params.id)
+      const product = _products.find((p) => String(p.id) === String(params.id))
       if (!product) throw new Error("Product not found")
       return product
     },
@@ -45,7 +45,7 @@ export const productHandlers = [
     method: "GET",
     path: "/products/similar/:id",
     resolver: ({ params }) => {
-      const product = _products.find((p) => p.id === params.id)
+      const product = _products.find((p) => String(p.id) === String(params.id))
       if (!product) throw new Error("Product not found")
 
       let pool = _products.filter(
@@ -91,7 +91,7 @@ export const productHandlers = [
     method: "PUT",
     path: "/products/:id",
     resolver: ({ params, body }) => {
-      const index = _products.findIndex((p) => p.id === params.id)
+      const index = _products.findIndex((p) => String(p.id) === String(params.id))
       if (index === -1) throw new Error("Product not found")
       Object.assign(_products[index], body)
       return _products[index]
@@ -108,7 +108,7 @@ export const productHandlers = [
     method: "DELETE",
     path: "/products/:id",
     resolver: ({ params }) => {
-      const index = _products.findIndex((p) => p.id === params.id)
+      const index = _products.findIndex((p) => String(p.id) === String(params.id))
       if (index !== -1) _products.splice(index, 1)
       return null
     },

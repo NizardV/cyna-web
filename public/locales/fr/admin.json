@@ -1,0 +1,92 @@
+{
+  "products": {
+    "title": "Produits",
+    "total": "{{count}} produit au total",
+    "total_plural": "{{count}} produits au total",
+    "new": "Nouveau produit",
+    "searchPlaceholder": "Rechercher un produit…",
+    "deleteConfirm": "Supprimer ce produit définitivement ?",
+    "deleteSuccess": "Produit supprimé",
+    "deleteError": "Erreur lors de la suppression"
+  },
+  "status": {
+    "active": "Actif",
+    "inactive": "Inactif",
+    "archived": "Archivé"
+  },
+  "featured": {
+    "yes": "⭐ Oui",
+    "no": "Non"
+  },
+  "table": {
+    "product": "Produit",
+    "status": "Statut",
+    "featured": "Mis en avant",
+    "actions": "Actions",
+    "noResults": "Aucun produit ne correspond aux filtres sélectionnés.",
+    "apply": "Appliquer"
+  },
+  "form": {
+    "back": "Retour",
+    "editTitle": "Modifier le produit",
+    "newTitle": "Nouveau produit",
+    "productId": "ID #{{id}}",
+    "saving": "Enregistrement…",
+    "update": "Mettre à jour",
+    "create": "Créer le produit",
+    "cancel": "Annuler",
+    "errors": {
+      "nameRequired": "Le nom du produit est requis",
+      "notFound": "Produit introuvable",
+      "saveFailed": "Erreur lors de la sauvegarde",
+      "categoriesFailed": "Impossible de charger les catégories"
+    },
+    "success": {
+      "updated": "Produit mis à jour",
+      "created": "Produit créé"
+    }
+  },
+  "general": {
+    "title": "Informations générales",
+    "name": "Nom du produit",
+    "namePlaceholder": "Ex : Cyna SOC Manager",
+    "description": "Description",
+    "descriptionPlaceholder": "Décrivez le produit en quelques phrases…",
+    "status": "Statut"
+  },
+  "media": {
+    "title": "Médias & Catégorie",
+    "imageUrl": "URL de l'image principale",
+    "imageUrlInvalid": "L'URL doit commencer par http:// ou https://",
+    "imageAlt": "Aperçu",
+    "category": "Catégorie",
+    "noCategory": "— Aucune catégorie —",
+    "featured": "Mettre en avant sur la page d'accueil",
+    "displayOrder": "Ordre d'affichage",
+    "displayOrderHelp": "Position dans la section Top Produits (1 = premier)."
+  },
+  "specs": {
+    "title": "Spécifications techniques",
+    "label": "Spécifications",
+    "placeholder": "Ex : Protection multi-terminaux…",
+    "help": "Appuyez sur Entrée pour ajouter une spécification."
+  },
+  "pricing": {
+    "title": "Tarification",
+    "monthly": "Mensuel",
+    "yearly": "Annuel",
+    "lifetime": "Définitif",
+    "users": "Utilisateurs",
+    "devices": "Appareils",
+    "enablePlan": "Activer ce plan",
+    "minQty": "Min qté",
+    "maxQty": "Max qté",
+    "unitPrice": "Prix / unité (€)",
+    "addTier": "Ajouter un palier",
+    "invalidTier": "Max qté doit être supérieur au min calculé.",
+    "errors": {
+      "incomplete": "{{plan}} / {{unit}} : palier {{tier}} incomplet",
+      "invalidMax": "{{plan}} / {{unit}} : palier {{tier}} — max doit être supérieur à {{min}}"
+    }
+  }
+}
