@@ -1,19 +1,42 @@
 /**
  * @file pages/account/order-history.jsx
- * Uses AccountNav (same position as profile) and shared UI components.
+ *
+ * Aligné sur OrderSummaryDto (v1) :
+ *   { id, status, totalAmount, createdAt, invoiceUrl, items: OrderItemDto[] }
+ *
+ * Correction : la recherche textuelle porte sur
+ *   items[].productNameSnapshot  (remplace order.productName inexistant)
  */
 
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
-import { AccountNav } from "@/components/ui/account/account-nav"
-import { getAccountOrders } from "@/api/user.js"
-import { getMe } from "@/api/user.js"
+import { AccountNav } from "@/components/account/account-nav"
+import { getAccountOrders, getMe } from "@/api/user.js"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
-import { OrderGroup, OrderHistorySkeleton } from "@/components/ui/account/order"
-import { YearCombobox } from "@/components/ui/account/year-combobox"
+import { OrderGroup, OrderHistorySkeleton } from "@/components/account/order"
+import { YearCombobox } from "@/components/account/year-combobox"
 import { getYear } from "@/lib/utils"
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Vérifie si une commande contient le terme de recherche
+ * dans l'un de ses productNameSnapshot.
+ * @param {object} order  OrderSummaryDto
+ * @param {string} query
+ * @returns {boolean}
+ */
+function orderMatchesSearch(order, query) {
+  if (!query) return true
+  const q = query.toLowerCase()
+  return (order.items ?? []).some((item) =>
+    item.productNameSnapshot?.toLowerCase().includes(q)
+  )
+}
 
 // ---------------------------------------------------------------------------
 // Page principale
@@ -45,10 +68,9 @@ export function OrderHistory() {
       })
   }, [])
 
+  // Filtre : recherche sur productNameSnapshot + filtre année sur createdAt
   const filteredOrders = orders.filter((order) => {
-    const matchSearch =
-      searchQuery === "" ||
-      order.productName.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchSearch = orderMatchesSearch(order, searchQuery)
     const matchYear =
       selectedYear === "all" ||
       getYear(order.createdAt) === parseInt(selectedYear, 10)
@@ -56,8 +78,8 @@ export function OrderHistory() {
   })
 
   const allYears = [...new Set(orders.map((o) => getYear(o.createdAt)))].sort((a, b) => b - a)
-  const years = [...new Set(filteredOrders.map((o) => getYear(o.createdAt)))].sort((a, b) => b - a)
-  const grouped = years.map((year) => ({
+  const years    = [...new Set(filteredOrders.map((o) => getYear(o.createdAt)))].sort((a, b) => b - a)
+  const grouped  = years.map((year) => ({
     year,
     orders: filteredOrders.filter((o) => getYear(o.createdAt) === year),
   }))
@@ -71,10 +93,10 @@ export function OrderHistory() {
           <AccountNav user={loadingUser ? undefined : user ?? undefined} />
         </div>
 
-        {/* Main content */}
+        {/* Contenu principal */}
         <div className="min-w-0 flex-1">
 
-          {/* Page header + filters */}
+          {/* En-tête + filtres */}
           <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
               <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
@@ -96,7 +118,7 @@ export function OrderHistory() {
             </div>
           </div>
 
-          {/* Content */}
+          {/* États */}
           {loading && <OrderHistorySkeleton />}
 
           {error && (

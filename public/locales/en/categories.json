@@ -1,0 +1,83 @@
+{
+  "title": "Categories",
+  "subtitle": "Manage your product catalog categories.",
+  "newCategory": "New category",
+  "counter": "{{count}} category",
+  "counter_plural": "{{count}} categories",
+  "counterFor": "{{count}} category for \"{{search}}\"",
+  "counterFor_plural": "{{count}} categories for \"{{search}}\"",
+  "search": {
+    "placeholder": "Search by name, slug…"
+  },
+  "table": {
+    "image": "Image",
+    "name": "Name",
+    "slug": "Slug",
+    "description": "Description",
+    "products": "Products",
+    "order": "Order",
+    "actions": "Actions"
+  },
+  "empty": {
+    "noResults": "No categories found.",
+    "clearSearch": "Clear search"
+  },
+  "actions": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{current}} of {{total}}"
+  },
+  "form": {
+    "name": "Name",
+    "nameRequired": "*",
+    "namePlaceholder": "e.g. EDR, SOC, Zero Trust…",
+    "nameError": "Name is required.",
+    "slug": "Slug",
+    "slugHint": "(auto-generated if empty)",
+    "slugPlaceholder": "e.g. zero-trust",
+    "description": "Description",
+    "descriptionPlaceholder": "Short description of the category…",
+    "imageUrl": "Image URL",
+    "imageUrlPlaceholder": "https://…",
+    "displayOrder": "Display order"
+  },
+  "dialogs": {
+    "create": {
+      "title": "New category",
+      "description": "Fill in the details for the new category.",
+      "cancel": "Cancel",
+      "submit": "Create",
+      "submitting": "Creating…"
+    },
+    "edit": {
+      "title": "Edit category",
+      "description": "Update the fields you want to change, then save.",
+      "cancel": "Cancel",
+      "submit": "Save",
+      "submitting": "Saving…"
+    },
+    "delete": {
+      "title": "Delete category",
+      "description": "Are you sure you want to delete <strong>{{name}}</strong>?",
+      "warningProducts_one": "This category contains {{count}} product. This action cannot be undone.",
+      "warningProducts_other": "This category contains {{count}} products. This action cannot be undone.",
+      "warningNoProducts": "This action cannot be undone.",
+      "cancel": "Cancel",
+      "submit": "Delete",
+      "submitting": "Deleting…"
+    }
+  },
+  "toast": {
+    "created": "Category \"{{name}}\" created.",
+    "updated": "Category \"{{name}}\" updated.",
+    "deleted": "Category \"{{name}}\" deleted.",
+    "loadError": "Failed to load categories.",
+    "createError": "Error creating category.",
+    "updateError": "Error updating category.",
+    "deleteError": "Error deleting category."
+  }
+}

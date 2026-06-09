@@ -25,6 +25,13 @@
     "errorLength": "Le mot de passe doit contenir au moins 8 caractères.",
     "error": "Une erreur est survenue."
   },
+  "language": {
+    "title": "Langue",
+    "description": "Choisissez la langue d'affichage de l'interface.",
+    "success": "Langue mise à jour.",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…"
+  },
   "subscriptions": {
     "title": "Abonnements SaaS actifs",
     "description": "Gérez vos licences en cours.",

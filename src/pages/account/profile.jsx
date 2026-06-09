@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
-import { AccountNav } from "@/components/ui/account/account-nav"
+import { AccountNav } from "@/components/account/account-nav"
 import { getMe, updateProfile, updatePassword, getSubscriptions } from "@/api/user.js"
 import { apiClient } from "@/api/client.js"
 import { toast } from "sonner"
@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
-import { CancelSubscriptionDialog, SubscriptionItem } from "@/components/ui/account/subscription"
+import { CancelSubscriptionDialog, SubscriptionItem } from "@/components/account/subscription"
 
 // ---------------------------------------------------------------------------
 // API helper — cancel a subscription
