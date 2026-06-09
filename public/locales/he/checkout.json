@@ -1,0 +1,58 @@
+{
+  "title": "השלמת ההזמנה",
+  "badge": "תשלום מאובטח 100%",
+  "step1": {
+    "title": "חשבון לקוח",
+    "loggedAs": "מחובר כ-",
+    "edit": "עריכה",
+    "loginHintLink": "התחבר",
+    "loginHintAfter": "או המשך כאורח."
+  },
+  "step2": {
+    "title": "כתובת לחיוב",
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "address": "כתובת",
+    "addressPlaceholder": "מספר ושם הרחוב",
+    "postalCode": "מיקוד",
+    "city": "עיר",
+    "country": "מדינה"
+  },
+  "step3": {
+    "title": "אמצעי תשלום",
+    "cardType": "כרטיס אשראי",
+    "cardName": "שם בעל הכרטיס",
+    "cardNumber": "מספר כרטיס",
+    "expiry": "תוקף (MM/YY)",
+    "cvv": "CVV"
+  },
+  "summary": {
+    "title": "סיכום הזמנה",
+    "duration": {
+      "monthly": "חודשי",
+      "yearly": "שנתי"
+    },
+    "users_one": "{{count}} משתמש",
+    "users_other": "{{count}} משתמשים",
+    "subtotal": "סכום ביניים (ללא מע\"מ)",
+    "vat": "מע\"מ (20%)",
+    "total": "סה\"כ כולל מע\"מ",
+    "confirm": "אישור רכישה",
+    "confirming": "מעבד…",
+    "cgvBefore": "באישור הרכישה אתה מסכים ל",
+    "cgvLink": "תנאי המכירה"
+  },
+  "errors": {
+    "missingAddress": "אנא מלא את כל שדות הכתובת",
+    "missingPayment": "אנא מלא את פרטי התשלום",
+    "orderFailed": "אירעה שגיאה במהלך התשלום"
+  },
+  "toast": {
+    "success": "ההזמנה אושרה!"
+  },
+  "footer": {
+    "legal": "הודעה משפטית",
+    "cgu": "תנאים",
+    "contact": "צור קשר"
+  }
+}

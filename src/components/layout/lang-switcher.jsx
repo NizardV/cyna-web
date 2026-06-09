@@ -10,6 +10,8 @@ import {
 const LANGUAGES = [
   { code: "fr", label: "FR", flag: "🇫🇷" },
   { code: "en", label: "EN", flag: "🇬🇧" },
+  { code: "ar", label: "AR", flag: "🇸🇦" },
+  { code: "he", label: "HE", flag: "🇮🇱" },
 ]
 
 export function LangSwitcher() {

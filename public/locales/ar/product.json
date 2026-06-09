@@ -1,0 +1,32 @@
+{
+  "availableImmediately": "متاح فوراً",
+  "serviceUnavailable": "الخدمة غير متاحة مؤقتاً",
+  "technicalSpecsTitle": "المواصفات التقنية",
+  "subscribeNow": "اشترك الآن",
+  "buyNow": "اشترِ الآن",
+  "tryNow": "جرّب الآن",
+  "serviceUnavailableBtn": "الخدمة غير متاحة",
+  "try14Days": "جرّب (14 يوماً)",
+  "similarServicesTitle": "خدمات مشابهة",
+  "addedToCart": "تمت إضافة المنتج إلى السلة",
+  "billing": {
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "lifetime": "دائم"
+  },
+  "billingLabel": {
+    "monthly": "شهر",
+    "yearly": "سنة",
+    "lifetime": "دفعة واحدة"
+  },
+  "users": "المستخدمون",
+  "devices": "الأجهزة",
+  "tiersTitle": "جدول التسعير",
+  "tiersUnitHeader": "السعر / وحدة",
+  "tiersUpTo": "حتى {{max}}",
+  "tiersFrom": "ابتداءً من {{min}}",
+  "perUnit": "{{price}} / {{unit}}",
+  "overLimit": "تجاوزت الحد ← يلزم عرض سعر",
+  "requestQuote": "التواصل مع فريق المبيعات",
+  "quoteInfo": "لتجاوز الحدود الإلكترونية، تواصل معنا للحصول على عرض سعر مخصص."
+}
