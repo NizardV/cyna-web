@@ -4,6 +4,8 @@
  */
 
 import { Home } from "./pages/home"
+import { AdminProducts } from "./pages/admin/product/products.jsx"
+import { AdminProductForm } from "./pages/admin/product/product-form.jsx"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
 import { LoginPage } from "./pages/login-page"
@@ -46,6 +48,12 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+
+          {/* ── Backoffice admin ── */}
+          <Route path="/admin/products" element={<AdminProducts />} />
+          <Route path="/admin/products/new" element={<AdminProductForm />} />
+          <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Suspense>
