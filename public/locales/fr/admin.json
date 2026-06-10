@@ -7,12 +7,14 @@
     "searchPlaceholder": "Rechercher un produit…",
     "deleteConfirm": "Supprimer ce produit définitivement ?",
     "deleteSuccess": "Produit supprimé",
-    "deleteError": "Erreur lors de la suppression"
+    "deleteError": "Erreur lors de la suppression",
+    "deleteErrorReferenced": "Ce produit ne peut pas être supprimé car il est lié à des commandes ou abonnements existants."
   },
   "status": {
-    "active": "Actif",
-    "inactive": "Inactif",
-    "archived": "Archivé"
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "outofstock": "Rupture de stock",
+    "preview": "Aperçu"
   },
   "featured": {
     "yes": "⭐ Oui",

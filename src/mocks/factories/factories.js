@@ -71,8 +71,8 @@ export function makeCategory(overrides = {}) {
 // Product  →  ProductDto
 // { id, name, description, status, imageUrl, price }
 //
-// IMPORTANT : status suit exactement les valeurs de l'enum .NET :
-//   "Active" | "Inactive" | "Archived"
+// IMPORTANT : status suit exactement les valeurs de l'enum .NET ProductStatus :
+//   "Available" | "Unavailable" | "OutOfStock" | "Preview"
 //
 // Les champs supplémentaires (pricingPlans, images, technicalSpecs…) sont
 // conservés pour la page produit et la home — ils ne font PAS partie du
@@ -145,9 +145,9 @@ export function makeProduct(overrides = {}) {
     description: faker.lorem.paragraphs(2),
     // Valeurs PascalCase identiques à l'enum .NET ProductStatus
     status: faker.helpers.weightedArrayElement([
-      { weight: 6, value: "Active" },
-      { weight: 2, value: "Inactive" },
-      { weight: 1, value: "Archived" },
+      { weight: 6, value: "Available" },
+      { weight: 2, value: "Unavailable" },
+      { weight: 1, value: "OutOfStock" },
     ]),
     imageUrl: faker.image.url(),
     price: p(basePrice),

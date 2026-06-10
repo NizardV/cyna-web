@@ -29,6 +29,14 @@ export const getSimilarProducts = (id) =>
   apiClient.get("/products/similar/:id", { params: { id } });
 
 /**
+ * Fetch a product with both locales for the admin edit form (admin only).
+ * @param {string} id
+ * @returns {Promise<object>}
+ */
+export const getProductAdmin = (id) =>
+  apiClient.get("/products/:id/admin", { params: { id } });
+
+/**
  * Create a new product (admin only).
  * @param {object} dto
  * @returns {Promise<object>}

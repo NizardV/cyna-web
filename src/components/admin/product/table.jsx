@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils"
 
 const TH_CLASS = "px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
 
-const STATUS_VALUES = ["Active", "Inactive", "Archived"]
+// Valeurs alignées sur l'enum .NET ProductStatus
+const STATUS_VALUES = ["Available", "Unavailable", "OutOfStock", "Preview"]
 
 const SORT_ICON = {
   yes: <ChevronDown className="h-3.5 w-3.5 text-primary" />,
