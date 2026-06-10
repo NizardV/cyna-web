@@ -11,7 +11,7 @@ import { FormSpecs }   from "@/components/admin/product/form-specs"
 import { FormPricing } from "@/components/admin/product/form-pricing"
 import { defaultPricingState, pricingPlansToState, stateToPricingPlans, validatePricing } from "@/components/admin/product/pricing-utils"
 import { getProduct, createProduct, updateProduct } from "@/api/products"
-import { getCategories } from "@/api/catalog"
+import { getCategories } from "@/api/categories"
 import { toast } from "sonner"
 import { ArrowLeft } from "lucide-react"
 

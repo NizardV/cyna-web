@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { Layout } from "@/components/layout/layout"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { CatalogPagination } from "@/components/ui/catalog/catalog-pagination"
+import { SearchPagination } from "@/components/search/search-pagination"
 import { ProductAdminTable } from "@/components/admin/product/table"
 import { getProducts, deleteProduct } from "@/api/products"
 import { Plus, Search } from "lucide-react"
@@ -103,7 +103,7 @@ export function AdminProducts() {
           onFeaturedSort={handleFeaturedSort}
         />
 
-        <CatalogPagination
+        <SearchPagination
           currentPage={page}
           totalPages={totalPages}
           onPageChange={setPage}
