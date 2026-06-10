@@ -1,0 +1,79 @@
+{
+  "title": "الفئات",
+  "subtitle": "إدارة فئات كتالوج المنتجات.",
+  "newCategory": "فئة جديدة",
+  "counter": "{{count}} فئة",
+  "counter_plural": "{{count}} فئات",
+  "counterFor": "{{count}} فئة لـ \"{{search}}\"",
+  "counterFor_plural": "{{count}} فئات لـ \"{{search}}\"",
+  "search": { "placeholder": "البحث بالاسم أو الرابط..." },
+  "table": {
+    "image": "صورة",
+    "name": "الاسم",
+    "slug": "الرابط",
+    "description": "الوصف",
+    "products": "المنتجات",
+    "order": "الترتيب",
+    "actions": "الإجراءات"
+  },
+  "empty": {
+    "noResults": "لا توجد فئات.",
+    "clearSearch": "مسح البحث"
+  },
+  "actions": { "edit": "تعديل", "delete": "حذف" },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "page": "الصفحة {{current}} من {{total}}"
+  },
+  "form": {
+    "name": "الاسم",
+    "nameRequired": "*",
+    "namePlaceholder": "مثال: EDR، SOC، Zero Trust...",
+    "nameError": "الاسم مطلوب.",
+    "nameOptional": "(اختياري)",
+    "slug": "الرابط",
+    "slugHint": "(يُولَّد تلقائياً إذا كان فارغاً)",
+    "slugPlaceholder": "مثال: zero-trust",
+    "description": "الوصف",
+    "descriptionPlaceholder": "وصف مختصر للفئة...",
+    "imageUrl": "رابط الصورة",
+    "imageUrlPlaceholder": "https://…",
+    "displayOrder": "ترتيب العرض"
+  },
+  "dialogs": {
+    "create": {
+      "title": "فئة جديدة",
+      "description": "أدخل تفاصيل الفئة الجديدة.",
+      "cancel": "إلغاء",
+      "submit": "إنشاء",
+      "submitting": "جارٍ الإنشاء…"
+    },
+    "edit": {
+      "title": "تعديل الفئة",
+      "description": "عدّل الحقول المطلوبة ثم احفظ.",
+      "cancel": "إلغاء",
+      "submit": "حفظ",
+      "submitting": "جارٍ الحفظ…"
+    },
+    "delete": {
+      "title": "حذف الفئة",
+      "description": "هل أنت متأكد من حذف <strong>{{name}}</strong>؟",
+      "warningProducts_one": "تحتوي هذه الفئة على {{count}} منتج. لا يمكن التراجع عن هذا الإجراء.",
+      "warningProducts_other": "تحتوي هذه الفئة على {{count}} منتجات. لا يمكن التراجع عن هذا الإجراء.",
+      "warningNoProducts": "لا يمكن التراجع عن هذا الإجراء.",
+      "cancel": "إلغاء",
+      "submit": "حذف",
+      "submitting": "جارٍ الحذف…"
+    }
+  },
+  "toast": {
+    "created": "تم إنشاء الفئة \"{{name}}\".",
+    "updated": "تم تحديث الفئة \"{{name}}\".",
+    "deleted": "تم حذف الفئة \"{{name}}\".",
+    "loadError": "تعذّر تحميل الفئات.",
+    "createError": "خطأ في إنشاء الفئة.",
+    "updateError": "خطأ في تحديث الفئة.",
+    "deleteError": "خطأ في حذف الفئة."
+  }
+}

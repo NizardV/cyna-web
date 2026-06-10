@@ -1,0 +1,22 @@
+{
+  "header": {
+    "search": "חפש פתרון (SOC, EDR...)",
+    "home": "דף הבית",
+    "categories": "קטגוריות",
+    "contact": "צור קשר",
+    "userProfile": "פרופיל משתמש",
+    "escapeClient": "אזור לקוחות"
+  },
+  "footer": {
+    "description": "השותף האמין שלך לאבטחת תשתיות ה-IT שלך. פתרונות SaaS בעלי ביצועים גבוהים וניתנים להרחבה.",
+    "information": "מידע",
+    "aboutCyna": "אודות Cyna",
+    "contactUs": "צור קשר",
+    "legal": "משפטי",
+    "legalNotice": "הודעה משפטית",
+    "termsOfService": "תנאי שירות",
+    "privacyPolicy": "מדיניות פרטיות",
+    "followUs": "עקוב אחרינו",
+    "copyright": "© 2024 Cyna. כל הזכויות שמורות."
+  }
+}

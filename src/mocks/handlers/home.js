@@ -24,8 +24,10 @@ export const homeHandlers = [
         .sort((a, b) => a.displayOrder - b.displayOrder)
         .slice(0, 4);
       // Les Top Produits (On génère 4 produits "Featured")
-      let featuredProducts = _products.filter(p => p.isFeatured);
-      
+      let featuredProducts = _products
+        .filter(p => p.isFeatured)
+        .sort((a, b) => (a.displayOrder ?? 99) - (b.displayOrder ?? 99));
+
       // Sécurité : Si Faker n'en a pas généré au moins 4 avec 'isFeatured=true',
       // on complète avec des produits normaux pour avoir une belle grille de 4.
       if (featuredProducts.length < 4) {

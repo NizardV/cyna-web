@@ -1,0 +1,37 @@
+{
+  "title": "עגלת קניות",
+  "empty": "עגלת הקניות ריקה",
+  "emptyHint": "הוסף שירותים מהקטלוג כדי להתחיל",
+  "backHome": "חזרה לדף הבית",
+  "header": {
+    "service": "שירות SaaS",
+    "licenses": "רישיונות",
+    "total": "סה\"כ"
+  },
+  "item": {
+    "remove": "הסרה",
+    "quoteRequired": "נדרשת הצעת מחיר",
+    "quoteWarning": "פריט אחד או יותר דורש הצעת מחיר.",
+    "quoteContact": "צור קשר",
+    "users": "משתמשים",
+    "devices": "מכשירים",
+    "billing": {
+      "monthly": "חודשי",
+      "yearly": "שנתי",
+      "lifetime": "לצמיתות"
+    }
+  },
+  "summary": {
+    "title": "סיכום הזמנה",
+    "subtotal": "סכום ביניים (ללא מע\"מ)",
+    "vat": "מע\"מ (20%)",
+    "total": "סה\"כ כולל מע\"מ",
+    "loginHintBefore": "כבר יש לך חשבון?",
+    "loginHintLink": "התחבר",
+    "loginHintAfter": "כדי למצוא את הפרטים שלך.",
+    "checkout": "המשך לתשלום"
+  },
+  "toast": {
+    "removed": "השירות הוסר מהעגלה"
+  }
+}

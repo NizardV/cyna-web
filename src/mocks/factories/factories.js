@@ -155,7 +155,8 @@ export function makeProduct(overrides = {}) {
     // --- Internal fields (page produit + home) ---
     categoryId: faker.number.int({ min: 1, max: 999 }),
     slug: faker.helpers.slugify(productName).toLowerCase(),
-    isFeatured: faker.datatype.boolean({ probability: 0.2 }),
+    isFeatured:   faker.datatype.boolean({ probability: 0.2 }),
+    displayOrder: faker.number.int({ min: 1, max: 20 }),
     pricingPlans,
     images: Array.from({ length: 3 }, (_, i) =>
       `https://picsum.photos/seed/${prefix}-${i}/800/600`

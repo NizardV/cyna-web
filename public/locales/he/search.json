@@ -1,0 +1,42 @@
+{
+  "title": "קטלוג שירותים",
+  "results": "שירות {{count}}",
+  "results_plural": "{{count}} שירותים",
+  "resultsLabel": "תוצאות חיפוש",
+  "noResults": "אין תוצאות",
+  "noResultsHint": "נסה לשנות את קריטריוני החיפוש.",
+  "resetFilters": "אפס מסננים",
+  "sortBy": "מיין לפי",
+  "sort": {
+    "relevance": "מיין לפי: רלוונטיות",
+    "price_asc": "מחיר: הנמוך קודם",
+    "price_desc": "מחיר: הגבוה קודם",
+    "name": "שם א–ת"
+  },
+  "filter": {
+    "title": "סינון שירותים",
+    "search": "חיפוש",
+    "searchPlaceholder": "כותרת או תיאור...",
+    "categories": "קטגוריות",
+    "budget": "תקציב (חודשי)",
+    "budgetMax": "מקסימום",
+    "onlyAvailable": "זמין בלבד",
+    "apply": "הצג תוצאות"
+  },
+  "product": {
+    "available": "זמין",
+    "unavailable": "לא זמין",
+    "outOfStock": "אזל המלאי",
+    "from": "החל מ-",
+    "perMonth": "/חודש",
+    "perYear": "/שנה",
+    "perLifetime": "תשלום חד פעמי",
+    "details": "פרטים",
+    "solutions": "פתרונות"
+  },
+  "pagination": {
+    "previous": "הקודם",
+    "next": "הבא",
+    "page": "עמוד {{current}} מתוך {{total}}"
+  }
+}
