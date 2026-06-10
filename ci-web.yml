@@ -9,9 +9,13 @@ variables:
   - group: 'GHCR'
   - name: FULL_IMAGE
     value: 'ghcr.io/nizardv/cyna-frontend'
+
+  - name: envName
+    value: 'staging'
+
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - name: envName
-        value: 'production'
+        value: 'prod'
       - name: VITE_API_URL
         value: 'https://api.projet-cyna.fr'
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
