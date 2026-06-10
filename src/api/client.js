@@ -21,7 +21,7 @@ import { mockRegistry } from "../mocks/registry.js";
 // Config
 // ---------------------------------------------------------------------------
 
-const BASE_URL = import.meta.env.VITE_API_URL ?? "http://localhost:5000/api";
+const BASE_URL = "/api";
 const MOCK_ENABLED = import.meta.env.VITE_MOCK_API === "true";
 const MOCK_DELAY_MS = Number(import.meta.env.VITE_MOCK_DELAY ?? 400);
 
@@ -137,13 +137,11 @@ async function interceptMock(method, path, body, queryParams = {}) {
  * @returns {Promise<unknown>}
  */
 async function coreFetch(path, options = {}) {
-  const token = localStorage.getItem("cyna_token");
-
   const response = await fetch(`${BASE_URL}${path}`, {
     ...options,
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
   });

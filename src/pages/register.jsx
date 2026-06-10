@@ -17,11 +17,13 @@ const PASSWORD_RULES = [
   { id: "special", label: "password.special", test: (pwd) => /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd) },
 ];
 
-export function RegisterPage() {
+export function Register() {
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
-  const { login, setLoading } = useAuth();
-  const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
+  const { setLoading } = useAuth();
+
+  // ALIGNEMENT : Remplacement de fullName par firstName et lastName
+  const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", password: "" });
   const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
@@ -33,7 +35,9 @@ export function RegisterPage() {
   }));
 
   const isPasswordValid = passwordValidation.every((rule) => rule.satisfied);
-  const isFormValid = formData.fullName.trim() && formData.email.trim() && isPasswordValid;
+
+  // ALIGNEMENT : Validation mise à jour
+  const isFormValid = formData.firstName.trim() && formData.lastName.trim() && formData.email.trim() && isPasswordValid;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,14 +62,16 @@ export function RegisterPage() {
     setError("");
 
     try {
+      // ALIGNEMENT : Envoi direct du nouveau format de DTO propre
       const response = await registerUser({
-        fullName: formData.fullName,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
         email: formData.email,
-        password: formData.password,
+        password: formData.password
       });
-
-      login(response.user, response.token);
-      setSuccess(true);
+      if (response) {
+        setSuccess(true);
+      }
     } catch (err) {
       setError(err.response?.data?.message || t("register.error"));
     } finally {
@@ -102,23 +108,42 @@ export function RegisterPage() {
           <h1 className="text-center text-2xl font-bold mb-2">{t("register.title")}</h1>
           <p className="text-center text-gray-600 mb-6">
             {t("register.subtitle")}
-            <Link to="/login" className="text-[#7C3AED] font-semibold hover:underline">
+            <Link to="/login" className="text-[#7C3AED] font-semibold hover:underline ms-1">
               {t("register.subtitleLink")}
             </Link>
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="fullName">{t("register.fullName")}</Label>
-              <Input
-                id="fullName"
-                name="fullName"
-                type="text"
-                placeholder={t("register.fullNamePlaceholder")}
-                value={formData.fullName}
-                onChange={handleChange}
-                disabled={loading}
-              />
+
+            {/* ALIGNEMENT : Grille responsive pour Prénom et Nom côte à côte */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First name</Label>
+                <Input
+                  id="firstName"
+                  name="firstName"
+                  type="text"
+                  placeholder="John"
+                  value={formData.firstName}
+                  onChange={handleChange}
+                  disabled={loading}
+                  required
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last name</Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  placeholder="Doe"
+                  value={formData.lastName}
+                  onChange={handleChange}
+                  disabled={loading}
+                  required
+                />
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -131,6 +156,7 @@ export function RegisterPage() {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={loading}
+                required
               />
             </div>
 
@@ -145,6 +171,7 @@ export function RegisterPage() {
                 onChange={handleChange}
                 onFocus={handlePasswordFocus}
                 disabled={loading}
+                required
               />
               {showPasswordRules && formData.password && (
                 <div className="mt-3 space-y-2 rounded-lg bg-gray-50 p-3">
@@ -156,9 +183,8 @@ export function RegisterPage() {
                         <Circle className="h-4 w-4 text-gray-300" />
                       )}
                       <span
-                        className={`text-sm ${
-                          rule.satisfied ? "text-green-700" : "text-gray-600"
-                        }`}
+                        className={`text-sm ${rule.satisfied ? "text-green-700" : "text-gray-600"
+                          }`}
                       >
                         {t(rule.label)}
                       </span>

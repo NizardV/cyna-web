@@ -7,12 +7,12 @@
  * Correction : user.name → `${user.firstName} ${user.lastName}`
  */
 
-import { NavLink, useNavigate } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/api/auth.js"
+import { useAuth } from "@/hooks/use-auth"
 import { IconUser } from "../icons/IconUser"
 import { IconLogOut } from "../icons/IconLogOut"
 import { IconReceipt } from "../icons/IconReceipt"
@@ -59,21 +59,25 @@ const NAV_ITEMS = [
 
 /**
  * Navigation latérale du compte utilisateur.
- * @param {{ user?: object }} props  user = UserProfileDto | undefined
+ * @param {{ user?: { firstName?: string, lastName?: string, email?: string } }} props
  */
 export function AccountNav({ user }) {
-  const navigate = useNavigate()
+  // 🔄 ALIGNEMENT : On récupère la méthode logout centralisée de ton contexte
+  const { logout: contextLogout } = useAuth()
   const [loggingOut, setLoggingOut] = useState(false)
 
+  /**
+   * Déconnecte l'utilisateur via le contexte global.
+   */
   const handleLogout = async () => {
     setLoggingOut(true)
     try {
-      await logout()
-    } catch {
-      localStorage.removeItem("cyna_token")
+      // Éxécute le POST /auth/logout, détruit les cookies et vide l'état user
+      await contextLogout()
+    } catch (err) {
+      console.error("Échec de la déconnexion", err)
     } finally {
       setLoggingOut(false)
-      navigate("/")
     }
   }
 
@@ -96,7 +100,7 @@ export function AccountNav({ user }) {
         </Avatar>
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-foreground">
-            {getFullName(user)}
+            {user ? `${user.firstName} ${user.lastName}` : "Invité"}
           </p>
           <p className="truncate text-xs text-muted-foreground">
             {user?.email ?? "Non connecté"}
@@ -104,6 +108,7 @@ export function AccountNav({ user }) {
         </div>
       </div>
 
+      {/* Séparateur visuel */}
       <div className="mb-2 h-px bg-border" />
 
       {/* Liens */}
