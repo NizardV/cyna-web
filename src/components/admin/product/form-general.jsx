@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -5,10 +6,21 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
 const STATUS_VALUES = ["Active", "Inactive", "Archived"]
+const LANGS = ["fr", "en"]
 
 export function FormGeneral({ value, onChange }) {
   const { t } = useTranslation("admin")
+  const [lang, setLang] = useState("fr")
+
+  const setField = (base) => (e) =>
+    onChange({ ...value, [`${base}${lang === "fr" ? "Fr" : "En"}`]: e.target.value })
+
   const set = (field) => (e) => onChange({ ...value, [field]: e.target.value })
+
+  const nameFr = value.nameFr ?? ""
+  const nameEn = value.nameEn ?? ""
+  const descFr = value.descriptionFr ?? ""
+  const descEn = value.descriptionEn ?? ""
 
   return (
     <Card>
@@ -17,21 +29,43 @@ export function FormGeneral({ value, onChange }) {
       </CardHeader>
       <CardContent className="space-y-4">
 
+        <div className="flex items-center gap-1 p-1 bg-muted rounded-md w-fit">
+          {LANGS.map(l => (
+            <button
+              key={l}
+              type="button"
+              onClick={() => setLang(l)}
+              className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+                lang === l
+                  ? "bg-background text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t(`general.lang.${l}`)}
+            </button>
+          ))}
+        </div>
+
         <div className="space-y-1.5">
-          <Label>{t("general.name")} <span className="text-destructive">*</span></Label>
+          <Label>
+            {t("general.name")}
+            {lang === "fr" && <span className="text-destructive"> *</span>}
+          </Label>
           <Input
-            value={value.name}
-            onChange={set("name")}
+            key={`name-${lang}`}
+            value={lang === "fr" ? nameFr : nameEn}
+            onChange={setField("name")}
             placeholder={t("general.namePlaceholder")}
-            autoFocus
+            autoFocus={lang === "fr"}
           />
         </div>
 
         <div className="space-y-1.5">
           <Label>{t("general.description")}</Label>
           <Textarea
-            value={value.description}
-            onChange={set("description")}
+            key={`desc-${lang}`}
+            value={lang === "fr" ? descFr : descEn}
+            onChange={setField("description")}
             placeholder={t("general.descriptionPlaceholder")}
             rows={4}
           />

@@ -19,7 +19,7 @@ import { ArrowLeft } from "lucide-react"
 // État initial
 // ---------------------------------------------------------------------------
 
-const DEFAULT_GENERAL = { name: "", description: "", status: "Active" }
+const DEFAULT_GENERAL = { nameFr: "", nameEn: "", descriptionFr: "", descriptionEn: "", status: "Active" }
 const DEFAULT_MEDIA   = { imageUrl: "", categoryId: "", isFeatured: false, displayOrder: 1 }
 
 // ---------------------------------------------------------------------------
@@ -53,7 +53,13 @@ export function AdminProductForm() {
     if (isEdit) {
       getProduct(id)
         .then(p => {
-          setGeneral({ name: p.name ?? "", description: p.description ?? "", status: p.status ?? "Active" })
+          setGeneral({
+              nameFr: p.nameFr ?? p.name ?? "",
+              nameEn: p.nameEn ?? p.name ?? "",
+              descriptionFr: p.descriptionFr ?? p.description ?? "",
+              descriptionEn: p.descriptionEn ?? p.description ?? "",
+              status: p.status ?? "Active",
+            })
           setMedia({ imageUrl: p.imageUrl ?? "", categoryId: p.categoryId ?? "", isFeatured: p.isFeatured ?? false, displayOrder: p.displayOrder ?? 1 })
           setSpecs(Array.isArray(p.technicalSpecs) ? p.technicalSpecs : [])
           setPricing(pricingPlansToState(p.pricingPlans ?? []))
@@ -65,7 +71,7 @@ export function AdminProductForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    if (!general.name.trim()) { toast.error(t("form.errors.nameRequired")); return }
+    if (!general.nameFr.trim()) { toast.error(t("form.errors.nameRequired")); return }
 
     const pricingErrors = validatePricing(pricing, t)
     if (pricingErrors.length > 0) {
@@ -77,8 +83,15 @@ export function AdminProductForm() {
     try {
       // Destructure avant le spread pour éviter d'envoyer les valeurs brutes (string) à l'API
       const { categoryId: rawCategoryId, displayOrder: rawDisplayOrder, ...restMedia } = media
+      const { nameFr, nameEn, descriptionFr, descriptionEn, ...restGeneral } = general
       const payload = {
-        ...general,
+        ...restGeneral,
+        nameFr,
+        nameEn,
+        descriptionFr,
+        descriptionEn,
+        name: nameFr || nameEn,
+        description: descriptionFr || descriptionEn,
         ...restMedia,
         categoryId:    rawCategoryId ? parseInt(rawCategoryId, 10) : undefined,
         displayOrder:  restMedia.isFeatured ? (Number(rawDisplayOrder) || 1) : undefined,
