@@ -46,3 +46,30 @@ stages:
 
     - task: SonarCloudPublish@3
       displayName: 'SonarCloud : Publish Quality Gate'
+      inputs:
+        pollingTimeoutSec: '300'
+      continueOnError: true
+
+    # ── 2. Login GHCR ──────────────────────────────────────────────
+    - task: Docker@2
+      displayName: 'Login GHCR'
+      inputs:
+        command: login
+        containerRegistry: 'GHCR-Cyna-Connection'
+
+    # ── 3. Build image avec VITE_API_URL ───────────────────────────
+    - script: |
+        docker build \
+          --build-arg VITE_API_URL=$(VITE_API_URL) \
+          -t $(FULL_IMAGE):$(envName) \
+          -t $(FULL_IMAGE):sha-$(Build.SourceVersion) \
+          -t $(FULL_IMAGE):build-$(Build.BuildId) \
+          .
+      displayName: 'Docker Build [ $(envName) ]'
+
+    # ── 4. Push → GHCR ─────────────────────────────────────────────
+    - script: |
+        docker push $(FULL_IMAGE):$(envName)
+        docker push $(FULL_IMAGE):sha-$(Build.SourceVersion)
+        docker push $(FULL_IMAGE):build-$(Build.BuildId)
+      displayName: 'Docker Push → GHCR [ $(envName) ]'
