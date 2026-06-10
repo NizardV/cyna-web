@@ -5,6 +5,7 @@
  */
 
 import { useEffect, useState } from "react"
+import { useAuth } from "@/hooks/use-auth"
 import { Link } from "react-router-dom"
 import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
@@ -62,10 +63,12 @@ function ProfileSkeleton() {
 export function Profile() {
   const { t } = useTranslation("profile")
 
+  const {setUser: setGlobalUser } = useAuth()
+
   const [user, setUser] = useState(null)
   const [loadingUser, setLoadingUser] = useState(true)
 
-  const [profileForm, setProfileForm] = useState({ name: "", email: "" })
+  const [profileForm, setProfileForm] = useState({ firstName: "", lastName: "", email: "" })
   const [profileSaving, setProfileSaving] = useState(false)
 
   const [passwordForm, setPasswordForm] = useState({
@@ -76,15 +79,18 @@ export function Profile() {
   const [subscriptions, setSubscriptions] = useState([])
   const [loadingSubs, setLoadingSubs] = useState(true)
 
-  // Cancel dialog state
-  const [cancelTarget, setCancelTarget] = useState(null)   // the subscription being cancelled
+  const [cancelTarget, setCancelTarget] = useState(null)
   const [cancelling, setCancelling] = useState(false)
 
   useEffect(() => {
     getMe()
       .then((data) => {
         setUser(data)
-        setProfileForm({ name: data.name ?? "", email: data.email ?? "" })
+        setProfileForm({
+          firstName: data.firstName ?? "",
+          lastName: data.lastName ?? "",
+          email: data.email ?? ""
+        })
         setLoadingUser(false)
       })
       .catch(() => setLoadingUser(false))
@@ -103,6 +109,11 @@ export function Profile() {
     try {
       const updated = await updateProfile(profileForm)
       setUser(updated)
+
+      if (setGlobalUser) {
+        setGlobalUser(updated)
+      }
+
       toast.success(t("personalInfo.success"))
     } catch (err) {
       toast.error(err.message || t("personalInfo.error"))
@@ -182,17 +193,33 @@ export function Profile() {
                 <CardContent className="pt-4">
                   <form onSubmit={handleProfileSubmit}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+
+                      {/* CHAMP 1 : Prénom (First Name) */}
                       <div className="flex flex-col gap-1.5">
-                        <Label htmlFor="name">{t("personalInfo.fullName")}</Label>
+                        <Label htmlFor="firstName">First name</Label>
                         <Input
-                          id="name"
+                          id="firstName"
                           type="text"
-                          value={profileForm.name}
-                          onChange={(e) => setProfileForm((f) => ({ ...f, name: e.target.value }))}
+                          value={profileForm.firstName}
+                          onChange={(e) => setProfileForm((f) => ({ ...f, firstName: e.target.value }))}
                           required
                         />
                       </div>
+
+                      {/* CHAMP 2 : Nom (Last Name) */}
                       <div className="flex flex-col gap-1.5">
+                        <Label htmlFor="lastName">Last name</Label>
+                        <Input
+                          id="lastName"
+                          type="text"
+                          value={profileForm.lastName}
+                          onChange={(e) => setProfileForm((f) => ({ ...f, lastName: e.target.value }))}
+                          required
+                        />
+                      </div>
+
+                      {/* CHAMP 3 : Adresse Email */}
+                      <div className="flex flex-col gap-1.5 md:col-span-2">
                         <Label htmlFor="email">{t("personalInfo.email")}</Label>
                         <div className="flex">
                           <Input
@@ -210,6 +237,7 @@ export function Profile() {
                           )}
                         </div>
                       </div>
+
                       <div className="flex justify-end md:col-span-2">
                         <Button type="submit" disabled={profileSaving}>
                           {profileSaving ? t("personalInfo.saving") : t("personalInfo.save")}
