@@ -52,7 +52,11 @@
     "namePlaceholder": "Ex : Cyna SOC Manager",
     "description": "Description",
     "descriptionPlaceholder": "Décrivez le produit en quelques phrases…",
-    "status": "Statut"
+    "status": "Statut",
+    "lang": {
+      "fr": "🇫🇷 Français",
+      "en": "🇬🇧 English"
+    }
   },
   "media": {
     "title": "Médias & Catégorie",
