@@ -17,7 +17,9 @@ variables:
     value: 'ghcr.io/nizardv/cyna-frontend'
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
       - name: envName
-        value: 'production'
+        value: 'prod'
+      - name: targetEnv
+        value: 'PROD'
       - name: WEB_PORT
         value: '3000'
       - name: VITE_API_URL
@@ -25,6 +27,8 @@ variables:
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
       - name: envName
         value: 'staging'
+      - name: targetEnv
+        value: 'DEV'
       - name: WEB_PORT
         value: '3001'
       - name: VITE_API_URL
@@ -35,7 +39,7 @@ stages:
   displayName: 'CD Cloud — Deploy OVH [ $(envName) ]'
   jobs:
   - deployment: Deploy
-    environment: ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}PROD${{ else }}DEV${{ end }}
+    environment: $(targetEnv)
     strategy:
       runOnce:
         deploy:
