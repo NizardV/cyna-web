@@ -10,7 +10,7 @@ import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/hooks/use-auth";
 import { loginUser } from "@/api/auth";
 
-export function LoginPage() {
+export function Login() {
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const { login, setLoading } = useAuth();
@@ -44,16 +44,8 @@ export function LoginPage() {
     setError("");
 
     try {
-      const response = await loginUser({
-        email: formData.email,
-        password: formData.password,
-      });
-
-      login(response.user, response.token);
-
-      if (rememberMe) {
-        localStorage.setItem("rememberMe", "true");
-      }
+      const response = await loginUser({ email: formData.email, password: formData.password });
+      login();
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || t("login.error"));
