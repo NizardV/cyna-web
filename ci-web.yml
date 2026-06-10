@@ -44,12 +44,6 @@ stages:
     - task: SonarCloudAnalyze@3
       displayName: 'SonarCloud : Analyze'
 
-    - task: SonarCloudPublish@3
-      displayName: 'SonarCloud : Publish Quality Gate'
-      inputs:
-        pollingTimeoutSec: '300'
-      continueOnError: true
-
     # ── 2. Login GHCR ──────────────────────────────────────────────
     - task: Docker@2
       displayName: 'Login GHCR'
