@@ -2,7 +2,7 @@ trigger: none
 
 resources:
   pipelines:
-  - pipeline: ci-web
+  - pipeline: 'ci-web'
     source: 'Cyna-Web CI'
     trigger:
       branches:
@@ -15,35 +15,36 @@ variables:
   - group: 'GHCR'
   - name: FULL_IMAGE
     value: 'ghcr.io/nizardv/cyna-frontend'
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
-      - name: envName
-        value: 'prod'
-      - name: targetEnv
-        value: 'PROD'
-      - name: WEB_PORT
-        value: '3000'
-      - name: VITE_API_URL
-        value: 'https://api.projet-cyna.fr'
-  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
-      - name: envName
-        value: 'staging'
-      - name: targetEnv
-        value: 'DEV'
-      - name: WEB_PORT
-        value: '3001'
-      - name: VITE_API_URL
-        value: 'https://api.staging.projet-cyna.fr'
+  - name: RAW_BRANCH
+    value: $(resources.pipeline['ci-web'].sourceBranch)
 
 stages:
 - stage: CD_Cloud
-  displayName: 'CD Cloud — Deploy OVH [ $(envName) ]'
+  displayName: 'CD Cloud — Deploy OVH'
   jobs:
   - deployment: Deploy
-    environment: $(targetEnv)
+    environment: 'OVH-Cloud'
     strategy:
       runOnce:
         deploy:
           steps:
+          # ── STEP 1 : Calcul des variables en Bash ──
+          - bash: |
+              BRANCH_NAME=$(echo "$(RAW_BRANCH)" | sed 's|refs/heads/||')
+              echo "Pipeline déclenché par la branche : $BRANCH_NAME"
+              
+              if [ "$BRANCH_NAME" = "main" ]; then
+                echo "##vso[task.setvariable variable=envName]prod"
+                echo "##vso[task.setvariable variable=WEB_PORT]3000"
+                echo "##vso[task.setvariable variable=VITE_API_URL]https://api.projet-cyna.fr"
+              else
+                echo "##vso[task.setvariable variable=envName]staging"
+                echo "##vso[task.setvariable variable=WEB_PORT]3001"
+                echo "##vso[task.setvariable variable=VITE_API_URL]https://api.staging.projet-cyna.fr"
+              fi
+            displayName: 'Calcul dynamique de l’environnement cible'
+
+          # ── STEP 2 : Déploiement SSH ──
           - task: SSH@0
             displayName: 'Deploy Frontend sur OVH'
             inputs:
@@ -52,6 +53,7 @@ stages:
               inline: |
                 echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
 
+                echo "─── Pull & Recréation du conteneur Web ($(envName)) sur le port $(WEB_PORT) ───"
                 docker pull $(FULL_IMAGE):$(envName)
                 docker stop cyna-web-$(envName) 2>/dev/null || true
                 docker rm   cyna-web-$(envName) 2>/dev/null || true
