@@ -13,12 +13,13 @@ import { Register } from "./pages/register"
 import { Cart } from "./pages/cart"
 import { Checkout } from "./pages/checkout"
 import { OrderConfirmation } from "./pages/order-confirmation"
-import { Catalog } from "./pages/catalog"
+import { Search } from "./pages/search"
 import { Product } from "./pages/product"
 import { Contact } from "./pages/contact"
 import { CGU } from "./pages/cgu"
 import { MentionsLegales } from "./pages/mentions-legales"
 import { Privacy } from "./pages/privacy"
+import { AdminCategories } from "./pages/admin/categories"
 import { Unauthorized } from "./pages/specials/unauthorized"
 import NotFound from "./pages/specials/not-found"
 import Loading from "./pages/specials/loading"
@@ -35,7 +36,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/loading" element={<Loading />} />
-          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/search" element={<Search />} />
           <Route path="/account/profile" element={<Profile />} />
           <Route path="/account/orders" element={<OrderHistory />} />
           <Route path="/cart" element={<Cart />} />
@@ -48,6 +49,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/downloads" element={<Downloads />} />
           <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/admin/categories" element={<AdminCategories />} />
 
           {/* ── Backoffice admin ── */}
           <Route path="/admin/products" element={<AdminProducts />} />

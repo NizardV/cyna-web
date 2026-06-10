@@ -1,7 +1,10 @@
 /**
- * @description Navigation latérale du compte utilisateur.
- * Affiche les liens Profil & Sécurité, Mes Abonnements SaaS, Facturation & Paiement
- * et Se déconnecter. Correspond au panneau visible dans la maquette.
+ * @file components/ui/account/account-nav.jsx
+ *
+ * Aligné sur UserProfileDto (v1) :
+ *   { id, email, firstName, lastName, role, isEmailVerified, createdAt }
+ *
+ * Correction : user.name → `${user.firstName} ${user.lastName}`
  */
 
 import { NavLink } from "react-router-dom"
@@ -19,30 +22,39 @@ import { IconReceipt } from "../icons/IconReceipt"
 // ---------------------------------------------------------------------------
 
 /**
- * Génère les initiales d'un nom complet (ex: "Jean Dupont" → "JD").
- * @param {string} name
+ * Génère les initiales depuis firstName + lastName.
+ * @param {string} firstName
+ * @param {string} lastName
  * @returns {string}
  */
-function getInitials(name = "") {
-  return name
-    .split(" ")
-    .slice(0, 2)
-    .map((w) => w[0]?.toUpperCase() ?? "")
-    .join("")
+function getInitials(firstName = "", lastName = "") {
+  const first = firstName[0]?.toUpperCase() ?? ""
+  const last  = lastName[0]?.toUpperCase() ?? ""
+  return `${first}${last}` || "?"
+}
+
+/**
+ * Nom complet affiché.
+ * @param {{ firstName?: string, lastName?: string }} user
+ * @returns {string}
+ */
+function getFullName(user) {
+  if (!user) return "Invité"
+  const parts = [user.firstName, user.lastName].filter(Boolean)
+  return parts.length ? parts.join(" ") : "Invité"
 }
 
 // ---------------------------------------------------------------------------
-// Éléments de navigation
+// Navigation items
 // ---------------------------------------------------------------------------
 
-/** @type {{ to: string, label: string, Icon: React.FC }[]} */
 const NAV_ITEMS = [
-  { to: "/account/profile", label: "Profil & Sécurité", Icon: IconUser },
-  { to: "/account/orders", label: "Facturation & Paiement", Icon: IconReceipt },
+  { to: "/account/profile", label: "Profil & Sécurité",     Icon: IconUser    },
+  { to: "/account/orders",  label: "Facturation & Paiement", Icon: IconReceipt },
 ]
 
 // ---------------------------------------------------------------------------
-// Composant principal
+// Composant
 // ---------------------------------------------------------------------------
 
 /**
@@ -74,7 +86,7 @@ export function AccountNav({ user }) {
       className="flex w-full flex-col gap-0.5 md:w-52 md:shrink-0"
       aria-label="Navigation du compte"
     >
-      {/* En-tête utilisateur - Affiche un fallback si user n'existe pas */}
+      {/* En-tête utilisateur */}
       <div className="mb-3 flex items-center gap-3 px-2 py-2">
         <Avatar size="default">
           <AvatarFallback className={cn(
@@ -83,7 +95,7 @@ export function AccountNav({ user }) {
               ? "bg-primary/10 text-primary"
               : "bg-muted text-muted-foreground"
           )}>
-            {user ? getInitials(`${user.firstName} ${user.lastName}`) : "?"}
+            {user ? getInitials(user.firstName, user.lastName) : "?"}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">
@@ -91,7 +103,7 @@ export function AccountNav({ user }) {
             {user ? `${user.firstName} ${user.lastName}` : "Invité"}
           </p>
           <p className="truncate text-xs text-muted-foreground">
-            {user?.email || "Non connecté"}
+            {user?.email ?? "Non connecté"}
           </p>
         </div>
       </div>
@@ -99,7 +111,7 @@ export function AccountNav({ user }) {
       {/* Séparateur visuel */}
       <div className="mb-2 h-px bg-border" />
 
-      {/* Liens de navigation */}
+      {/* Liens */}
       {NAV_ITEMS.map(({ to, label, Icon }) => (
         <NavLink
           key={to}
@@ -122,10 +134,8 @@ export function AccountNav({ user }) {
         </NavLink>
       ))}
 
-      {/* Séparateur avant déconnexion */}
       <div className="my-2 h-px bg-border" />
 
-      {/* Bouton déconnexion */}
       <Button
         onClick={handleLogout}
         disabled={loggingOut}

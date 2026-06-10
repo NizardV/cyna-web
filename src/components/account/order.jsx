@@ -1,3 +1,17 @@
+/**
+ * @file components/ui/account/order.jsx
+ *
+ * Aligné sur OrderSummaryDto (v1) :
+ *   { id, status, totalAmount, createdAt, invoiceUrl,
+ *     items: OrderItemDto[] }
+ *
+ * OrderItemDto :
+ *   { id, productNameSnapshot, planNameSnapshot, quantityUsers, quantityDevices }
+ *
+ * Les champs inexistants du DTO (productName, total, type, paymentMethod…)
+ * sont calculés ou omis ici.
+ */
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
@@ -7,28 +21,54 @@ import { formatDate, formatPrice } from "@/lib/utils"
 import { useTranslation } from "react-i18next"
 
 // ---------------------------------------------------------------------------
-// StatusBadge
+// Helpers — status PascalCase → badge style
 // ---------------------------------------------------------------------------
 
 const STATUS_STYLES = {
-  active:     "bg-green-100 text-green-800",
-  terminated: "bg-gray-100 text-gray-800",
-  refunded:   "bg-red-100 text-red-800",
-  paid:       "bg-green-100 text-green-800",
-  pending:    "bg-amber-100 text-amber-800",
-  failed:     "bg-red-100 text-red-800",
+  // PascalCase depuis l'enum .NET
+  Paid:     "bg-green-100 text-green-800",
+  Pending:  "bg-amber-100 text-amber-800",
+  Failed:   "bg-red-100 text-red-800",
+  Refunded: "bg-blue-100 text-blue-800",
+  // Fallback lowercase pour compatibilité
+  paid:     "bg-green-100 text-green-800",
+  pending:  "bg-amber-100 text-amber-800",
+  failed:   "bg-red-100 text-red-800",
+  refunded: "bg-blue-100 text-blue-800",
+}
+
+/**
+ * Résume une liste d'OrderItemDto en une ligne lisible.
+ * Ex: "Cyna EDR Pro × 3 users, Shield XDR Suite"
+ * @param {object[]} items
+ * @returns {string}
+ */
+function summarizeItems(items = []) {
+  if (!items.length) return "—"
+  return items
+    .map((item) => {
+      const parts = [item.productNameSnapshot]
+      if (item.planNameSnapshot) parts.push(`(${item.planNameSnapshot})`)
+      const qty = []
+      if (item.quantityUsers > 0)   qty.push(`${item.quantityUsers}u`)
+      if (item.quantityDevices > 0) qty.push(`${item.quantityDevices}app`)
+      if (qty.length) parts.push(`× ${qty.join(", ")}`)
+      return parts.join(" ")
+    })
+    .join(" • ")
 }
 
 // ---------------------------------------------------------------------------
-// OrderRow — inside a Card
+// OrderRow
 // ---------------------------------------------------------------------------
 
 function OrderRow({ order, isLast }) {
   const { t } = useTranslation("order-history")
 
-  const paymentLine = order.paymentLast4
-    ? t("paidViaCard", { method: order.paymentMethod, last4: order.paymentLast4 })
-    : t("paidVia", { method: order.paymentMethod })
+  // Nom du produit principal = premier item ou "—"
+  const primaryName = order.items?.[0]?.productNameSnapshot ?? "—"
+  // Résumé des items
+  const itemsSummary = summarizeItems(order.items)
 
   return (
     <div
@@ -37,32 +77,44 @@ function OrderRow({ order, isLast }) {
         !isLast && "border-b border-border"
       )}
     >
-      {/* Left: name + meta */}
-      <div className="flex-1">
+      {/* Gauche : nom + statut + items */}
+      <div className="flex-1 min-w-0">
         <div className="mb-1 flex flex-wrap items-center gap-2">
-          <span className="text-xs font-bold text-foreground">{order.productName}</span>
-          <Badge className={STATUS_STYLES[order.status] ?? STATUS_STYLES.terminated} >
+          <span className="text-xs font-bold text-foreground truncate">{primaryName}</span>
+          <Badge className={STATUS_STYLES[order.status] ?? "bg-gray-100 text-gray-800"}>
             {t(`status.${order.status}`, { defaultValue: order.status })}
           </Badge>
         </div>
         <p className="text-xs text-muted-foreground">
-          {t("orderedOn", { date: formatDate(order.createdAt) })} • {order.type}
+          {t("orderedOn", { date: formatDate(order.createdAt) })}
         </p>
+        {order.items?.length > 1 && (
+          <p className="mt-0.5 text-xs text-muted-foreground truncate max-w-sm" title={itemsSummary}>
+            {itemsSummary}
+          </p>
+        )}
       </div>
 
-      {/* Center: amount */}
-      <div className="text-right">
-        <p className="text-sm font-extrabold text-foreground">{formatPrice(order.total)}</p>
-        <p className="text-xs text-muted-foreground">{paymentLine}</p>
+      {/* Centre : montant depuis totalAmount */}
+      <div className="text-right shrink-0">
+        <p className="text-sm font-extrabold text-foreground">
+          {order.totalAmount != null ? formatPrice(order.totalAmount) : "—"}
+        </p>
+        {order.items?.length > 0 && (
+          <p className="text-xs text-muted-foreground">
+            {t("itemCount", { count: order.items.length, defaultValue: `${order.items.length} article(s)` })}
+          </p>
+        )}
       </div>
 
-      {/* Right: actions */}
-      <div className="flex gap-2">
+      {/* Droite : facture */}
+      <div className="flex gap-2 shrink-0">
         {order.invoiceUrl && (
           <Button variant="secondary" size="sm" asChild>
             <a href={order.invoiceUrl} target="_blank" rel="noopener noreferrer">
               <svg className="h-3.5 w-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
               </svg>
               {t("invoicePdf")}
             </a>
@@ -74,7 +126,7 @@ function OrderRow({ order, isLast }) {
 }
 
 // ---------------------------------------------------------------------------
-// OrderGroup — one Card per year
+// OrderGroup — une Card par année
 // ---------------------------------------------------------------------------
 
 export function OrderGroup({ year, orders, dimmed }) {
@@ -97,7 +149,7 @@ export function OrderGroup({ year, orders, dimmed }) {
 }
 
 // ---------------------------------------------------------------------------
-// OrderHistorySkeleton
+// Squelette
 // ---------------------------------------------------------------------------
 
 export function OrderHistorySkeleton() {
@@ -119,7 +171,6 @@ export function OrderHistorySkeleton() {
                   </div>
                   <Skeleton className="h-5 w-20" />
                   <div className="flex gap-2">
-                    <Skeleton className="h-7 w-16" />
                     <Skeleton className="h-7 w-24" />
                   </div>
                 </div>

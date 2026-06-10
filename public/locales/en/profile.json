@@ -25,6 +25,13 @@
     "errorLength": "Password must be at least 8 characters.",
     "error": "An error occurred."
   },
+  "language": {
+    "title": "Language",
+    "description": "Choose the display language for the interface.",
+    "success": "Language updated.",
+    "save": "Save",
+    "saving": "Saving…"
+  },
   "subscriptions": {
     "title": "Active SaaS Subscriptions",
     "description": "Manage your current licenses.",

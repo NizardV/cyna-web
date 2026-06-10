@@ -6,7 +6,7 @@ export function Search() {
   const navigate = useNavigate()
 
   return (
-    <Button variant="outline" onClick={() => navigate("/catalog")}>
+    <Button variant="outline" onClick={() => navigate("/search")}>
       <SearchIcon className="text-muted-foreground" />
     </Button>
   )

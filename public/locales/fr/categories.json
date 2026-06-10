@@ -1,0 +1,83 @@
+{
+  "title": "Catégories",
+  "subtitle": "Gérez les catégories du catalogue produit.",
+  "newCategory": "Nouvelle catégorie",
+  "counter": "{{count}} catégorie",
+  "counter_plural": "{{count}} catégories",
+  "counterFor": "{{count}} catégorie pour « {{search}} »",
+  "counterFor_plural": "{{count}} catégories pour « {{search}} »",
+  "search": {
+    "placeholder": "Rechercher par nom, slug…"
+  },
+  "table": {
+    "image": "Image",
+    "name": "Nom",
+    "slug": "Slug",
+    "description": "Description",
+    "products": "Produits",
+    "order": "Ordre",
+    "actions": "Actions"
+  },
+  "empty": {
+    "noResults": "Aucune catégorie trouvée.",
+    "clearSearch": "Effacer la recherche"
+  },
+  "actions": {
+    "edit": "Modifier",
+    "delete": "Supprimer"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {{current}} sur {{total}}"
+  },
+  "form": {
+    "name": "Nom",
+    "nameRequired": "*",
+    "namePlaceholder": "ex. EDR, SOC, Zero Trust…",
+    "nameError": "Le nom est requis.",
+    "slug": "Slug",
+    "slugHint": "(auto-généré si vide)",
+    "slugPlaceholder": "ex. zero-trust",
+    "description": "Description",
+    "descriptionPlaceholder": "Courte description de la catégorie…",
+    "imageUrl": "URL de l'image",
+    "imageUrlPlaceholder": "https://…",
+    "displayOrder": "Ordre d'affichage"
+  },
+  "dialogs": {
+    "create": {
+      "title": "Nouvelle catégorie",
+      "description": "Renseignez les informations de la nouvelle catégorie.",
+      "cancel": "Annuler",
+      "submit": "Créer",
+      "submitting": "Création…"
+    },
+    "edit": {
+      "title": "Modifier la catégorie",
+      "description": "Modifiez les champs souhaités puis enregistrez.",
+      "cancel": "Annuler",
+      "submit": "Enregistrer",
+      "submitting": "Enregistrement…"
+    },
+    "delete": {
+      "title": "Supprimer la catégorie",
+      "description": "Voulez-vous vraiment supprimer <strong>{{name}}</strong> ?",
+      "warningProducts_one": "Cette catégorie contient {{count}} produit. Cette action est irréversible.",
+      "warningProducts_other": "Cette catégorie contient {{count}} produits. Cette action est irréversible.",
+      "warningNoProducts": "Cette action est irréversible.",
+      "cancel": "Annuler",
+      "submit": "Supprimer",
+      "submitting": "Suppression…"
+    }
+  },
+  "toast": {
+    "created": "Catégorie « {{name}} » créée.",
+    "updated": "Catégorie « {{name}} » mise à jour.",
+    "deleted": "Catégorie « {{name}} » supprimée.",
+    "loadError": "Impossible de charger les catégories.",
+    "createError": "Erreur lors de la création.",
+    "updateError": "Erreur lors de la mise à jour.",
+    "deleteError": "Erreur lors de la suppression."
+  }
+}
