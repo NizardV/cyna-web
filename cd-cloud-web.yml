@@ -1,0 +1,59 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: ci-web
+    source: 'Cyna-Web CI'
+    trigger:
+      branches:
+        include: [ "main", "dev" ]
+
+pool:
+  name: 'CyanPool'
+
+variables:
+  - group: 'GHCR'
+  - name: FULL_IMAGE
+    value: 'ghcr.io/nizardv/cyna-frontend'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+      - name: envName
+        value: 'production'
+      - name: WEB_PORT
+        value: '3000'
+      - name: VITE_API_URL
+        value: 'https://api.projet-cyna.fr'
+  - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
+      - name: envName
+        value: 'staging'
+      - name: WEB_PORT
+        value: '3001'
+      - name: VITE_API_URL
+        value: 'https://api.staging.projet-cyna.fr'
+
+stages:
+- stage: CD_Cloud
+  displayName: 'CD Cloud — Deploy OVH [ $(envName) ]'
+  jobs:
+  - deployment: Deploy
+    environment: ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}PROD${{ else }}DEV${{ end }}
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          - task: SSH@0
+            displayName: 'Deploy Frontend sur OVH'
+            inputs:
+              sshEndpoint: 'OVH-SSH-Connection'
+              runOptions: 'inline'
+              inline: |
+                echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
+
+                docker pull $(FULL_IMAGE):$(envName)
+                docker stop cyna-web-$(envName) 2>/dev/null || true
+                docker rm   cyna-web-$(envName) 2>/dev/null || true
+
+                docker run -d \
+                  --name cyna-web-$(envName) \
+                  --restart unless-stopped \
+                  -p 127.0.0.1:$(WEB_PORT):80 \
+                  $(FULL_IMAGE):$(envName)
