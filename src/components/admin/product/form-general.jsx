@@ -9,7 +9,7 @@ const STATUS_VALUES = ["Active", "Inactive", "Archived"]
 const LANGS = ["fr", "en"]
 
 export function FormGeneral({ value, onChange }) {
-  const { t } = useTranslation("admin")
+  const { t } = useTranslation("admin-products")
   const [lang, setLang] = useState("fr")
 
   const setField = (base) => (e) =>

@@ -18,7 +18,7 @@ function isValidUrl(url) {
 }
 
 export function FormMedia({ value, onChange, categories }) {
-  const { t } = useTranslation("admin")
+  const { t } = useTranslation("admin-products")
   const [urlError, setUrlError] = useState(false)
 
   const set = (field) => (e) => {

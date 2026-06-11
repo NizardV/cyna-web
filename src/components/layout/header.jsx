@@ -2,11 +2,13 @@ import { useState } from "react";
 import { User, Lock, ShoppingCart, Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/use-auth";
+import { useTranslation } from "react-i18next";
 import { LangSwitcher } from "./lang-switcher";
 import { Search } from "./search";
 
 export function Header({ hideNav = false, hideUserSection = false }) {
   const { user } = useAuth();
+  const { t } = useTranslation("common");
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -30,13 +32,13 @@ export function Header({ hideNav = false, hideUserSection = false }) {
         {!hideNav && (
           <nav className="hidden md:flex items-center gap-6 shrink-0">
             <Link to="/" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              Accueil
+              {t("nav.home")}
             </Link>
             <Link to="/search" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              Catalogue
+              {t("nav.catalog")}
             </Link>
             <Link to="/contact" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              Contact
+              {t("nav.contact")}
             </Link>
           </nav>
         )}
@@ -44,7 +46,6 @@ export function Header({ hideNav = false, hideUserSection = false }) {
         {/* Droite : Actions */}
         <div className="flex items-center gap-2 flex-1 justify-end">
 
-          {/* Sélecteur de langue — toujours visible */}
           <LangSwitcher />
 
           {!hideUserSection && (
@@ -74,7 +75,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
                     className="hidden md:inline-flex items-center gap-2 rounded-lg bg-[#7C3AED] px-3 py-2 text-sm font-medium text-white transition hover:bg-[#6D28D9]"
                   >
                     <Lock className="h-4 w-4" />
-                    Espace Client
+                    {t("nav.clientArea")}
                   </Link>
                 </>
               )}
@@ -86,7 +87,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
             <button
               className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
               onClick={() => setMenuOpen((o) => !o)}
-              aria-label="Menu"
+              aria-label={t("nav.home")}
             >
               {menuOpen ? <X className="h-5 w-5 text-gray-700" /> : <Menu className="h-5 w-5 text-gray-700" />}
             </button>
@@ -102,20 +103,20 @@ export function Header({ hideNav = false, hideUserSection = false }) {
           </div>
           <nav className="flex flex-col gap-1 pt-1">
             <Link to="/" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-              Accueil
+              {t("nav.home")}
             </Link>
             <Link to="/catalog" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-              Catalogue
+              {t("nav.catalog")}
             </Link>
             <Link to="/contact" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-              Contact
+              {t("nav.contact")}
             </Link>
           </nav>
           {!hideUserSection && !user && (
             <div className="mt-3 border-t border-gray-100 pt-3">
               <Link to="/login" onClick={() => setMenuOpen(false)} className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#7C3AED] px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#6D28D9]">
                 <Lock className="h-4 w-4" />
-                Espace Client
+                {t("nav.clientArea")}
               </Link>
             </div>
           )}

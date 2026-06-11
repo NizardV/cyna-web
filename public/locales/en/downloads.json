@@ -1,0 +1,10 @@
+{
+  "title": "Android Application",
+  "badge": "Android",
+  "appName": "CYNA Application",
+  "description": "Download the CYNA app on your Android device.",
+  "downloadBtn": "Download APK",
+  "installNote": "Remember to enable",
+  "unknownSources": "Unknown Sources",
+  "installPath": "in Settings → Security before installing."
+}

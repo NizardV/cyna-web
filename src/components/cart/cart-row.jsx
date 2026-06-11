@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatPrice } from "@/lib/utils";
-import { findTier, UnitType } from "@/lib/pricing";
+import { findTier, UnitType } from "@/lib/pricing-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -11,6 +11,7 @@ export function lineTotal(item) {
 
 export function CartRow({ item, onUsersChange, onDevicesChange, onRemove }) {
   const { t } = useTranslation("cart");
+  const { t: tc } = useTranslation("common");
   const [updating, setUpdating] = useState(false);
 
   const isOverLimitUsers   = item.quantityUsers   > item.maxUsersCheckout;
@@ -82,8 +83,12 @@ export function CartRow({ item, onUsersChange, onDevicesChange, onRemove }) {
 
         <div className="flex px-2">
           {isQuoteRequired
-            ? <span className="text-xs text-orange-400 tabular-nums flex-1 text-right">Sur devis</span>
-            : <span className="text-xs text-muted-foreground tabular-nums flex-1 text-right">{formatPrice(total)}</span>
+            ? <span className="text-xs text-orange-400 tabular-nums flex-1 text-right">
+                {tc("product.onQuote")}
+              </span>
+            : <span className="text-xs text-muted-foreground tabular-nums flex-1 text-right">
+                {formatPrice(total)}
+              </span>
           }
         </div>
       </div>

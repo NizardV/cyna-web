@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { cn, formatPrice } from "@/lib/utils";
-import { UnitType } from "@/lib/pricing";
+import { UnitType } from "@/lib/pricing-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { addToCart } from "@/api/cart";
@@ -22,6 +22,7 @@ export function ProductPricing({
   isAvailable,
 }) {
   const { t } = useTranslation("product");
+  const { t: tc } = useTranslation("common");
   const navigate = useNavigate();
 
   const hasUserTiers   = currentPlan?.pricingTiers?.some(t => t.unitType === UnitType.USER);
@@ -55,21 +56,23 @@ export function ProductPricing({
         {hasUserTiers && (
           <QuantityRow
             label={t("users")}
-            sublabel={tierUser ? `${formatPrice(tierUser.unitPrice)} / utilisateur` : null}
+            sublabel={tierUser ? `${formatPrice(tierUser.unitPrice)}${tc("product.perUser")}` : null}
             quantity={quantityUsers}
             onDecrement={() => onUsersChange(q => Math.max(0, q - 1))}
             onIncrement={() => onUsersChange(q => q + 1)}
             isOverLimit={quantityUsers > currentPlan.maxUsersCheckout}
+            overLimitLabel={t("overLimit")}
           />
         )}
         {hasDeviceTiers && (
           <QuantityRow
             label={t("devices")}
-            sublabel={tierDevice ? `${formatPrice(tierDevice.unitPrice)} / appareil` : null}
+            sublabel={tierDevice ? `${formatPrice(tierDevice.unitPrice)}${tc("product.perDevice")}` : null}
             quantity={quantityDevices}
             onDecrement={() => onDevicesChange(q => Math.max(0, q - 1))}
             onIncrement={() => onDevicesChange(q => q + 1)}
             isOverLimit={quantityDevices > currentPlan.maxDevicesCheckout}
+            overLimitLabel={t("overLimit")}
           />
         )}
       </div>
@@ -115,7 +118,7 @@ export function ProductPricing({
   );
 }
 
-function QuantityRow({ label, sublabel, quantity, onDecrement, onIncrement, isOverLimit }) {
+function QuantityRow({ label, sublabel, quantity, onDecrement, onIncrement, isOverLimit, overLimitLabel }) {
   return (
     <div className={cn(
       "flex items-center justify-between p-3 rounded-lg border transition-colors",
@@ -126,7 +129,7 @@ function QuantityRow({ label, sublabel, quantity, onDecrement, onIncrement, isOv
         {sublabel && <p className="text-xs text-muted-foreground">{sublabel}</p>}
         {isOverLimit && (
           <Badge variant="outline" className="mt-1 text-xs border-orange-300 text-orange-500">
-            {t("overLimit")}
+            {overLimitLabel}
           </Badge>
         )}
       </div>

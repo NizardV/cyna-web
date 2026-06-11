@@ -9,7 +9,7 @@ import { FormGeneral } from "@/components/admin/product/form-general"
 import { FormMedia }   from "@/components/admin/product/form-media"
 import { FormSpecs }   from "@/components/admin/product/form-specs"
 import { FormPricing } from "@/components/admin/product/form-pricing"
-import { defaultPricingState, pricingPlansToState, stateToPricingPlans, validatePricing } from "@/components/admin/product/pricing-utils"
+import { defaultPricingState, pricingPlansToState, stateToPricingPlans, validatePricing } from "@/lib/pricing-utils"
 import { getProduct, createProduct, updateProduct } from "@/api/products"
 import { getCategories } from "@/api/categories"
 import { toast } from "sonner"
@@ -27,7 +27,7 @@ const DEFAULT_MEDIA   = { imageUrl: "", categoryId: "", isFeatured: false, displ
 // ---------------------------------------------------------------------------
 
 export function AdminProductForm() {
-  const { t }       = useTranslation("admin")
+  const { t }       = useTranslation("admin-products")
   const { id }      = useParams()
   const navigate    = useNavigate()
   const isEdit      = !!id

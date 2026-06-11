@@ -13,7 +13,7 @@ import { toast } from "sonner"
 const PAGE_SIZE = 5
 
 export function AdminProducts() {
-  const { t }       = useTranslation("admin")
+  const { t }       = useTranslation("admin-products")
   const navigate    = useNavigate()
   const initialized = useRef(false)
 

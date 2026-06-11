@@ -10,9 +10,10 @@
     "deleteError": "Error while deleting"
   },
   "status": {
-    "active": "Active",
-    "inactive": "Inactive",
-    "archived": "Archived"
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "outofstock": "Out of stock",
+    "preview": "Preview"
   },
   "featured": {
     "yes": "⭐ Yes",

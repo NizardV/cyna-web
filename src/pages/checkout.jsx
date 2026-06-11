@@ -13,7 +13,7 @@ import { apiClient } from "@/api/client"
 import { toast } from "sonner"
 
 // ---------------------------------------------------------------------------
-// StepBlock — bloc numéroté (fait / actif / inactif)
+// StepBlock
 // ---------------------------------------------------------------------------
 
 function StepBlock({ number, title, done = false, active = false, children }) {
@@ -64,7 +64,7 @@ function StepBlock({ number, title, done = false, active = false, children }) {
 }
 
 // ---------------------------------------------------------------------------
-// CheckoutSummary — colonne droite (sticky)
+// CheckoutSummary
 // ---------------------------------------------------------------------------
 
 function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting }) {
@@ -78,7 +78,6 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
             {t("summary.title")}
           </h2>
 
-          {/* Liste des articles */}
           <div className="space-y-2">
             {items.map((item) => {
               const lineTotal = item.lineTotal ?? 0
@@ -88,8 +87,8 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
                     <p className="truncate font-medium text-foreground">{item.productName}</p>
                     <p className="text-muted-foreground">
                       {t(`summary.duration.${item.billingPeriod}`, { defaultValue: item.billingPeriod })}
-                      {item.quantityUsers  > 0 && ` • ${item.quantityUsers} utilisateur${item.quantityUsers > 1 ? "s" : ""}`}
-                      {item.quantityDevices > 0 && ` • ${item.quantityDevices} appareil${item.quantityDevices > 1 ? "s" : ""}`}
+                      {item.quantityUsers > 0 && ` • ${t("summary.users", { count: item.quantityUsers })}`}
+                      {item.quantityDevices > 0 && ` • ${t("summary.devices", { count: item.quantityDevices })}`}
                     </p>
                   </div>
                   <span className="shrink-0 font-medium tabular-nums">{formatPrice(lineTotal)}</span>
@@ -98,7 +97,6 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
             })}
           </div>
 
-          {/* Sous-totaux */}
           <div className="space-y-1.5 border-t border-border pt-3 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">{t("summary.subtotal")}</span>
@@ -110,7 +108,6 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
             </div>
           </div>
 
-          {/* Total TTC */}
           <div className="flex items-center justify-between border-t border-border pt-3">
             <span className="text-sm font-bold">{t("summary.total")}</span>
             <span className="text-xl font-extrabold text-primary tabular-nums">
@@ -254,7 +251,6 @@ export function Checkout() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header minimal sécurisé */}
       <header className="border-b bg-background">
         <div className="container mx-auto flex items-center justify-between px-4 py-4">
           <Link to="/" className="text-lg font-extrabold tracking-tight text-foreground">
@@ -270,7 +266,6 @@ export function Checkout() {
         <h1 className="mb-6 text-xl font-bold text-foreground">{t("title")}</h1>
 
         <div className="flex flex-col gap-6 md:flex-row">
-          {/* ——— Étapes ——— */}
           <div className="flex-1 space-y-4">
             {/* Étape 1 — Compte client */}
             <StepBlock number={1} title={t("step1.title")} done={!!user}>
@@ -299,50 +294,27 @@ export function Checkout() {
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.firstName")}</Label>
-                  <Input
-                    value={address.firstName}
-                    onChange={(e) => setAddress((p) => ({ ...p, firstName: e.target.value }))}
-                    placeholder="Jean"
-                  />
+                  <Input value={address.firstName} onChange={(e) => setAddress((p) => ({ ...p, firstName: e.target.value }))} placeholder="Jean" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.lastName")}</Label>
-                  <Input
-                    value={address.lastName}
-                    onChange={(e) => setAddress((p) => ({ ...p, lastName: e.target.value }))}
-                    placeholder="Dupont"
-                  />
+                  <Input value={address.lastName} onChange={(e) => setAddress((p) => ({ ...p, lastName: e.target.value }))} placeholder="Dupont" />
                 </div>
                 <div className="col-span-2 space-y-1">
                   <Label className="text-xs">{t("step2.address")}</Label>
-                  <Input
-                    value={address.line1}
-                    onChange={(e) => setAddress((p) => ({ ...p, line1: e.target.value }))}
-                    placeholder={t("step2.addressPlaceholder")}
-                  />
+                  <Input value={address.line1} onChange={(e) => setAddress((p) => ({ ...p, line1: e.target.value }))} placeholder={t("step2.addressPlaceholder")} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.postalCode")}</Label>
-                  <Input
-                    value={address.postalCode}
-                    onChange={(e) => setAddress((p) => ({ ...p, postalCode: e.target.value }))}
-                    placeholder="75001"
-                  />
+                  <Input value={address.postalCode} onChange={(e) => setAddress((p) => ({ ...p, postalCode: e.target.value }))} placeholder="75001" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.city")}</Label>
-                  <Input
-                    value={address.city}
-                    onChange={(e) => setAddress((p) => ({ ...p, city: e.target.value }))}
-                    placeholder="Paris"
-                  />
+                  <Input value={address.city} onChange={(e) => setAddress((p) => ({ ...p, city: e.target.value }))} placeholder="Paris" />
                 </div>
                 <div className="col-span-2 space-y-1">
                   <Label className="text-xs">{t("step2.country")}</Label>
-                  <Input
-                    value={address.country}
-                    onChange={(e) => setAddress((p) => ({ ...p, country: e.target.value }))}
-                  />
+                  <Input value={address.country} onChange={(e) => setAddress((p) => ({ ...p, country: e.target.value }))} />
                 </div>
               </div>
             </StepBlock>
@@ -363,50 +335,26 @@ export function Checkout() {
               <div className="space-y-3">
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step3.cardName")}</Label>
-                  <Input
-                    value={payment.cardName}
-                    onChange={(e) => setPayment((p) => ({ ...p, cardName: e.target.value.toUpperCase() }))}
-                    placeholder="JEAN DUPONT"
-                  />
+                  <Input value={payment.cardName} onChange={(e) => setPayment((p) => ({ ...p, cardName: e.target.value.toUpperCase() }))} placeholder="JEAN DUPONT" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step3.cardNumber")}</Label>
-                  <Input
-                    value={payment.cardNumber}
-                    onChange={handleCardNumber}
-                    placeholder="0000 0000 0000 0000"
-                    maxLength={19}
-                    inputMode="numeric"
-                  />
+                  <Input value={payment.cardNumber} onChange={handleCardNumber} placeholder="0000 0000 0000 0000" maxLength={19} inputMode="numeric" />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-xs">{t("step3.expiry")}</Label>
-                    <Input
-                      value={payment.expiry}
-                      onChange={handleExpiry}
-                      placeholder="MM/AA"
-                      maxLength={5}
-                      inputMode="numeric"
-                    />
+                    <Input value={payment.expiry} onChange={handleExpiry} placeholder="MM/AA" maxLength={5} inputMode="numeric" />
                   </div>
                   <div className="space-y-1">
                     <Label className="text-xs">{t("step3.cvv")}</Label>
-                    <Input
-                      value={payment.cvv}
-                      onChange={(e) => setPayment((p) => ({ ...p, cvv: e.target.value.replace(/\D/g, "").slice(0, 3) }))}
-                      placeholder="123"
-                      maxLength={3}
-                      type="password"
-                      inputMode="numeric"
-                    />
+                    <Input value={payment.cvv} onChange={(e) => setPayment((p) => ({ ...p, cvv: e.target.value.replace(/\D/g, "").slice(0, 3) }))} placeholder="123" maxLength={3} type="password" inputMode="numeric" />
                   </div>
                 </div>
               </div>
             </StepBlock>
           </div>
 
-          {/* ——— Résumé ——— */}
           <CheckoutSummary
             items={items}
             subtotal={subtotal}
@@ -418,7 +366,6 @@ export function Checkout() {
         </div>
       </div>
 
-      {/* Footer minimal */}
       <footer className="mt-12 border-t bg-background">
         <div className="container mx-auto flex justify-center gap-6 px-4 py-4 text-xs text-muted-foreground">
           <Link to="/mentions-legales" className="hover:underline">{t("footer.legal")}</Link>
