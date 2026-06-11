@@ -58,4 +58,4 @@ stages:
 
                 echo "─── Pull & Relance du Frontend ($(envName)) ───"
                 docker compose -f docker-compose.$(composeEnv).yml pull web
-                docker compose -f docker-compose.$(composeEnv).yml up -d --no-build --force-recreate web
+                docker compose -f docker-compose.$(composeEnv).yml up -d --no-build --force-recreate --no-deps web
