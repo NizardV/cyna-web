@@ -14,6 +14,7 @@ import { Cart } from "./pages/cart"
 import { Checkout } from "./pages/checkout"
 import { OrderConfirmation } from "./pages/order-confirmation"
 import { Search } from "./pages/search"
+import { Catalog } from "./pages/catalog"
 import { Product } from "./pages/product"
 import { Contact } from "./pages/contact"
 import { CGU } from "./pages/cgu"
@@ -37,6 +38,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/loading" element={<Loading />} />
           <Route path="/search" element={<Search />} />
+          <Route path="/catalog/category/:slug" element={<Catalog />} />
           <Route path="/account/profile" element={<Profile />} />
           <Route path="/account/orders" element={<OrderHistory />} />
           <Route path="/cart" element={<Cart />} />
