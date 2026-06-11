@@ -6,14 +6,17 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { Link } from "react-router-dom"
+import Autoplay from "embla-carousel-autoplay";
+import { Link } from "react-router-dom";
+
 
 export function HomeCarousel({ slides }) {
   if (!slides || slides.length === 0) return null;
 
   return (
     // opts={{ loop: true }} permet au carrousel de tourner en boucle
-    <Carousel opts={{ loop: true }} className="relative w-full">
+    <Carousel 
+      opts={{ loop: true }}  plugins={[Autoplay({delay: 4000,}),]} className="relative w-full" >
       <CarouselContent>
         {slides.map((slide) => (
           <CarouselItem key={slide.id}>
@@ -21,7 +24,7 @@ export function HomeCarousel({ slides }) {
             <div className="relative flex h-[80vh] min-h-[500px] w-full items-center justify-center overflow-hidden">
               {/* Image de fond */}
               <img
-                src={slide.image}
+                src={slide.imageUrl}
                 alt={slide.title}
                 className="absolute inset-0 h-full w-full object-cover"
               />
