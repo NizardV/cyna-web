@@ -29,7 +29,7 @@ import {
 } from "@/components/ui/combobox"
 import { useDebounce } from "@/hooks/useDebounce.js"
 import { SearchPagination } from "@/components/search/search-pagination"
-import { FilterSidebar, FilterSidebarSkeleton, FilterDrawer } from "@/components/search/filter-sidebar"
+import { FilterSidebar, FilterDrawer, FilterSidebarSkeleton } from "@/components/search/filter"
 import { ProductCard, ProductCardSkeleton } from "@/components/search/product-card"
 
 // ---------------------------------------------------------------------------

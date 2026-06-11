@@ -21,12 +21,12 @@ export function CategoryGrid({ categories }) {
           {categories.map((category) => (
             <Link
               key={category.id}
-              to={`/catalog?category=${category.id}`}
+              to={`/catalog/category/${category.slug}`}
               className="group relative rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all h-64 flex items-end cursor-pointer"
             >
               {/* L'image de fond (vient de la BDD/Mock) */}
               <img
-                src={category.image}
+                src={category.imageUrl}
                 alt={category.name}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
               />
