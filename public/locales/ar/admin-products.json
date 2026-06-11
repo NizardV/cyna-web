@@ -7,7 +7,8 @@
     "searchPlaceholder": "ابحث عن منتج…",
     "deleteConfirm": "حذف هذا المنتج نهائياً؟",
     "deleteSuccess": "تم حذف المنتج",
-    "deleteError": "خطأ أثناء الحذف"
+    "deleteError": "خطأ أثناء الحذف",
+    "deleteErrorReferenced": "لا يمكن حذف هذا المنتج لأنه مرتبط بالطلبات أو الاشتراكات الموجودة."
   },
   "status": {
     "available": "متاح",

@@ -7,7 +7,8 @@
     "searchPlaceholder": "Search for a product…",
     "deleteConfirm": "Permanently delete this product?",
     "deleteSuccess": "Product deleted",
-    "deleteError": "Error while deleting"
+    "deleteError": "Error while deleting",
+    "deleteErrorReferenced": "This product cannot be deleted because it is linked to existing orders or subscriptions."
   },
   "status": {
     "available": "Available",
