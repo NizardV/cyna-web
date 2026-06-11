@@ -1,0 +1,65 @@
+{
+  "nav": {
+    "home": "דף הבית",
+    "catalog": "קטלוג",
+    "contact": "צור קשר",
+    "clientArea": "אזור לקוחות",
+    "android": "אפליקציית אנדרואיד"
+  },
+  "footer": {
+    "description": "השותף האמין שלך לאבטחת תשתיות ה-IT שלך. פתרונות SaaS בעלי ביצועים גבוהים וניתנים להרחבה.",
+    "information": "מידע",
+    "aboutCyna": "אודות Cyna",
+    "contactUs": "צור קשר",
+    "legal": "משפטי",
+    "legalNotice": "הודעה משפטית",
+    "termsOfService": "תנאי שירות",
+    "privacyPolicy": "מדיניות פרטיות",
+    "followUs": "עקוב אחרינו",
+    "copyright": "פרויקט CYNA DIIAGE. © 2025 כל הזכויות שמורות."
+  },
+  "accountNav": {
+    "profile": "פרופיל ואבטחה",
+    "billing": "חיוב ותשלום",
+    "guest": "אורח",
+    "notConnected": "לא מחובר",
+    "logout": "התנתקות",
+    "loggingOut": "מתנתק…"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "הדף לא נמצא",
+    "message": "הדף שחיפשת אינו קיים או הועבר. בדוק את הכתובת או חזור לדף הבית.",
+    "backHome": "עבור לדף הבית"
+  },
+  "unauthorized": {
+    "code": "403",
+    "title": "גישה נדחתה",
+    "message": "אין לך הרשאה לגשת לדף זה. אזור זה דורש הרשאות מנהל.",
+    "backHome": "עבור לדף הבית"
+  },
+  "loading": {
+    "title": "טוען...",
+    "subtitle": "אנא המתן בזמן שאנו מכינים הכל עבורך"
+  },
+  "product": {
+    "notFound": "המוצר לא נמצא",
+    "notFoundDesc": "מוצר זה אינו קיים או הוסר.",
+    "backToCatalog": "← חזרה לקטלוג",
+    "loading": "טוען...",
+    "perUser": "/ משתמש",
+    "perDevice": "/ מכשיר",
+    "onQuote": "לפי בקשה"
+  },
+  "admin": {
+    "langFr": "🇫🇷 צרפתית",
+    "langEn": "🇬🇧 אנגלית",
+    "invalidUrl": "כתובת לא תקינה",
+    "optional": "(אופציונלי)"
+  },
+  "status": {
+    "available": "פעיל",
+    "inactive": "לא פעיל",
+    "archived": "מאורכב"
+  }
+}

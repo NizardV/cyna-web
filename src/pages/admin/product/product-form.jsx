@@ -9,8 +9,8 @@ import { FormGeneral } from "@/components/admin/product/form-general"
 import { FormMedia }   from "@/components/admin/product/form-media"
 import { FormSpecs }   from "@/components/admin/product/form-specs"
 import { FormPricing } from "@/components/admin/product/form-pricing"
-import { defaultPricingState, pricingPlansToState, stateToPricingPlans, validatePricing } from "@/components/admin/product/pricing-utils"
-import { getProductAdmin, createProduct, updateProduct } from "@/api/products"
+import { defaultPricingState, pricingPlansToState, stateToPricingPlans, validatePricing } from "@/lib/pricing-utils"
+import { getProduct, createProduct, updateProduct } from "@/api/products"
 import { getCategories } from "@/api/categories"
 import { toast } from "sonner"
 import { ArrowLeft } from "lucide-react"
@@ -19,7 +19,7 @@ import { ArrowLeft } from "lucide-react"
 // État initial
 // ---------------------------------------------------------------------------
 
-const DEFAULT_GENERAL = { nameFr: "", nameEn: "", descriptionFr: "", descriptionEn: "", status: "Available" }
+const DEFAULT_GENERAL = { nameFr: "", nameEn: "", descriptionFr: "", descriptionEn: "", status: "Active" }
 const DEFAULT_MEDIA   = { imageUrl: "", categoryId: "", isFeatured: false, displayOrder: 1 }
 
 // ---------------------------------------------------------------------------
@@ -27,7 +27,7 @@ const DEFAULT_MEDIA   = { imageUrl: "", categoryId: "", isFeatured: false, displ
 // ---------------------------------------------------------------------------
 
 export function AdminProductForm() {
-  const { t }       = useTranslation("admin")
+  const { t }       = useTranslation("admin-products")
   const { id }      = useParams()
   const navigate    = useNavigate()
   const isEdit      = !!id
@@ -51,15 +51,14 @@ export function AdminProductForm() {
     })
 
     if (isEdit) {
-      // Endpoint admin : renvoie les deux locales et les plans au format du formulaire
-      getProductAdmin(id)
+      getProduct(id)
         .then(p => {
           setGeneral({
               nameFr: p.nameFr ?? p.name ?? "",
               nameEn: p.nameEn ?? p.name ?? "",
               descriptionFr: p.descriptionFr ?? p.description ?? "",
               descriptionEn: p.descriptionEn ?? p.description ?? "",
-              status: p.status ?? "Available",
+              status: p.status ?? "Active",
             })
           setMedia({ imageUrl: p.imageUrl ?? "", categoryId: p.categoryId ?? "", isFeatured: p.isFeatured ?? false, displayOrder: p.displayOrder ?? 1 })
           setSpecs(Array.isArray(p.technicalSpecs) ? p.technicalSpecs : [])

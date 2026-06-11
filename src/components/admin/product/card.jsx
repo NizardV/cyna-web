@@ -15,7 +15,7 @@ const STATUS_VARIANT = {
 }
 
 export function ProductAdminCard({ product, onDelete }) {
-  const { t } = useTranslation("admin")
+  const { t } = useTranslation("admin-products")
   const variant = STATUS_VARIANT[product.status] ?? "outline"
 
   return (

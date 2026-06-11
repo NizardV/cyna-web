@@ -1,0 +1,22 @@
+{
+  "header": {
+    "search": "ابحث عن حل (SOC، EDR...)",
+    "home": "الرئيسية",
+    "categories": "الفئات",
+    "contact": "اتصل بنا",
+    "userProfile": "الملف الشخصي",
+    "escapeClient": "منطقة العميل"
+  },
+  "footer": {
+    "description": "شريكك الموثوق لأمن بنيتك التحتية لتكنولوجيا المعلومات. حلول SaaS عالية الأداء وقابلة للتوسع.",
+    "information": "معلومات",
+    "aboutCyna": "حول Cyna",
+    "contactUs": "اتصل بنا",
+    "legal": "قانوني",
+    "legalNotice": "الإشعار القانوني",
+    "termsOfService": "شروط الخدمة",
+    "privacyPolicy": "سياسة الخصوصية",
+    "followUs": "تابعنا",
+    "copyright": "© 2024 Cyna. جميع الحقوق محفوظة."
+  }
+}

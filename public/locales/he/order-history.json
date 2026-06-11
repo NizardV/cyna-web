@@ -1,0 +1,25 @@
+{
+  "title": "היסטוריית הזמנות",
+  "subtitle": "מצא את כל החשבוניות והמנויים שלך.",
+  "searchPlaceholder": "חפש הזמנה...",
+  "allYears": "כל השנים",
+  "year": "שנה: {{year}}",
+  "noOrders": "לא נמצאו הזמנות",
+  "noOrdersHint": "נסה מונח חיפוש אחר.",
+  "noOrdersEmpty": "עדיין לא ביצעת הזמנות.",
+  "error": "שגיאה: {{message}}",
+  "orderedOn": "הוזמן ב-{{date}}",
+  "orderType": "{{type}}",
+  "paidVia": "שולם באמצעות {{method}}",
+  "paidViaCard": "שולם באמצעות {{method}} המסתיים ב-{{last4}}",
+  "invoicePdf": "חשבונית PDF",
+  "ordersIn": "הזמנות ב-{{year}}",
+  "status": {
+    "active": "פעיל",
+    "terminated": "הסתיים",
+    "refunded": "הוחזר",
+    "paid": "שולם",
+    "pending": "ממתין",
+    "failed": "נכשל"
+  }
+}

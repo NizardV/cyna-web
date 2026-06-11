@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Check } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { BillingPeriod } from "@/lib/pricing";
+import { BillingPeriod } from "@/lib/pricing-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";

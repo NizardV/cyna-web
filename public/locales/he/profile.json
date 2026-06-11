@@ -1,0 +1,44 @@
+{
+  "title": "פרופיל ואבטחה",
+  "personalInfo": {
+    "title": "מידע אישי",
+    "description": "נהל את פרטי הקשר וכתובת האימייל שלך.",
+    "fullName": "שם מלא",
+    "email": "כתובת אימייל",
+    "verified": "מאומת",
+    "save": "שמור שינויים",
+    "saving": "שומר…",
+    "success": "המידע עודכן בהצלחה.",
+    "error": "אירעה שגיאה."
+  },
+  "security": {
+    "title": "אבטחת חשבון",
+    "description": "עדכן את הסיסמה שלך כדי לאבטח את הגישה לשירותי ה-SaaS שלך.",
+    "currentPassword": "סיסמה נוכחית",
+    "newPassword": "סיסמה חדשה",
+    "confirmPassword": "אישור סיסמה",
+    "update": "עדכון סיסמה",
+    "updating": "מעדכן…",
+    "success": "הסיסמה עודכנה בהצלחה.",
+    "errorRequired": "הסיסמה הנוכחית נדרשת.",
+    "errorMismatch": "הסיסמאות אינן תואמות.",
+    "errorLength": "הסיסמה חייבת להכיל לפחות 8 תווים.",
+    "error": "אירעה שגיאה."
+  },
+  "language": {
+    "title": "שפה",
+    "description": "בחר את שפת התצוגה של הממשק.",
+    "success": "השפה עודכנה.",
+    "save": "שמור",
+    "saving": "שומר…"
+  },
+  "subscriptions": {
+    "title": "מנויי SaaS פעילים",
+    "description": "נהל את הרישיונות הנוכחיים שלך.",
+    "viewAll": "הצג הכל ←",
+    "empty": "אין מנויים פעילים כרגע.",
+    "users": "{{count}} משתמשים",
+    "renewal": "חידוש אוטומטי ב-{{date}}",
+    "cancel": "ביטול"
+  }
+}

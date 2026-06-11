@@ -10,24 +10,32 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider } from '@/contexts/auth-context'
+import { DirectionProvider } from "@/components/ui/direction"
+import { useTranslation } from "react-i18next"
 import './index.css'
 import App from './App'
 import "./lib/i18n";
 
-async function bootstrap() {
+function Root() {
+  const { i18n } = useTranslation()
+  const dir = i18n.dir(i18n.language)
   // Load mock handlers before anything renders
   if (import.meta.env.VITE_MOCK_API === "true") {
-    await import("./mocks/index.js");
+    import("./mocks/index.js");
   }
 
-  createRoot(document.getElementById("root")).render(
-    <StrictMode>
-      <AuthProvider>
-        <App />
-        <Toaster />
-      </AuthProvider>
-    </StrictMode>
-  );
+  return (
+    <DirectionProvider direction={dir}>
+      <App />
+      <Toaster />
+    </DirectionProvider>
+  )
 }
 
-bootstrap();
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <AuthProvider>
+      <Root />
+    </AuthProvider>
+  </StrictMode>
+)

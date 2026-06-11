@@ -1,0 +1,58 @@
+{
+  "title": "إتمام الطلب",
+  "badge": "دفع آمن 100%",
+  "step1": {
+    "title": "حساب العميل",
+    "loggedAs": "مسجّل الدخول بصفتك",
+    "edit": "تعديل",
+    "loginHintLink": "تسجيل الدخول",
+    "loginHintAfter": "أو المتابعة كضيف."
+  },
+  "step2": {
+    "title": "عنوان الفاتورة",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "address": "العنوان",
+    "addressPlaceholder": "رقم الشارع واسمه",
+    "postalCode": "الرمز البريدي",
+    "city": "المدينة",
+    "country": "الدولة"
+  },
+  "step3": {
+    "title": "طريقة الدفع",
+    "cardType": "بطاقة ائتمان",
+    "cardName": "الاسم على البطاقة",
+    "cardNumber": "رقم البطاقة",
+    "expiry": "تاريخ الانتهاء (MM/YY)",
+    "cvv": "CVV"
+  },
+  "summary": {
+    "title": "ملخص الطلب",
+    "duration": {
+      "monthly": "شهري",
+      "yearly": "سنوي"
+    },
+    "users_one": "{{count}} مستخدم",
+    "users_other": "{{count}} مستخدمين",
+    "subtotal": "المجموع الجزئي (بدون ضريبة)",
+    "vat": "ضريبة القيمة المضافة (20%)",
+    "total": "المجموع الكلي شامل الضريبة",
+    "confirm": "تأكيد الشراء",
+    "confirming": "جارٍ المعالجة…",
+    "cgvBefore": "بتأكيد شرائك، فإنك توافق على",
+    "cgvLink": "شروط البيع"
+  },
+  "errors": {
+    "missingAddress": "يرجى ملء جميع حقول العنوان",
+    "missingPayment": "يرجى ملء معلومات الدفع",
+    "orderFailed": "حدث خطأ أثناء إتمام الطلب"
+  },
+  "toast": {
+    "success": "تم تأكيد الطلب!"
+  },
+  "footer": {
+    "legal": "الإشعار القانوني",
+    "cgu": "الشروط والأحكام",
+    "contact": "اتصل بنا"
+  }
+}

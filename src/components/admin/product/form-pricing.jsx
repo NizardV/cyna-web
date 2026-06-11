@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
 import { Plus, Trash2, AlertTriangle } from "lucide-react"
-import { TABS, computeMin, getInvalidIndices } from "./pricing-utils"
+import { TABS, computeMin, getInvalidIndices } from "@/lib/pricing-utils"
 
 const emptyTier = () => ({ maxQty: "", unitPrice: "" })
 
@@ -15,7 +15,7 @@ const emptyTier = () => ({ maxQty: "", unitPrice: "" })
 // ---------------------------------------------------------------------------
 
 function TiersTable({ label, tiers, onChange }) {
-  const { t }      = useTranslation("admin")
+  const { t }      = useTranslation("admin-products")
   const invalid    = getInvalidIndices(tiers)
   const hasInvalid = invalid.size > 0
 
@@ -107,7 +107,7 @@ function TiersTable({ label, tiers, onChange }) {
 // ---------------------------------------------------------------------------
 
 function PlanPanel({ plan, onChange }) {
-  const { t } = useTranslation("admin")
+  const { t } = useTranslation("admin-products")
 
   return (
     <div className="space-y-5 pt-4">
@@ -144,7 +144,7 @@ function PlanPanel({ plan, onChange }) {
 // ---------------------------------------------------------------------------
 
 export function FormPricing({ value, onChange }) {
-  const { t }      = useTranslation("admin")
+  const { t }      = useTranslation("admin-products")
   const [activeTab, setActiveTab] = useState("monthly")
   const updatePlan = (key) => (plan) => onChange({ ...value, [key]: plan })
 

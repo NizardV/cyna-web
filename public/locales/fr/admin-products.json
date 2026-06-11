@@ -8,13 +8,7 @@
     "deleteConfirm": "Supprimer ce produit définitivement ?",
     "deleteSuccess": "Produit supprimé",
     "deleteError": "Erreur lors de la suppression",
-    "deleteErrorReferenced": "Ce produit ne peut pas être supprimé car il est lié à des commandes ou abonnements existants."
-  },
-  "status": {
-    "available": "Disponible",
-    "unavailable": "Indisponible",
-    "outofstock": "Rupture de stock",
-    "preview": "Aperçu"
+    "deleteErrorReferenced": "Ce produit ne peut pas étre supprimé car il est lié à des commandes ou abonnements existants."
   },
   "featured": {
     "yes": "⭐ Oui",
@@ -47,6 +41,12 @@
       "updated": "Produit mis à jour",
       "created": "Produit créé"
     }
+  },
+  "status": {
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "outofstock": "Rupture de stock",
+    "preview": "Aperçu"
   },
   "general": {
     "title": "Informations générales",

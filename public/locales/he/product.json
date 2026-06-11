@@ -1,0 +1,32 @@
+{
+  "availableImmediately": "זמין מיידית",
+  "serviceUnavailable": "השירות אינו זמין זמנית",
+  "technicalSpecsTitle": "מפרט טכני",
+  "subscribeNow": "הירשם עכשיו",
+  "buyNow": "קנה עכשיו",
+  "tryNow": "נסה עכשיו",
+  "serviceUnavailableBtn": "השירות אינו זמין",
+  "try14Days": "נסה (14 ימים)",
+  "similarServicesTitle": "שירותים דומים",
+  "addedToCart": "המוצר נוסף לעגלה",
+  "billing": {
+    "monthly": "חודשי",
+    "yearly": "שנתי",
+    "lifetime": "לצמיתות"
+  },
+  "billingLabel": {
+    "monthly": "חודש",
+    "yearly": "שנה",
+    "lifetime": "תשלום חד פעמי"
+  },
+  "users": "משתמשים",
+  "devices": "מכשירים",
+  "tiersTitle": "טבלת תמחור",
+  "tiersUnitHeader": "מחיר / יחידה",
+  "tiersUpTo": "עד {{max}}",
+  "tiersFrom": "החל מ-{{min}}",
+  "perUnit": "{{price}} / {{unit}}",
+  "overLimit": "חריגה מהמגבלה ← נדרשת הצעת מחיר",
+  "requestQuote": "צור קשר עם צוות המכירות",
+  "quoteInfo": "מעבר למגבלות המקוונות, צור קשר לקבלת הצעת מחיר מותאמת אישית."
+}

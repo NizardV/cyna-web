@@ -1,0 +1,79 @@
+{
+  "title": "קטגוריות",
+  "subtitle": "ניהול קטגוריות קטלוג המוצרים.",
+  "newCategory": "קטגוריה חדשה",
+  "counter": "קטגוריה {{count}}",
+  "counter_plural": "{{count}} קטגוריות",
+  "counterFor": "{{count}} קטגוריה עבור \"{{search}}\"",
+  "counterFor_plural": "{{count}} קטגוריות עבור \"{{search}}\"",
+  "search": { "placeholder": "חיפוש לפי שם או slug..." },
+  "table": {
+    "image": "תמונה",
+    "name": "שם",
+    "slug": "כתובת",
+    "description": "תיאור",
+    "products": "מוצרים",
+    "order": "סדר",
+    "actions": "פעולות"
+  },
+  "empty": {
+    "noResults": "לא נמצאו קטגוריות.",
+    "clearSearch": "נקה חיפוש"
+  },
+  "actions": { "edit": "עריכה", "delete": "מחיקה" },
+  "pagination": {
+    "previous": "הקודם",
+    "next": "הבא",
+    "page": "עמוד {{current}} מתוך {{total}}"
+  },
+  "form": {
+    "name": "שם",
+    "nameRequired": "*",
+    "namePlaceholder": "לדוגמה: EDR, SOC, Zero Trust...",
+    "nameError": "שם הוא שדה חובה.",
+    "nameOptional": "(אופציונלי)",
+    "slug": "כתובת",
+    "slugHint": "(נוצר אוטומטית אם ריק)",
+    "slugPlaceholder": "לדוגמה: zero-trust",
+    "description": "תיאור",
+    "descriptionPlaceholder": "תיאור קצר של הקטגוריה...",
+    "imageUrl": "כתובת תמונה",
+    "imageUrlPlaceholder": "https://…",
+    "displayOrder": "סדר תצוגה"
+  },
+  "dialogs": {
+    "create": {
+      "title": "קטגוריה חדשה",
+      "description": "מלא את פרטי הקטגוריה החדשה.",
+      "cancel": "ביטול",
+      "submit": "יצירה",
+      "submitting": "יוצר…"
+    },
+    "edit": {
+      "title": "עריכת קטגוריה",
+      "description": "עדכן את השדות הרצויים ושמור.",
+      "cancel": "ביטול",
+      "submit": "שמירה",
+      "submitting": "שומר…"
+    },
+    "delete": {
+      "title": "מחיקת קטגוריה",
+      "description": "האם אתה בטוח שברצונך למחוק את <strong>{{name}}</strong>?",
+      "warningProducts_one": "קטגוריה זו מכילה {{count}} מוצר. לא ניתן לבטל פעולה זו.",
+      "warningProducts_other": "קטגוריה זו מכילה {{count}} מוצרים. לא ניתן לבטל פעולה זו.",
+      "warningNoProducts": "לא ניתן לבטל פעולה זו.",
+      "cancel": "ביטול",
+      "submit": "מחיקה",
+      "submitting": "מוחק…"
+    }
+  },
+  "toast": {
+    "created": "הקטגוריה \"{{name}}\" נוצרה.",
+    "updated": "הקטגוריה \"{{name}}\" עודכנה.",
+    "deleted": "הקטגוריה \"{{name}}\" נמחקה.",
+    "loadError": "טעינת הקטגוריות נכשלה.",
+    "createError": "שגיאה ביצירת קטגוריה.",
+    "updateError": "שגיאה בעדכון קטגוריה.",
+    "deleteError": "שגיאה במחיקת קטגוריה."
+  }
+}

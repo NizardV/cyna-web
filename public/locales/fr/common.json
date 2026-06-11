@@ -1,0 +1,60 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "catalog": "Catalogue",
+    "contact": "Contact",
+    "clientArea": "Espace Client",
+    "android": "Application Android"
+  },
+  "footer": {
+    "description": "Votre partenaire de confiance pour la sécurité de vos infrastructures IT. Solutions SaaS performantes et évolutives.",
+    "information": "INFORMATIONS",
+    "aboutCyna": "À propos de Cyna",
+    "contactUs": "Contactez-nous",
+    "legal": "LÉGAL",
+    "legalNotice": "Mentions Légales",
+    "termsOfService": "Conditions Générales (CGU)",
+    "privacyPolicy": "Politique de confidentialité",
+    "followUs": "SUIVEZ-NOUS",
+    "copyright": "CYNA PROJET DIIAGE. © 2025 Tous droits réservés."
+  },
+  "accountNav": {
+    "profile": "Profil & Sécurité",
+    "billing": "Facturation & Paiement",
+    "guest": "Invité",
+    "notConnected": "Non connecté",
+    "logout": "Se déconnecter",
+    "loggingOut": "Déconnexion…"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page introuvable",
+    "message": "La page que vous recherchez n'existe pas ou a été déplacée. Vérifiez l'URL ou retournez à l'accueil.",
+    "backHome": "Retour à l'accueil"
+  },
+  "unauthorized": {
+    "code": "403",
+    "title": "Accès refusé",
+    "message": "Vous n'avez pas la permission d'accéder à cette page. Cette zone nécessite des droits administrateur.",
+    "backHome": "Retour à l'accueil"
+  },
+  "loading": {
+    "title": "Chargement...",
+    "subtitle": "Veuillez patienter pendant que nous préparons tout pour vous"
+  },
+  "product": {
+    "notFound": "Produit introuvable",
+    "notFoundDesc": "Ce produit n'existe pas ou a été supprimé.",
+    "backToCatalog": "← Retour au catalogue",
+    "loading": "Chargement en cours...",
+    "perUser": "/ utilisateur",
+    "perDevice": "/ appareil",
+    "onQuote": "Sur devis"
+  },
+  "admin": {
+    "langFr": "🇫🇷 Français",
+    "langEn": "🇬🇧 English",
+    "invalidUrl": "URL invalide",
+    "optional": "(optionnel)"
+  }
+}
