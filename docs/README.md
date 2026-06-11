@@ -26,6 +26,9 @@ docs/
 │   ├── product-page.md   Décomposition page produit + state lifting
 │   └── cart-page.md      Décomposition page panier + recalcul prix
 │
+├── admin/
+│   └── product-admin-crud.md   Interface back-office gestion produits
+│
 └── i18n/
     └── overview.md       Namespaces, clés pricing et panier
 ```
@@ -42,6 +45,7 @@ docs/
 | Quelle route API appeler | `api/endpoints.md` |
 | La page produit en détail | `components/product-page.md` |
 | Comment fonctionne le panier | `components/cart-page.md` + `api/cart.md` |
+| Comment gérer les produits en admin | `admin/product-admin-crud.md` |
 
 ---
 

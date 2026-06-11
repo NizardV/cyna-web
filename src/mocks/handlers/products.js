@@ -67,6 +67,22 @@ export const productHandlers = [
   },
 
   /**
+   * GET /products/:id/admin
+   * Retourne un produit pour le formulaire d'édition admin.
+   * En mock, même forme que GET /products/:id (le formulaire a des fallbacks
+   * name → nameFr/nameEn) ; en réel, l'API renvoie les deux locales.
+   */
+  {
+    method: "GET",
+    path: "/products/:id/admin",
+    resolver: ({ params }) => {
+      const product = _products.find((p) => String(p.id) === String(params.id))
+      if (!product) throw new Error("Product not found")
+      return product
+    },
+  },
+
+  /**
    * POST /products
    * Crée un nouveau produit (admin uniquement).
    * Génère les champs manquants via makeProduct si non fournis.

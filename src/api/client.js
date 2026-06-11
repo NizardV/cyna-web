@@ -21,7 +21,7 @@ import { mockRegistry } from "../mocks/registry.js";
 // Config
 // ---------------------------------------------------------------------------
 
-const BASE_URL = "/api";
+const BASE_URL = import.meta.env.VITE_API_URL ?? "/api";
 const MOCK_ENABLED = import.meta.env.VITE_MOCK_API === "true";
 const MOCK_DELAY_MS = Number(import.meta.env.VITE_MOCK_DELAY ?? 400);
 

@@ -11,7 +11,8 @@ export function ProductInfo({ product, billingPeriod, onBillingPeriodChange }) {
 
   if (!product) return null;
 
-  const isAvailable = product.status === "available";
+  // Insensible à la casse : l'API publique renvoie "available", les mocks "Available"
+  const isAvailable = product.status?.toLowerCase() === "available";
 
   const orderedPlans = [BillingPeriod.MONTHLY, BillingPeriod.YEARLY, BillingPeriod.LIFETIME]
     .map(period => product.pricingPlans?.find(p => p.billingPeriod === period))
