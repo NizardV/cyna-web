@@ -8,11 +8,12 @@ import { ProductInfo } from "@/components/product/product-info";
 import { PricingTiersTable } from "@/components/product/pricing-tiers-table";
 import { ProductPricing } from "@/components/product/product-pricing";
 import { FeaturedProducts } from "@/components/home/featured-products";
-import { findTier, UnitType } from "@/lib/pricing";
+import { findTier, UnitType } from "@/lib/pricing-utils";
 
 export function Product() {
   const { id } = useParams();
   const { t } = useTranslation("product");
+  const { t: tc } = useTranslation("common");
 
   const [product, setProduct] = useState(null);
   const [similarProducts, setSimilarProducts] = useState([]);
@@ -44,7 +45,6 @@ export function Product() {
 
   useEffect(() => { window.scrollTo(0, 0); }, [id]);
 
-  // Dérivé du state — recalculé à chaque changement de période ou quantité
   const currentPlan    = product?.pricingPlans?.find(p => p.billingPeriod === billingPeriod);
   const hasUserTiers   = currentPlan?.pricingTiers?.some(t => t.unitType === UnitType.USER);
   const hasDeviceTiers = currentPlan?.pricingTiers?.some(t => t.unitType === UnitType.DEVICE);
@@ -67,7 +67,7 @@ export function Product() {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-[60vh] text-primary">
-          Chargement en cours...
+          {tc("product.loading")}
         </div>
       </Layout>
     );
@@ -78,13 +78,13 @@ export function Product() {
       <Layout>
         <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
           <p className="text-6xl">🔍</p>
-          <h1 className="text-2xl font-bold text-gray-900">Produit introuvable</h1>
-          <p className="text-gray-500">Ce produit n'existe pas ou a été supprimé.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{tc("product.notFound")}</h1>
+          <p className="text-gray-500">{tc("product.notFoundDesc")}</p>
           <Link
             to="/catalog"
             className="mt-2 text-sm font-medium text-primary underline underline-offset-4"
           >
-            ← Retour au catalogue
+            {tc("product.backToCatalog")}
           </Link>
         </div>
       </Layout>
@@ -95,7 +95,6 @@ export function Product() {
     <Layout>
       <main className="p-8 max-w-7xl mx-auto w-full py-12">
 
-        {/* Galerie (gauche) + Info haut : badge, titre, specs, toggle (droite) */}
         <div className="flex flex-col md:flex-row gap-12 w-full mb-8">
           <ProductGallery images={product.images} productName={product.name} />
           <ProductInfo
@@ -105,7 +104,6 @@ export function Product() {
           />
         </div>
 
-        {/* Grille de tarification — pleine largeur */}
         {currentPlan && (
           <div className="mb-6">
             <PricingTiersTable
@@ -116,7 +114,6 @@ export function Product() {
           </div>
         )}
 
-        {/* Compteurs + prix + CTA — pleine largeur */}
         {currentPlan && (
           <div className="mb-24">
             <ProductPricing
@@ -138,14 +135,12 @@ export function Product() {
 
       </main>
 
-      {/* Les produits similaires en pleine largeur juste au-dessus du footer */}
       {similarProducts && similarProducts.length > 0 && (
         <div className="bg-slate-50 border-t border-gray-200 py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">
               {t("similarServicesTitle")}
             </h2>
-            {/* On réutilise le composant de la Home, il fera parfaitement l'affaire ! */}
             <FeaturedProducts products={similarProducts} />
           </div>
         </div>

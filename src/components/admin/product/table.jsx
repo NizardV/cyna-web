@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 
 const TH_CLASS = "px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
 
-const STATUS_VALUES = ["Active", "Inactive", "Archived"]
+const STATUS_VALUES = ["Available", "Unavailable", "OutOfStock", "Preview"]
 
 const SORT_ICON = {
   yes: <ChevronDown className="h-3.5 w-3.5 text-primary" />,
@@ -22,7 +22,7 @@ const SORT_ICON = {
 // ---------------------------------------------------------------------------
 
 function StatusFilterDropdown({ value, onChange }) {
-  const { t }             = useTranslation("admin")
+  const { t }             = useTranslation("admin-products")
   const [open, setOpen]   = useState(false)
   const [pending, setPending] = useState(value)
   const [pos, setPos]     = useState({ top: 0, left: 0 })
@@ -127,7 +127,7 @@ function FeaturedSortButton({ value, onChange }) {
 // ---------------------------------------------------------------------------
 
 function AdminTableHeader({ statusFilter, onStatusFilter, featuredSort, onFeaturedSort }) {
-  const { t } = useTranslation("admin")
+  const { t } = useTranslation("admin-products")
 
   return (
     <TableHeader className="bg-muted/40">
@@ -166,7 +166,7 @@ function AdminTableHeader({ statusFilter, onStatusFilter, featuredSort, onFeatur
 // ---------------------------------------------------------------------------
 
 function TableRows({ loading, products, onDelete }) {
-  const { t } = useTranslation("admin")
+  const { t } = useTranslation("admin-products")
 
   if (loading) {
     return Array.from({ length: 5 }).map((_, i) => <ProductAdminCardSkeleton key={i} />)

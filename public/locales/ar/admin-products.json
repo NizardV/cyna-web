@@ -1,0 +1,93 @@
+{
+  "products": {
+    "title": "المنتجات",
+    "total": "{{count}} منتج في المجموع",
+    "total_plural": "{{count}} منتجات في المجموع",
+    "new": "منتج جديد",
+    "searchPlaceholder": "ابحث عن منتج…",
+    "deleteConfirm": "حذف هذا المنتج نهائياً؟",
+    "deleteSuccess": "تم حذف المنتج",
+    "deleteError": "خطأ أثناء الحذف"
+  },
+  "status": {
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "outofstock": "نفد المخزون",
+    "preview": "معاينة"
+  },
+  "featured": {
+    "yes": "⭐ نعم",
+    "no": "لا"
+  },
+  "table": {
+    "product": "المنتج",
+    "status": "الحالة",
+    "featured": "مميز",
+    "actions": "الإجراءات",
+    "noResults": "لا توجد منتجات تطابق الفلاتر المحددة.",
+    "apply": "تطبيق"
+  },
+  "form": {
+    "back": "رجوع",
+    "editTitle": "تعديل المنتج",
+    "newTitle": "منتج جديد",
+    "productId": "المعرف #{{id}}",
+    "saving": "جارٍ الحفظ…",
+    "update": "تحديث",
+    "create": "إنشاء المنتج",
+    "cancel": "إلغاء",
+    "errors": {
+      "nameRequired": "اسم المنتج مطلوب",
+      "notFound": "المنتج غير موجود",
+      "saveFailed": "خطأ أثناء الحفظ",
+      "categoriesFailed": "تعذّر تحميل الفئات"
+    },
+    "success": {
+      "updated": "تم تحديث المنتج",
+      "created": "تم إنشاء المنتج"
+    }
+  },
+  "general": {
+    "title": "المعلومات العامة",
+    "name": "اسم المنتج",
+    "namePlaceholder": "مثال: Cyna SOC Manager",
+    "description": "الوصف",
+    "descriptionPlaceholder": "صِف المنتج في بضع جمل…",
+    "status": "الحالة"
+  },
+  "media": {
+    "title": "الوسائط والفئة",
+    "imageUrl": "رابط الصورة الرئيسية",
+    "imageUrlInvalid": "يجب أن يبدأ الرابط بـ http:// أو https://",
+    "imageAlt": "معاينة",
+    "category": "الفئة",
+    "noCategory": "— بدون فئة —",
+    "featured": "تمييز على الصفحة الرئيسية",
+    "displayOrder": "ترتيب العرض",
+    "displayOrderHelp": "الموضع في قسم أبرز المنتجات (1 = الأول)."
+  },
+  "specs": {
+    "title": "المواصفات التقنية",
+    "label": "المواصفات",
+    "placeholder": "مثال: حماية متعددة الأجهزة…",
+    "help": "اضغط Enter لإضافة مواصفة."
+  },
+  "pricing": {
+    "title": "التسعير",
+    "monthly": "شهري",
+    "yearly": "سنوي",
+    "lifetime": "دائم",
+    "users": "المستخدمون",
+    "devices": "الأجهزة",
+    "enablePlan": "تفعيل هذا الخطة",
+    "minQty": "الحد الأدنى",
+    "maxQty": "الحد الأقصى",
+    "unitPrice": "السعر / وحدة (€)",
+    "addTier": "إضافة مستوى",
+    "invalidTier": "يجب أن يكون الحد الأقصى أكبر من الحد الأدنى المحسوب.",
+    "errors": {
+      "incomplete": "{{plan}} / {{unit}}: المستوى {{tier}} غير مكتمل",
+      "invalidMax": "{{plan}} / {{unit}}: المستوى {{tier}} — يجب أن يكون الأقصى أكبر من {{min}}"
+    }
+  }
+}

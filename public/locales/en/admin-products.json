@@ -10,9 +10,10 @@
     "deleteError": "Error while deleting"
   },
   "status": {
-    "active": "Active",
-    "inactive": "Inactive",
-    "archived": "Archived"
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "outofstock": "Out of stock",
+    "preview": "Preview"
   },
   "featured": {
     "yes": "⭐ Yes",
@@ -52,7 +53,11 @@
     "namePlaceholder": "E.g. Cyna SOC Manager",
     "description": "Description",
     "descriptionPlaceholder": "Describe the product in a few sentences…",
-    "status": "Status"
+    "status": "Status",
+    "lang": {
+      "fr": "🇫🇷 Français",
+      "en": "🇬🇧 English"
+    }
   },
   "media": {
     "title": "Media & Category",

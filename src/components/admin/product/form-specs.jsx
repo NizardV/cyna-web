@@ -7,7 +7,7 @@ import { X } from "lucide-react"
 
 // value : string[]
 export function FormSpecs({ value, onChange }) {
-  const { t }          = useTranslation("admin")
+  const { t }             = useTranslation("admin-products")
   const [draft, setDraft] = useState("")
 
   const addTag = () => {
@@ -18,17 +18,18 @@ export function FormSpecs({ value, onChange }) {
     setDraft("")
   }
 
-  const removeTag = (i) => onChange(value.filter((_, idx) => idx !== i))
+  // FIX : on reçoit `spec` (la valeur) depuis le map, pas `i` (l'index).
+  // On filtre par valeur pour éviter tout décalage d'index.
+  const removeTag = (spec) => onChange(value.filter((s) => s !== spec))
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       e.preventDefault()
-      e.stopPropagation() // empêche le onKeyDown du <form> parent de s'exécuter
+      e.stopPropagation()
       addTag()
     }
-    // Backspace sur un input vide supprime le dernier tag (UX classique tag-input)
     if (e.key === "Backspace" && !draft && value.length > 0) {
-      removeTag(value.length - 1)
+      onChange(value.slice(0, -1))
     }
   }
 
@@ -40,10 +41,8 @@ export function FormSpecs({ value, onChange }) {
       <CardContent className="space-y-3">
         <Label>{t("specs.label")}</Label>
 
-        {/* Zone des tags */}
         {value.length > 0 && (
           <div className="flex flex-wrap gap-1.5">
-            {/* key=spec plutôt que key=i : évite les problèmes de diff si suppression au milieu */}
             {value.map((spec) => (
               <span
                 key={spec}
@@ -52,7 +51,7 @@ export function FormSpecs({ value, onChange }) {
                 {spec}
                 <button
                   type="button"
-                  onClick={() => removeTag(i)}
+                  onClick={() => removeTag(spec)}
                   className="text-muted-foreground hover:text-foreground transition-colors"
                 >
                   <X className="h-3 w-3" />
@@ -62,10 +61,9 @@ export function FormSpecs({ value, onChange }) {
           </div>
         )}
 
-        {/* Input */}
         <Input
           value={draft}
-          onChange={e => setDraft(e.target.value)}
+          onChange={(e) => setDraft(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={t("specs.placeholder")}
         />

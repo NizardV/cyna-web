@@ -1,0 +1,97 @@
+{
+  "products": {
+    "title": "מוצרים",
+    "total": "{{count}} מוצר סה\"כ",
+    "total_plural": "{{count}} מוצרים סה\"כ",
+    "new": "מוצר חדש",
+    "searchPlaceholder": "חפש מוצר…",
+    "deleteConfirm": "למחוק את המוצר לצמיתות?",
+    "deleteSuccess": "המוצר נמחק",
+    "deleteError": "שגיאה במחיקה"
+  },
+  "status": {
+    "available": "זמין",
+    "unavailable": "לא זמין",
+    "outofstock": "אזל המלאי",
+    "preview": "תצוגה מקדימה"
+  },
+  "featured": {
+    "yes": "⭐ כן",
+    "no": "לא"
+  },
+  "table": {
+    "product": "מוצר",
+    "status": "סטטוס",
+    "featured": "מומלץ",
+    "actions": "פעולות",
+    "noResults": "אין מוצרים התואמים לפילטרים שנבחרו.",
+    "apply": "החל"
+  },
+  "form": {
+    "back": "חזרה",
+    "editTitle": "עריכת מוצר",
+    "newTitle": "מוצר חדש",
+    "productId": "מזהה #{{id}}",
+    "saving": "שומר…",
+    "update": "עדכן",
+    "create": "צור מוצר",
+    "cancel": "ביטול",
+    "errors": {
+      "nameRequired": "שם המוצר נדרש",
+      "notFound": "המוצר לא נמצא",
+      "saveFailed": "שגיאה בשמירה",
+      "categoriesFailed": "טעינת קטגוריות נכשלה"
+    },
+    "success": {
+      "updated": "המוצר עודכן",
+      "created": "המוצר נוצר"
+    }
+  },
+  "general": {
+    "title": "מידע כללי",
+    "name": "שם המוצר",
+    "namePlaceholder": "לדוגמה: Cyna SOC Manager",
+    "description": "תיאור",
+    "descriptionPlaceholder": "תאר את המוצר במספר משפטים…",
+    "status": "סטטוס",
+    "lang": {
+      "fr": "🇫🇷 צרפתית",
+      "en": "🇬🇧 אנגלית"
+    }
+  },
+  "media": {
+    "title": "מדיה וקטגוריה",
+    "imageUrl": "כתובת תמונה ראשית",
+    "imageUrlInvalid": "הכתובת חייבת להתחיל ב-http:// או https://",
+    "imageAlt": "תצוגה מקדימה",
+    "category": "קטגוריה",
+    "noCategory": "— ללא קטגוריה —",
+    "featured": "הצג בדף הבית",
+    "displayOrder": "סדר תצוגה",
+    "displayOrderHelp": "מיקום בקטע המוצרים המובילים (1 = ראשון)."
+  },
+  "specs": {
+    "title": "מפרט טכני",
+    "label": "מפרטים",
+    "placeholder": "לדוגמה: הגנה רב-מכשירית…",
+    "help": "לחץ Enter להוספת מפרט."
+  },
+  "pricing": {
+    "title": "תמחור",
+    "monthly": "חודשי",
+    "yearly": "שנתי",
+    "lifetime": "לצמיתות",
+    "users": "משתמשים",
+    "devices": "מכשירים",
+    "enablePlan": "הפעל תכנית זו",
+    "minQty": "כמות מינימום",
+    "maxQty": "כמות מקסימום",
+    "unitPrice": "מחיר / יחידה (€)",
+    "addTier": "הוסף רמה",
+    "invalidTier": "הכמות המקסימלית חייבת להיות גדולה מהמינימום המחושב.",
+    "errors": {
+      "incomplete": "{{plan}} / {{unit}}: רמה {{tier}} לא שלמה",
+      "invalidMax": "{{plan}} / {{unit}}: רמה {{tier}} — המקסימום חייב להיות גדול מ-{{min}}"
+    }
+  }
+}

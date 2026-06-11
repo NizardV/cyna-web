@@ -3,12 +3,11 @@
  *
  * Aligné sur UserProfileDto (v1) :
  *   { id, email, firstName, lastName, role, isEmailVerified, createdAt }
- *
- * Correction : user.name → `${user.firstName} ${user.lastName}`
  */
 
 import { NavLink, useNavigate } from "react-router-dom"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
@@ -21,37 +20,17 @@ import { IconReceipt } from "../icons/IconReceipt"
 // Helpers
 // ---------------------------------------------------------------------------
 
-/**
- * Génère les initiales depuis firstName + lastName.
- * @param {string} firstName
- * @param {string} lastName
- * @returns {string}
- */
 function getInitials(firstName = "", lastName = "") {
   const first = firstName[0]?.toUpperCase() ?? ""
   const last  = lastName[0]?.toUpperCase() ?? ""
   return `${first}${last}` || "?"
 }
 
-/**
- * Nom complet affiché.
- * @param {{ firstName?: string, lastName?: string }} user
- * @returns {string}
- */
-function getFullName(user) {
-  if (!user) return "Invité"
+function getFullName(user, guestLabel) {
+  if (!user) return guestLabel
   const parts = [user.firstName, user.lastName].filter(Boolean)
-  return parts.length ? parts.join(" ") : "Invité"
+  return parts.length ? parts.join(" ") : guestLabel
 }
-
-// ---------------------------------------------------------------------------
-// Navigation items
-// ---------------------------------------------------------------------------
-
-const NAV_ITEMS = [
-  { to: "/account/profile", label: "Profil & Sécurité",     Icon: IconUser    },
-  { to: "/account/orders",  label: "Facturation & Paiement", Icon: IconReceipt },
-]
 
 // ---------------------------------------------------------------------------
 // Composant
@@ -59,11 +38,17 @@ const NAV_ITEMS = [
 
 /**
  * Navigation latérale du compte utilisateur.
- * @param {{ user?: object }} props  user = UserProfileDto | undefined
+ * @param {{ user?: object }} props
  */
 export function AccountNav({ user }) {
   const navigate = useNavigate()
+  const { t } = useTranslation("common")
   const [loggingOut, setLoggingOut] = useState(false)
+
+  const NAV_ITEMS = [
+    { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser    },
+    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt },
+  ]
 
   const handleLogout = async () => {
     setLoggingOut(true)
@@ -80,7 +65,7 @@ export function AccountNav({ user }) {
   return (
     <nav
       className="flex w-full flex-col gap-0.5 md:w-52 md:shrink-0"
-      aria-label="Navigation du compte"
+      aria-label={t("accountNav.profile")}
     >
       {/* En-tête utilisateur */}
       <div className="mb-3 flex items-center gap-3 px-2 py-2">
@@ -96,10 +81,10 @@ export function AccountNav({ user }) {
         </Avatar>
         <div className="min-w-0">
           <p className="truncate text-xs font-semibold text-foreground">
-            {getFullName(user)}
+            {getFullName(user, t("accountNav.guest"))}
           </p>
           <p className="truncate text-xs text-muted-foreground">
-            {user?.email ?? "Non connecté"}
+            {user?.email ?? t("accountNav.notConnected")}
           </p>
         </div>
       </div>
@@ -107,7 +92,7 @@ export function AccountNav({ user }) {
       <div className="mb-2 h-px bg-border" />
 
       {/* Liens */}
-      {NAV_ITEMS.map(({ to, label, Icon }) => (
+      {NAV_ITEMS.map(({ to, labelKey, Icon }) => (
         <NavLink
           key={to}
           to={to}
@@ -123,7 +108,7 @@ export function AccountNav({ user }) {
           {({ isActive }) => (
             <>
               <Icon className={isActive ? "text-primary" : "text-muted-foreground"} />
-              {label}
+              {t(labelKey)}
             </>
           )}
         </NavLink>
@@ -137,7 +122,7 @@ export function AccountNav({ user }) {
         variant="destructive"
       >
         <IconLogOut className="text-destructive" />
-        {loggingOut ? "Déconnexion…" : "Se déconnecter"}
+        {loggingOut ? t("accountNav.loggingOut") : t("accountNav.logout")}
       </Button>
     </nav>
   )

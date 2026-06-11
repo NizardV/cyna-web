@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import { cn, formatPrice } from "@/lib/utils";
-import { UnitType } from "@/lib/pricing";
+import { UnitType } from "@/lib/pricing-utils";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 

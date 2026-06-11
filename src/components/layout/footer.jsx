@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { MapPin, Mail, Phone } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function LinkedinIcon({ className }) {
   return (
@@ -25,6 +26,8 @@ export function Footer({
   hideLegalSection = false,
   hideSocial = false,
 }) {
+  const { t } = useTranslation("common");
+
   return (
     <footer className="bg-gray-900 pt-16 pb-8 border-t border-gray-800 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,8 +46,7 @@ export function Footer({
 
             {!hideDescription && (
               <p className="text-gray-400 text-sm leading-relaxed max-w-sm mb-5">
-                Votre partenaire de confiance pour la sécurité de vos infrastructures IT.
-                Solutions SaaS performantes et évolutives.
+                {t("footer.description")}
               </p>
             )}
 
@@ -71,27 +73,27 @@ export function Footer({
           {!hideInfoSection && (
             <div>
               <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
-                Informations
+                {t("footer.information")}
               </h4>
               <ul className="space-y-3">
                 <li>
                   <Link to="#" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    À propos de Cyna
+                    {t("footer.aboutCyna")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/catalog" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    Catalogue
+                    {t("nav.catalog")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/contact" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    Contactez-nous
+                    {t("footer.contactUs")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/downloads" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    Application Android
+                    {t("nav.android")}
                   </Link>
                 </li>
               </ul>
@@ -102,22 +104,22 @@ export function Footer({
           {!hideLegalSection && (
             <div>
               <h4 className="text-white font-bold mb-4 uppercase tracking-wider text-sm">
-                Légal
+                {t("footer.legal")}
               </h4>
               <ul className="space-y-3">
                 <li>
                   <Link to="/mentions-legales" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    Mentions Légales
+                    {t("footer.legalNotice")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/cgu" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    Conditions Générales (CGU)
+                    {t("footer.termsOfService")}
                   </Link>
                 </li>
                 <li>
                   <Link to="/privacy" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    Politique de confidentialité
+                    {t("footer.privacyPolicy")}
                   </Link>
                 </li>
               </ul>
@@ -127,7 +129,7 @@ export function Footer({
 
         {/* ── Barre copyright ── */}
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-gray-500 text-sm">CYNA PROJET DIIAGE. © 2025 Tous droits réservés.</p>
+          <p className="text-gray-500 text-sm">{t("footer.copyright")}</p>
 
           {!hideSocial && (
             <div className="flex items-center gap-5">
