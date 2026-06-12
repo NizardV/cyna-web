@@ -45,11 +45,11 @@ const ROLE_OVERRIDE = import.meta.env.VITE_OVERRIDE_ROLE === "true";
 export function AccountNav({ user }) {
   const { t } = useTranslation("common")
   const [loggingOut, setLoggingOut] = useState(false)
-  const { logout } = useAuth()
+  const { logout, isAdminView } = useAuth()
 
   const NAV_ITEMS = [
     { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser , canView: true    },
-    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt, canView: (!isAdmin || ROLE_OVERRIDE)},
+    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt, canView: (!isAdminView || ROLE_OVERRIDE)},
   ]
 
   const handleLogout = async () => {
