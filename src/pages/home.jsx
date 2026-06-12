@@ -7,6 +7,9 @@ import { FixedText } from "@/components/home/fixed-text";
 import { CategoryGrid } from "@/components/home/category-grid";
 import { FeaturedProducts } from "@/components/home/featured-products";
 
+/**
+ * Page d'accueil : carrousel, texte de mission, grille des catégories et top produits.
+ */
 export function Home() {
   const { t } = useTranslation("home");
   const [data, setData] = useState(null);
@@ -16,10 +19,8 @@ export function Home() {
     const loadData = async () => {
       try {
         setIsLoading(true);
-        // On récupère toutes nos données depuis notre super Mock API
-        const homeData = await fetchHomeData(); 
+        const homeData = await fetchHomeData();
         setData(homeData);
-        console.log("Données de la page d'accueil chargées :", homeData);
       } catch (error) {
         console.error("Erreur lors du chargement des données de la page d'accueil", error);
       } finally {

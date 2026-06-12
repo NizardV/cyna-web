@@ -9,6 +9,15 @@ import { Textarea } from "@/components/ui/textarea"
 const STATUS_VALUES = ["Available", "Unavailable", "OutOfStock", "Preview"]
 const LANGS = ["fr", "en"]
 
+/**
+ * Formulaire de saisie des informations générales d'un produit (nom, description, statut).
+ * Bascule entre les locales FR et EN via un sélecteur d'onglet intégré.
+ *
+ * @param {{
+ *   value: { nameFr: string, nameEn: string, descriptionFr: string, descriptionEn: string, status: string },
+ *   onChange: (value: object) => void
+ * }} props
+ */
 export function FormGeneral({ value, onChange }) {
   const { t } = useTranslation("admin-products")
   const [lang, setLang] = useState("fr")

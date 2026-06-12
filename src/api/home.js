@@ -1,14 +1,13 @@
 import { apiClient } from "./client.js"
 
 /**
- * Récupère les données dynamiques de la page d'accueil
- * (Carrousel, Texte fixe, Catégories, Top Produits)
+ * Récupère les données dynamiques de la page d'accueil.
+ *
+ * @returns {Promise<{
+ *   carouselSlides: object[],
+ *   missionText: string,
+ *   categories: object[],
+ *   topProducts: object[]
+ * }>}
  */
-export const fetchHomeData = async () => {
-  // apiClient va faire un appel GET vers l'URL '/home'
-  // Si VITE_MOCK_API=true, l'intercepteur (MSW ou ton MockRegistry) va intercepter l'appel
-  // et renvoyer tes fausses données à la place !
-  const data = await apiClient.get("/home");
-  
-  return data;
-};
+export const fetchHomeData = () => apiClient.get("/home");

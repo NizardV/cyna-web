@@ -11,6 +11,10 @@ import { CartRow, lineTotal } from "@/components/cart/cart-row"
 import { CartSummary } from "@/components/cart/cart-summary"
 import { CartSkeleton } from "@/components/cart/cart-skeleton"
 
+/**
+ * Page panier : liste des articles avec contrôles de quantité, résumé et passage en caisse.
+ * Les prix par palier sont recalculés localement à chaque changement de quantité.
+ */
 export function Cart() {
   const { t } = useTranslation("cart")
   const navigate = useNavigate()

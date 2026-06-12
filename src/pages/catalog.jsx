@@ -12,16 +12,18 @@ import { FilterSidebar, FilterDrawer, FilterSidebarSkeleton } from "@/components
 import { ProductCard, ProductCardSkeleton } from "@/components/search/product-card"
 import { CategoryHeader } from "@/components/catalog/category-header"
 
+/**
+ * Page catalogue d'une catégorie : bannière, filtres et grille de produits paginée.
+ * Réutilise le namespace i18n "search" car les patterns d'affichage sont identiques.
+ */
 export function Catalog() {
-  const { t } = useTranslation("search") // On réutilise les trads de la recherche
-  const { slug } = useParams() // Récupère le slug de la catégorie depuis l'URL
+  const { t } = useTranslation("search")
+  const { slug } = useParams()
 
-  // --- État de la page ---
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
 
-  // --- État des filtres (Spécifiques à la catégorie) ---
   const [currentPage, setCurrentPage] = useState(1)
   const [filters, setFilters] = useState({
     search: "",
@@ -33,13 +35,11 @@ export function Catalog() {
   const debouncedSearch = useDebounce(filters.search, 700)
   const debouncedMaxPrice = useDebounce(filters.maxPrice, 500)
 
-  // --- Gestion des filtres ---
   const handleFilterChange = useCallback((patch) => {
     setFilters((prev) => ({ ...prev, ...patch }))
-    setCurrentPage(1) // Retour page 1 si on filtre
+    setCurrentPage(1)
   }, [])
 
-  // --- Chargement des données API ---
   useEffect(() => {
     setLoading(true)
     setError(false)
@@ -56,7 +56,6 @@ export function Catalog() {
     getCategoryCatalog(slug, params)
       .then((res) => {
         setData(res)
-        console.log("API Response:", res) 
         setLoading(false)
       })
       .catch(() => {
@@ -91,13 +90,10 @@ export function Catalog() {
       
       <main className="mx-auto flex w-full max-w-7xl gap-8 p-8">
         
-        {/* Panneau de filtres (Sidebar Desktop) */}
         {loading && !data ? (
-          
           <FilterSidebarSkeleton />
         ) : (
           <div className="hidden md:block">
-            {/*  On utilise hideCategories={true} pour cacher les catégories dans le panneau de filtres */}
             <FilterSidebar
               categories={[]} 
               filters={filters}
@@ -107,10 +103,7 @@ export function Catalog() {
           </div>
         )}
 
-        {/* Zone des résultats (Produits) */}
         <div className="min-w-0 flex-1">
-          
-          {/* Header des résultats + Bouton mobile */}
           <div className="mb-5 flex items-center justify-between gap-2 md:flex-row flex-col">
             <h2 className="shrink-0 text-sm font-bold text-foreground">
               {t("resultsLabel")}{" "}
@@ -122,7 +115,6 @@ export function Catalog() {
             </h2>
 
             <div className="flex items-center gap-2">
-              {/* Bouton Filtres (Mobile) */}
               <div className="md:hidden">
                 <FilterDrawer
                   categories={[]}
@@ -135,7 +127,6 @@ export function Catalog() {
             </div>
           </div>
 
-          {/* Grille de produits */}
           {loading ? (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               {Array.from({ length: 9 }).map((_, i) => (
@@ -165,7 +156,6 @@ export function Catalog() {
                 ))}
               </div>
 
-              {/* Pagination */}
               <SearchPagination
                 currentPage={data.page}
                 totalPages={data.totalPages}

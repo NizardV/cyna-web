@@ -1,6 +1,7 @@
 import "./loading.css";
 import { useTranslation } from "react-i18next";
 
+/** Écran de chargement global affiché pendant la résolution du lazy-loading des routes. */
 export default function Loading() {
   const { t } = useTranslation("common");
 

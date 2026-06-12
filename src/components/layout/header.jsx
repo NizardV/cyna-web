@@ -6,6 +6,15 @@ import { useTranslation } from "react-i18next";
 import { LangSwitcher } from "./lang-switcher";
 import { Search } from "./search";
 
+/**
+ * En-tête de l'application avec logo, barre de recherche, navigation et actions utilisateur.
+ * Adaptatif mobile/desktop avec menu burger. Affiche une navigation différente
+ * selon que l'utilisateur est en vue admin ou en vue utilisateur.
+ *
+ * @param {{ hideNav?: boolean, hideUserSection?: boolean }} props
+ * @param {boolean} [props.hideNav=false] - Masque les liens de navigation
+ * @param {boolean} [props.hideUserSection=false] - Masque les icônes panier et compte
+ */
 export function Header({ hideNav = false, hideUserSection = false }) {
   const { user, isAdminView } = useAuth();
   const { t } = useTranslation("common");

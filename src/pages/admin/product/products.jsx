@@ -12,6 +12,9 @@ import { toast } from "sonner"
 
 const PAGE_SIZE = 5
 
+/**
+ * Page liste des produits (admin) : recherche, filtres par statut/mise en avant, pagination côté client.
+ */
 export function AdminProducts() {
   const { t }       = useTranslation("admin-products")
   const navigate    = useNavigate()

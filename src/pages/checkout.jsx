@@ -139,6 +139,11 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
 // Page principale
 // ---------------------------------------------------------------------------
 
+/**
+ * Page de paiement en 3 étapes : compte client, adresse de facturation, paiement par carte.
+ * Enrichit les articles du panier avec les prix confirmés par le backend avant affichage.
+ * Les données de formulaire sont pré-remplies en mode développement pour accélérer les tests.
+ */
 export function Checkout() {
   const { t } = useTranslation("checkout")
   const navigate = useNavigate()

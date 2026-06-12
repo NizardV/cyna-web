@@ -12,6 +12,17 @@ import {
   SheetClose,
 } from "@/components/ui/sheet"
 
+/**
+ * Tiroir de filtres pour mobile (Sheet montant depuis le bas).
+ * Affiche un badge indiquant le nombre de filtres actifs.
+ *
+ * @param {{
+ *   categories: object[],
+ *   filters: object,
+ *   onChange: (patch: object) => void,
+ *   hideCategories?: boolean
+ * }} props
+ */
 export function FilterDrawer({ categories, filters, onChange, hideCategories = false }) {
   const { t } = useTranslation("search")
   const [open, setOpen] = useState(false)

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+/** Page 404 affichée pour toute route inconnue. */
 export default function NotFound() {
   const { t } = useTranslation("common");
 

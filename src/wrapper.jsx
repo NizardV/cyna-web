@@ -2,7 +2,11 @@ import { useAuth } from "@/hooks/use-auth.js";
 import { Navigate, Outlet } from "react-router-dom";
 import Loading from "./pages/specials/loading";
 
-/** Routes accessibles aux utilisateurs non-admin (null ou "Utilisateur") */
+/**
+ * Garde de route pour les utilisateurs non-admin.
+ * Redirige les admins vers le tableau de bord.
+ * @returns {React.ReactElement}
+ */
 export function UserRoute() {
   const { loading, isAdminView } = useAuth();
   if (loading) return <Loading />;
@@ -10,7 +14,11 @@ export function UserRoute() {
   return <Outlet />;
 }
 
-/** Routes accessibles uniquement aux admins */
+/**
+ * Garde de route pour les administrateurs uniquement.
+ * Redirige les non-admins vers la page d'accueil.
+ * @returns {React.ReactElement}
+ */
 export function AdminRoute() {
   const { isAdminView, loading } = useAuth();
   if (loading) return <Loading />;

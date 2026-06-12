@@ -2,6 +2,17 @@ import { useTranslation } from "react-i18next"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 
+/**
+ * Contenu du panneau de filtres (recherche, catégories, budget, disponibilité).
+ * Utilisé à la fois dans FilterSidebar (desktop) et FilterDrawer (mobile).
+ *
+ * @param {{
+ *   categories: object[],
+ *   filters: { search: string, categories: (string|number)[], maxPrice: string, onlyAvailable: boolean },
+ *   onChange: (patch: object) => void,
+ *   hideCategories?: boolean
+ * }} props
+ */
 export function FilterContent({ categories, filters, onChange, hideCategories = false }) {
   const { t } = useTranslation("search")
 

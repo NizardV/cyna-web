@@ -4,6 +4,16 @@ import { UnitType } from "@/lib/pricing-utils";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
+/**
+ * Tableau des paliers de tarification du plan courant.
+ * Met en surbrillance le palier actif selon la quantité choisie.
+ *
+ * @param {{
+ *   tiers: object[],
+ *   activeTierUser: object|null,
+ *   activeTierDevice: object|null
+ * }} props
+ */
 export function PricingTiersTable({ tiers, activeTierUser, activeTierDevice }) {
   const { t } = useTranslation("product");
 
@@ -44,6 +54,10 @@ export function PricingTiersTable({ tiers, activeTierUser, activeTierDevice }) {
   );
 }
 
+/**
+ * Colonne de paliers pour un type d'unité (users ou devices).
+ * @param {{ label: string, tiers: object[], activeTier: object|null }} props
+ */
 function TierColumn({ label, tiers, activeTier }) {
   const { t } = useTranslation("product");
   return (

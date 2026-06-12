@@ -28,6 +28,13 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
 import { UserRoute, AdminRoute } from "./wrapper"
+
+/**
+ * Composant racine du routeur.
+ * Définit l'arbre de routes de l'application, protégées par `UserRoute` et `AdminRoute`.
+ * Les routes sont enveloppées dans `Suspense` pour afficher une page de chargement
+ * pendant le chargement paresseux des modules.
+ */
 function App() {
   return (
     <BrowserRouter>

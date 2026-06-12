@@ -60,6 +60,9 @@ function ProfileSkeleton() {
 // Page principale
 // ---------------------------------------------------------------------------
 
+/**
+ * Page profil : modification des informations personnelles, mot de passe et gestion des abonnements actifs.
+ */
 export function Profile() {
   const { t } = useTranslation("profile")
 
@@ -140,18 +143,15 @@ export function Profile() {
     } finally { setPasswordSaving(false) }
   }
 
-  // Open dialog for the chosen subscription
   const handleCancelRequest = (sub) => {
     setCancelTarget(sub)
   }
 
-  // Actually call the API once the user confirms
   const handleCancelConfirm = async () => {
     if (!cancelTarget) return
     setCancelling(true)
     try {
       await cancelSubscription(cancelTarget.id)
-      // Optimistically remove from local list
       setSubscriptions((prev) => prev.filter((s) => s.id !== cancelTarget.id))
       setCancelTarget(null)
       toast.success(t("subscriptions.cancelDialog.successMessage", {
@@ -171,12 +171,10 @@ export function Profile() {
     <Layout>
       <main className="flex w-full flex-col gap-8 py-8 md:flex-row">
 
-        {/* Sidebar */}
         <div className="w-full md:w-52 md:shrink-0">
           <AccountNav user={loadingUser ? undefined : user ?? undefined} />
         </div>
 
-        {/* Main content */}
         <div className="min-w-0 flex-1 space-y-4">
           <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
 
@@ -184,7 +182,6 @@ export function Profile() {
             <ProfileSkeleton />
           ) : (
             <>
-              {/* Informations personnelles */}
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle>{t("personalInfo.title")}</CardTitle>
@@ -194,7 +191,6 @@ export function Profile() {
                   <form onSubmit={handleProfileSubmit}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                      {/* CHAMP 1 : Prénom (First Name) */}
                       <div className="flex flex-col gap-1.5">
                         <Label htmlFor="firstName">First name</Label>
                         <Input
@@ -206,7 +202,6 @@ export function Profile() {
                         />
                       </div>
 
-                      {/* CHAMP 2 : Nom (Last Name) */}
                       <div className="flex flex-col gap-1.5">
                         <Label htmlFor="lastName">Last name</Label>
                         <Input
@@ -218,7 +213,6 @@ export function Profile() {
                         />
                       </div>
 
-                      {/* CHAMP 3 : Adresse Email */}
                       <div className="flex flex-col gap-1.5 md:col-span-2">
                         <Label htmlFor="email">{t("personalInfo.email")}</Label>
                         <div className="flex">
@@ -248,7 +242,6 @@ export function Profile() {
                 </CardContent>
               </Card>
 
-              {/* Sécurité */}
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle>{t("security.title")}</CardTitle>
@@ -298,7 +291,6 @@ export function Profile() {
                 </CardContent>
               </Card>
 
-              {/* Abonnements */}
               <Card>
                 <CardHeader className="border-b">
                   <div className="flex items-center justify-between">

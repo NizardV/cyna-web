@@ -10,6 +10,10 @@ import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/hooks/use-auth";
 import { loginUser } from "@/api/auth";
 
+/**
+ * Page de connexion : formulaire email/mot de passe avec option "Se souvenir de moi".
+ * Masque la nav et la barre de recherche via les props de Layout.
+ */
 export function Login() {
   const navigate = useNavigate();
   const { t } = useTranslation("auth");

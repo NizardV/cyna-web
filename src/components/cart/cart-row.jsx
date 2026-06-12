@@ -5,10 +5,25 @@ import { findTier, UnitType } from "@/lib/pricing-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
+/**
+ * Calcule le total HT d'une ligne du panier.
+ * @param {{ unitPriceUsers: number, quantityUsers: number, unitPriceDevices: number, quantityDevices: number }} item
+ * @returns {number}
+ */
 export function lineTotal(item) {
   return (item.unitPriceUsers * item.quantityUsers) + (item.unitPriceDevices * item.quantityDevices);
 }
 
+/**
+ * Ligne d'un article dans le panier avec contrôles de quantité et bouton de suppression.
+ *
+ * @param {{
+ *   item: object,
+ *   onUsersChange: (id: string, quantity: number) => Promise<void>,
+ *   onDevicesChange: (id: string, quantity: number) => Promise<void>,
+ *   onRemove: (id: string) => void
+ * }} props
+ */
 export function CartRow({ item, onUsersChange, onDevicesChange, onRemove }) {
   const { t } = useTranslation("cart");
   const { t: tc } = useTranslation("common");
@@ -97,6 +112,20 @@ export function CartRow({ item, onUsersChange, onDevicesChange, onRemove }) {
   );
 }
 
+/**
+ * Contrôle de quantité avec indicateur visuel de dépassement de limite.
+ *
+ * @param {{
+ *   label: string,
+ *   quantity: number,
+ *   unitPrice: number,
+ *   unit: string,
+ *   isOverLimit: boolean,
+ *   onDecrement: () => void,
+ *   onIncrement: () => void,
+ *   disabled: boolean
+ * }} props
+ */
 function QuantityControl({ label, quantity, unitPrice, unit, isOverLimit, onDecrement, onIncrement, disabled }) {
   return (
     <div className={`flex items-center gap-2 px-2 py-1 rounded ${isOverLimit ? "bg-orange-50" : ""}`}>

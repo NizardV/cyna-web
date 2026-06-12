@@ -1,5 +1,8 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
+/**
+ * Squelette de chargement pour le panneau de filtres latéral (desktop uniquement).
+ */
 export function FilterSidebarSkeleton() {
   return (
     <aside className="hidden w-56 shrink-0 space-y-3 md:block">

@@ -14,6 +14,11 @@ const STATUS_VARIANT = {
   Preview:     "secondary",
 }
 
+/**
+ * Ligne de tableau pour un produit dans l'interface d'administration.
+ *
+ * @param {{ product: object, onDelete: (id: string) => void }} props
+ */
 export function ProductAdminCard({ product, onDelete }) {
   const { t } = useTranslation("admin-products")
   const variant = STATUS_VARIANT[product.status] ?? "outline"
@@ -80,6 +85,9 @@ export function ProductAdminCard({ product, onDelete }) {
   )
 }
 
+/**
+ * Squelette de chargement pour une ligne du tableau produit admin.
+ */
 export function ProductAdminCardSkeleton() {
   return (
     <TableRow>

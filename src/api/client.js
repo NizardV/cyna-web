@@ -157,9 +157,8 @@ async function coreFetch(path, options = {}) {
   return response.json();
 }
 
-// Ajoutez cette fonction helper dans client.js
 /**
- * Build query string from params object
+ * Build query string from params object, ignoring empty/null values.
  * @param {Record<string, string>} params
  * @returns {string}
  */
@@ -299,5 +298,4 @@ class ApiClient {
   }
 }
 
-// Export singleton
 export const apiClient = new ApiClient();
