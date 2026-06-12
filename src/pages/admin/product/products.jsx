@@ -40,8 +40,12 @@ export function AdminProducts() {
       await deleteProduct(id)
       setProducts(prev => prev.filter(p => p.id !== id))
       toast.success(t("products.deleteSuccess"))
-    } catch {
-      toast.error(t("products.deleteError"))
+    } catch (err) {
+      if (err?.status === 409) {
+        toast.error(t("products.deleteErrorReferenced"), { duration: 6000 })
+      } else {
+        toast.error(t("products.deleteError"))
+      }
     }
   }
 

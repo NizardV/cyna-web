@@ -19,6 +19,7 @@ export function Home() {
         // On récupère toutes nos données depuis notre super Mock API
         const homeData = await fetchHomeData(); 
         setData(homeData);
+        console.log("Données de la page d'accueil chargées :", homeData);
       } catch (error) {
         console.error("Erreur lors du chargement des données de la page d'accueil", error);
       } finally {
@@ -47,7 +48,7 @@ export function Home() {
 
       <CategoryGrid categories={data?.categories} />
       
-      <FeaturedProducts products={data?.featuredProducts} />
+      <FeaturedProducts products={data?.topProducts} />
     </Layout>
   );
 }

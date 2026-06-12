@@ -6,10 +6,12 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { TableCell, TableRow } from "@/components/ui/table"
 import { Pencil, Trash2 } from "lucide-react"
 
+// Clés alignées sur l'enum .NET ProductStatus
 const STATUS_VARIANT = {
-  Active:   "default",
-  Inactive: "outline",
-  Archived: "destructive",
+  Available:   "default",
+  Unavailable: "outline",
+  OutOfStock:  "destructive",
+  Preview:     "secondary",
 }
 
 export function ProductAdminCard({ product, onDelete }) {

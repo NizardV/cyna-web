@@ -1,0 +1,61 @@
+trigger: none
+
+resources:
+  pipelines:
+  - pipeline: 'ci-web'
+    source: 'Cyna-Web CI'
+    trigger:
+      branches:
+        include: [ "main", "dev" ]
+
+pool:
+  name: 'CyanPool'
+
+variables:
+  - group: 'GHCR'
+  - name: FULL_IMAGE
+    value: 'ghcr.io/nizardv/cyna-frontend'
+  - name: RAW_BRANCH
+    value: $(resources.pipeline['ci-web'].sourceBranch)
+
+stages:
+- stage: CD_Cloud
+  displayName: 'CD Cloud — Deploy OVH'
+  jobs:
+  - deployment: Deploy
+    environment: 'OVH-Cloud'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # ── STEP 1 : Calcul des variables ──
+          - bash: |
+              BRANCH_NAME=$(echo "$(RAW_BRANCH)" | sed 's|refs/heads/||')
+              echo "Pipeline déclenché par la branche : $BRANCH_NAME"
+
+              if [ "$BRANCH_NAME" = "main" ]; then
+                echo "##vso[task.setvariable variable=envName]production"
+                echo "##vso[task.setvariable variable=composeEnv]prod"
+              else
+                echo "##vso[task.setvariable variable=envName]staging"
+                echo "##vso[task.setvariable variable=composeEnv]staging"
+              fi
+            displayName: "Calcul dynamique de l'environnement cible"
+
+          # ── STEP 2 : Déploiement SSH ──
+          - task: SSH@0
+            displayName: 'Deploy Frontend sur OVH via Docker Compose'
+            inputs:
+              sshEndpoint: 'OVH-SSH-Connection'
+              runOptions: 'inline'
+              failOnStdErr: false
+              inline: |
+                echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
+
+                cd ~/cyna-infra
+                git pull origin main
+                cd docker-compose/
+
+                echo "─── Pull & Relance du Frontend ($(envName)) ───"
+                docker compose -f docker-compose.$(composeEnv).yml pull web
+                docker compose -f docker-compose.$(composeEnv).yml up -d --no-build --force-recreate --no-deps web

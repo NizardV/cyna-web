@@ -29,6 +29,36 @@ export const getSimilarProducts = (id) =>
   apiClient.get("/products/similar/:id", { params: { id } });
 
 /**
+ * Fetch a product with both locales for the admin edit form (admin only).
+ * @param {string} id
+ * @returns {Promise<object>}
+ */
+export const getProductAdmin = (id) =>
+  apiClient.get("/products/:id/admin", { params: { id } });
+
+/**
+ * Récupère les informations d'une catégorie et ses produits (Page Catalogue).
+ * @param {string} slug - Le slug identifiant la catégorie.
+ * @param {{
+ * page?: string,
+ * pageSize?: string,
+ * locale?: string
+ * }} [params]
+ * @returns {Promise<{
+ * categoryName: string,
+ * categoryDescription: string,
+ * categoryImageUrl: string,
+ * items: object[],
+ * total: number,
+ * totalPages: number,
+ * page: number,
+ * pageSize: number
+ * }>}
+ */
+export const getCategoryCatalog = (slug, params = {}) =>
+  apiClient.get(`/catalog/category/${slug}`, { params: { locale: "fr", ...params } })
+
+/**
  * Create a new product (admin only).
  * @param {object} dto
  * @returns {Promise<object>}

@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 
-const STATUS_VALUES = ["Active", "Inactive", "Archived"]
+// Valeurs alignées sur l'enum .NET ProductStatus
+const STATUS_VALUES = ["Available", "Unavailable", "OutOfStock", "Preview"]
 const LANGS = ["fr", "en"]
 
 export function FormGeneral({ value, onChange }) {

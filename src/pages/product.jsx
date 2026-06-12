@@ -128,7 +128,7 @@ export function Product() {
               totalPrice={totalPrice}
               isQuoteRequired={isQuoteRequired}
               productName={product.name}
-              isAvailable={product.status === "available"}
+              isAvailable={product.status?.toLowerCase() === "available"}
             />
           </div>
         )}

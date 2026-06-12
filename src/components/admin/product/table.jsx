@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils"
 
 const TH_CLASS = "px-4 py-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground"
 
+// Valeurs alignées sur l'enum .NET ProductStatus
 const STATUS_VALUES = ["Available", "Unavailable", "OutOfStock", "Preview"]
 
 const SORT_ICON = {

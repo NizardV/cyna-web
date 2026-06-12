@@ -24,24 +24,24 @@ export const homeHandlers = [
         .sort((a, b) => a.displayOrder - b.displayOrder)
         .slice(0, 4);
       // Les Top Produits (On génère 4 produits "Featured")
-      let featuredProducts = _products
+      let topProducts = _products
         .filter(p => p.isFeatured)
         .sort((a, b) => (a.displayOrder ?? 99) - (b.displayOrder ?? 99));
 
       // Sécurité : Si Faker n'en a pas généré au moins 4 avec 'isFeatured=true',
       // on complète avec des produits normaux pour avoir une belle grille de 4.
-      if (featuredProducts.length < 4) {
+      if (topProducts.length < 4) {
         const others = _products.filter(p => !p.isFeatured);
-        featuredProducts = [...featuredProducts, ...others].slice(0, 4);
+        topProducts = [...topProducts, ...others].slice(0, 4);
       } else {
-        featuredProducts = featuredProducts.slice(0, 4);
+        topProducts = topProducts.slice(0, 4);
       }
 
       return {
         carouselSlides,
         missionText,
         categories,
-        featuredProducts
+        topProducts
       };
     },
   }

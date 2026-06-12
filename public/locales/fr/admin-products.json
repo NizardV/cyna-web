@@ -7,7 +7,8 @@
     "searchPlaceholder": "Rechercher un produit…",
     "deleteConfirm": "Supprimer ce produit définitivement ?",
     "deleteSuccess": "Produit supprimé",
-    "deleteError": "Erreur lors de la suppression"
+    "deleteError": "Erreur lors de la suppression",
+    "deleteErrorReferenced": "Ce produit ne peut pas étre supprimé car il est lié à des commandes ou abonnements existants."
   },
   "featured": {
     "yes": "⭐ Oui",
