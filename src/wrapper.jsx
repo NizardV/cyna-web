@@ -4,16 +4,16 @@ import Loading from "./pages/specials/loading";
 
 /** Routes accessibles aux utilisateurs non-admin (null ou "Utilisateur") */
 export function UserRoute() {
-  const { loading, isAdmin } = useAuth();
+  const { loading, isAdminView } = useAuth();
   if (loading) return <Loading />;
-  if (isAdmin) return <Navigate to="/admin/dashboard" replace />;
+  if (isAdminView) return <Navigate to="/admin/dashboard" replace />;
   return <Outlet />;
 }
 
 /** Routes accessibles uniquement aux admins */
 export function AdminRoute() {
-  const { isAdmin, loading } = useAuth();
+  const { isAdminView, loading } = useAuth();
   if (loading) return <Loading />;
-  if (!isAdmin) return <Navigate to="/" replace />;
+  if (!isAdminView) return <Navigate to="/" replace />;
   return <Outlet />;
 }
