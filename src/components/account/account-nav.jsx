@@ -5,13 +5,13 @@
  *   { id, email, firstName, lastName, role, isEmailVerified, createdAt }
  */
 
-import { NavLink, useNavigate } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/api/auth.js"
+import { useAuth } from "@/hooks/use-auth"
 import { IconUser } from "../icons/IconUser"
 import { IconLogOut } from "../icons/IconLogOut"
 import { IconReceipt } from "../icons/IconReceipt"
@@ -41,9 +41,9 @@ function getFullName(user, guestLabel) {
  * @param {{ user?: object }} props
  */
 export function AccountNav({ user }) {
-  const navigate = useNavigate()
   const { t } = useTranslation("common")
   const [loggingOut, setLoggingOut] = useState(false)
+  const { logout } = useAuth()
 
   const NAV_ITEMS = [
     { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser    },
@@ -51,16 +51,13 @@ export function AccountNav({ user }) {
   ]
 
   const handleLogout = async () => {
-    setLoggingOut(true)
+    setLoggingOut(true);
     try {
-      await logout()
-    } catch {
-      localStorage.removeItem("cyna_token")
+      await logout();
     } finally {
-      setLoggingOut(false)
-      navigate("/")
+      setLoggingOut(false);
     }
-  }
+  };
 
   return (
     <nav

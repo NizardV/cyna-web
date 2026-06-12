@@ -27,36 +27,44 @@ import Loading from "./pages/specials/loading"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
-
+import { UserRoute, AdminRoute } from "./wrapper"
 function App() {
   return (
     <BrowserRouter>
       <Suspense fallback={<Loading />}>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/loading" element={<Loading />} />
-          <Route path="/search" element={<Search />} />
-          <Route path="/catalog/category/:slug" element={<Catalog />} />
+          <Route path="/unauthorized"      element={<Unauthorized />} />
+          <Route path="/login"             element={<Login />} />
+          <Route path="/register"          element={<Register />} />
           <Route path="/account/profile" element={<Profile />} />
-          <Route path="/account/orders" element={<OrderHistory />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/checkout" element={<Checkout />} />
-          <Route path="/order-confirmation" element={<OrderConfirmation />} />
-          <Route path="/products/:id" element={<Product />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/cgu" element={<CGU />} />
-          <Route path="/mentions-legales" element={<MentionsLegales />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/downloads" element={<Downloads />} />
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/admin/categories" element={<AdminCategories />} />
+
+          {/* ── Routes utilisateur (non-admin) ── */}
+          <Route element={<UserRoute />}>
+            {/* ── Routes publiques ── */}
+            <Route path="/"                  element={<Home />} />
+            <Route path="/loading"           element={<Loading />} />
+            <Route path="/search"            element={<Search />} />
+            <Route path="/catalog/category/:slug" element={<Catalog />} />
+            <Route path="/products/:id"      element={<Product />} />
+            <Route path="/contact"           element={<Contact />} />
+            <Route path="/cgu"               element={<CGU />} />
+            <Route path="/mentions-legales"  element={<MentionsLegales />} />
+            <Route path="/privacy"           element={<Privacy />} />
+            <Route path="/downloads"         element={<Downloads />} />
+            <Route path="/cart"            element={<Cart />} />
+            <Route path="/checkout"        element={<Checkout />} />
+            <Route path="/order-confirmation" element={<OrderConfirmation />} />
+            <Route path="/account/orders"  element={<OrderHistory />} />
+          </Route>
 
           {/* ── Backoffice admin ── */}
-          <Route path="/admin/products" element={<AdminProducts />} />
-          <Route path="/admin/products/new" element={<AdminProductForm />} />
-          <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/admin/dashboard"         element={<Loading />} />
+            <Route path="/admin/categories"        element={<AdminCategories />} />
+            <Route path="/admin/products"          element={<AdminProducts />} />
+            <Route path="/admin/products/new"      element={<AdminProductForm />} />
+            <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+          </Route>
 
           <Route path="*" element={<NotFound />} />
         </Routes>
