@@ -82,11 +82,6 @@ export function Footer({
                   </Link>
                 </li>
                 <li>
-                  <Link to="/catalog" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    {t("nav.catalog")}
-                  </Link>
-                </li>
-                <li>
                   <Link to="/contact" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
                     {t("footer.contactUs")}
                   </Link>

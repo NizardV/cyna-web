@@ -37,20 +37,20 @@ function App() {
           <Route path="/login"             element={<Login />} />
           <Route path="/register"          element={<Register />} />
           <Route path="/account/profile" element={<Profile />} />
+          <Route path="/cgu"               element={<CGU />} />
+          <Route path="/mentions-legales"  element={<MentionsLegales />} />
+          <Route path="/privacy"           element={<Privacy />} />
+          <Route path="/downloads"         element={<Downloads />} />
+          <Route path="/loading"           element={<Loading />} />
+          <Route path="/contact"           element={<Contact />} />
 
           {/* ── Routes utilisateur (non-admin) ── */}
           <Route element={<UserRoute />}>
             {/* ── Routes publiques ── */}
             <Route path="/"                  element={<Home />} />
-            <Route path="/loading"           element={<Loading />} />
             <Route path="/search"            element={<Search />} />
             <Route path="/catalog/category/:slug" element={<Catalog />} />
             <Route path="/products/:id"      element={<Product />} />
-            <Route path="/contact"           element={<Contact />} />
-            <Route path="/cgu"               element={<CGU />} />
-            <Route path="/mentions-legales"  element={<MentionsLegales />} />
-            <Route path="/privacy"           element={<Privacy />} />
-            <Route path="/downloads"         element={<Downloads />} />
             <Route path="/cart"            element={<Cart />} />
             <Route path="/checkout"        element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />

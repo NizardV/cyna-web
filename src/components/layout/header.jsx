@@ -23,9 +23,11 @@ export function Header({ hideNav = false, hideUserSection = false }) {
             </div>
             <span className="font-bold text-lg">CYNA</span>
           </Link>
-          <div className="hidden md:flex w-full max-w-xs">
-            <Search />
-          </div>
+          {!isAdmin && (
+            <div className="hidden md:flex w-full max-w-xs">
+              <Search />
+            </div>
+          )}
         </div>
 
         {/* Centre : Nav desktop */}
@@ -57,9 +59,11 @@ export function Header({ hideNav = false, hideUserSection = false }) {
 
           {!hideUserSection && (
             <>
-              <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition">
-                <ShoppingCart className="h-5 w-5 text-gray-700" />
-              </Link>
+              {!isAdmin && (
+                <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition">
+                  <ShoppingCart className="h-5 w-5 text-gray-700" />
+                </Link>
+              )}
 
               {user ? (
                 <Link to="/account/profile" className="hidden md:flex items-center gap-2 hover:opacity-80 transition">
@@ -90,7 +94,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
           )}
 
           {/* Burger mobile */}
-          {!hideNav && (
+          {!hideNav && !isAdmin && (
             <button
               className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
               onClick={() => setMenuOpen((o) => !o)}

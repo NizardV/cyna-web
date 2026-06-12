@@ -43,11 +43,11 @@ function getFullName(user, guestLabel) {
 export function AccountNav({ user }) {
   const { t } = useTranslation("common")
   const [loggingOut, setLoggingOut] = useState(false)
-  const { logout } = useAuth()
+  const { logout, isAdmin } = useAuth()
 
   const NAV_ITEMS = [
-    { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser    },
-    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt },
+    { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser , canView: true    },
+    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt, canView: !isAdmin },
   ]
 
   const handleLogout = async () => {
@@ -89,7 +89,7 @@ export function AccountNav({ user }) {
       <div className="mb-2 h-px bg-border" />
 
       {/* Liens */}
-      {NAV_ITEMS.map(({ to, labelKey, Icon }) => (
+      {NAV_ITEMS.filter(({ canView }) => canView).map(({ to, labelKey, Icon }) => (
         <NavLink
           key={to}
           to={to}
