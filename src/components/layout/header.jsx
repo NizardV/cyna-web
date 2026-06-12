@@ -7,7 +7,7 @@ import { LangSwitcher } from "./lang-switcher";
 import { Search } from "./search";
 
 export function Header({ hideNav = false, hideUserSection = false }) {
-  const { user } = useAuth();
+  const { user, isAdminView } = useAuth();
   const { t } = useTranslation("common");
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -17,29 +17,38 @@ export function Header({ hideNav = false, hideUserSection = false }) {
 
         {/* Gauche : Logo + Search */}
         <div className="flex items-center gap-4 flex-1">
-          <Link to="/" className="flex items-center gap-2 shrink-0">
+          <Link to={isAdminView ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0">
             <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#7C3AED]">
               <span className="text-white font-bold text-sm">C</span>
             </div>
             <span className="font-bold text-lg">CYNA</span>
           </Link>
-          <div className="hidden md:flex w-full max-w-xs">
-            <Search />
-          </div>
+          {!isAdminView && (
+            <div className="hidden md:flex w-full max-w-xs">
+              <Search />
+            </div>
+          )}
         </div>
 
         {/* Centre : Nav desktop */}
         {!hideNav && (
           <nav className="hidden md:flex items-center gap-6 shrink-0">
-            <Link to="/" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              {t("nav.home")}
-            </Link>
-            <Link to="/search" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              {t("nav.catalog")}
-            </Link>
-            <Link to="/contact" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-              {t("nav.contact")}
-            </Link>
+            {isAdminView ? (
+              <>
+                <Link to="/admin/categories" className="text-sm font-medium text-gray-700 hover:text-gray-900">
+                  {t("nav.categories")}
+                </Link>
+                <Link to="/admin/products" className="text-sm font-medium text-gray-700 hover:text-gray-900">
+                  {t("nav.products")}
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link to="/"        className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.home")}</Link>
+                <Link to="/catalog"  className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.catalog")}</Link>
+                <Link to="/contact" className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.contact")}</Link>
+              </>
+            )}
           </nav>
         )}
 
@@ -50,9 +59,11 @@ export function Header({ hideNav = false, hideUserSection = false }) {
 
           {!hideUserSection && (
             <>
-              <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition">
-                <ShoppingCart className="h-5 w-5 text-gray-700" />
-              </Link>
+              {!isAdminView && (
+                <Link to="/cart" className="p-2 hover:bg-gray-100 rounded-lg transition">
+                  <ShoppingCart className="h-5 w-5 text-gray-700" />
+                </Link>
+              )}
 
               {user ? (
                 <Link to="/account/profile" className="hidden md:flex items-center gap-2 hover:opacity-80 transition">
@@ -83,7 +94,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
           )}
 
           {/* Burger mobile */}
-          {!hideNav && (
+          {!hideNav && !isAdminView && (
             <button
               className="md:hidden p-2 hover:bg-gray-100 rounded-lg transition"
               onClick={() => setMenuOpen((o) => !o)}
@@ -96,7 +107,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
       </div>
 
       {/* Menu mobile */}
-      {menuOpen && !hideNav && (
+      {menuOpen && !isAdminView && !hideNav && (
         <div className="md:hidden border-t border-gray-100 bg-white px-4 pb-4">
           <div className="pt-3 pb-2">
             <Search />
