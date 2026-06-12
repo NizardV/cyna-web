@@ -31,6 +31,14 @@ cd Cyna-Web
 npm install
 ```
 
+> **Windows — compatibilité CI** : le CI tourne sur Linux (`node:22-slim`). Si tu ajoutes ou mets à jour un package depuis Windows, régénère le lockfile dans un conteneur Linux avant de commiter, sinon `npm ci` cassera en CI :
+>
+> ```powershell
+> docker run --rm -v "${PWD}:/app" -w /app node:22-slim npm install
+> ```
+>
+> Si la version Node du Dockerfile change, mets à jour cette commande en conséquence.
+
 ---
 
 ## Configuration de l'environnement
