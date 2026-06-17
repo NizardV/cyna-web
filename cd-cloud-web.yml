@@ -1,5 +1,4 @@
 trigger: none
-
 resources:
   pipelines:
   - pipeline: 'ci-web'
@@ -7,17 +6,14 @@ resources:
     trigger:
       branches:
         include: [ "main", "dev" ]
-
 pool:
   name: 'CyanPool'
-
 variables:
   - group: 'GHCR'
   - name: FULL_IMAGE
     value: 'ghcr.io/nizardv/cyna-frontend'
   - name: RAW_BRANCH
     value: $(resources.pipeline['ci-web'].sourceBranch)
-
 stages:
 - stage: CD_Cloud
   displayName: 'CD Cloud — Deploy OVH'
@@ -31,18 +27,90 @@ stages:
           # ── STEP 1 : Calcul des variables ──
           - bash: |
               BRANCH_NAME=$(echo "$(RAW_BRANCH)" | sed 's|refs/heads/||')
-              echo "Pipeline déclenché par la branche : $BRANCH_NAME"
-
               if [ "$BRANCH_NAME" = "main" ]; then
                 echo "##vso[task.setvariable variable=envName]production"
                 echo "##vso[task.setvariable variable=composeEnv]prod"
+                echo "##vso[task.setvariable variable=IS_PROD]true"
               else
                 echo "##vso[task.setvariable variable=envName]staging"
                 echo "##vso[task.setvariable variable=composeEnv]staging"
+                echo "##vso[task.setvariable variable=IS_PROD]false"
               fi
             displayName: "Calcul dynamique de l'environnement cible"
 
-          # ── STEP 2 : Déploiement SSH ──
+          # ── STEP 2 : Versioning (prod uniquement) ──
+          - bash: |
+              if [ "$(IS_PROD)" != "true" ]; then
+                echo "Staging — versioning ignoré"
+                exit 0
+              fi
+
+              git fetch --tags
+              LAST_TAG=$(git tag --sort=-v:refname | grep -E '^web/v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
+
+              if [ -z "$LAST_TAG" ]; then
+                LAST_TAG="web/v0.0.0"
+                echo "Aucun tag trouvé, départ depuis $LAST_TAG"
+              fi
+
+              echo "Dernier tag : $LAST_TAG"
+              VERSION=${LAST_TAG#web/v}
+              MAJOR=$(echo $VERSION | cut -d. -f1)
+              MINOR=$(echo $VERSION | cut -d. -f2)
+              PATCH=$(echo $VERSION | cut -d. -f3)
+
+              COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"%s")
+              echo "Commits depuis $LAST_TAG :"
+              echo "$COMMITS"
+
+              BUMP="patch"
+              if echo "$COMMITS" | grep -qE '^feat!:|^fix!:|^refactor!:'; then
+                BUMP="major"
+              elif echo "$COMMITS" | grep -qE '^feat:'; then
+                BUMP="minor"
+              fi
+
+              echo "Bump détecté : $BUMP"
+
+              case $BUMP in
+                major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
+                minor) MINOR=$((MINOR+1)); PATCH=0 ;;
+                patch) PATCH=$((PATCH+1)) ;;
+              esac
+
+              NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+              NEW_TAG="web/${NEW_VERSION}"
+              echo "Nouvelle version : $NEW_TAG"
+              echo "##vso[task.setvariable variable=NEW_VERSION]$NEW_VERSION"
+              echo "##vso[task.setvariable variable=NEW_TAG]$NEW_TAG"
+
+              curl -s -X POST \
+                "https://dev.azure.com/2028DI1P5G3/DIIAGE%202028%20DI1%20P5%20G3/_apis/git/repositories/Cyna-Web/refs?api-version=7.1" \
+                -H "Content-Type: application/json" \
+                -H "Authorization: Basic $(echo -n ":$(ADO_PAT)" | base64)" \
+                -d "[{
+                  \"name\": \"refs/tags/${NEW_TAG}\",
+                  \"newObjectId\": \"$(Build.SourceVersion)\",
+                  \"oldObjectId\": \"0000000000000000000000000000000000000000\"
+                }]"
+
+              echo "Tag $NEW_TAG créé ✅"
+            displayName: 'Versioning — Calcul et tag Git'
+
+          # ── STEP 3 : Tag image Docker avec version (prod uniquement) ──
+          - bash: |
+              if [ "$(IS_PROD)" != "true" ]; then
+                echo "Staging — tag version ignoré"
+                exit 0
+              fi
+              echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
+              docker pull $(FULL_IMAGE):prod
+              docker tag $(FULL_IMAGE):prod $(FULL_IMAGE):$(NEW_VERSION)
+              docker push $(FULL_IMAGE):$(NEW_VERSION)
+              echo "Image taguée $(NEW_VERSION) ✅"
+            displayName: 'Tag image Docker avec version'
+
+          # ── STEP 4 : Déploiement SSH ──
           - task: SSH@0
             displayName: 'Deploy Frontend sur OVH via Docker Compose'
             inputs:
@@ -51,11 +119,20 @@ stages:
               failOnStdErr: false
               inline: |
                 echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
-
                 cd ~/cyna-infra
                 git pull origin main
                 cd docker-compose/
-
                 echo "─── Pull & Relance du Frontend ($(envName)) ───"
                 docker compose -f docker-compose.$(composeEnv).yml pull web
                 docker compose -f docker-compose.$(composeEnv).yml up -d --no-build --force-recreate --no-deps web
+
+          # ── STEP 5 : Health check ──
+          - task: SSH@0
+            displayName: 'Health check post-deploy'
+            inputs:
+              sshEndpoint: 'OVH-SSH-Connection'
+              runOptions: 'inline'
+              failOnStdErr: false
+              inline: |
+                sleep 5
+                curl -f http://localhost:$(API_PORT)/health || exit 1
