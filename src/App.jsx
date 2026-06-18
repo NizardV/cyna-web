@@ -6,6 +6,7 @@
 import { Home } from "./pages/home"
 import { AdminProducts } from "./pages/admin/product/products.jsx"
 import { AdminProductForm } from "./pages/admin/product/product-form.jsx"
+import { AdminDashboard } from "./pages/admin/dashboard.jsx"
 import { OrderHistory } from "./pages/account/order-history"
 import { Profile } from "./pages/account/profile"
 import { Login } from "./pages/login"
@@ -54,6 +55,7 @@ function App() {
           <Route path="/admin/categories" element={<AdminCategories />} />
 
           {/* ── Backoffice admin ── */}
+          <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/products" element={<AdminProducts />} />
           <Route path="/admin/products/new" element={<AdminProductForm />} />
           <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
