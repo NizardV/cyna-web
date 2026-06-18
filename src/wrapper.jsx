@@ -25,3 +25,15 @@ export function AdminRoute() {
   if (!isAdminView) return <Navigate to="/" replace />;
   return <Outlet />;
 }
+
+/**
+ * Garde de route pour les utilisateurs authentifiés.
+ * Redirige les utilisateurs non authentifiés vers la page de connexion.
+ * @returns {React.ReactElement}
+ */
+export function AuthRoute() {
+  const { loading, user } = useAuth();
+  if (loading) return <Loading />;
+  if (!user) return <Navigate to="/login" replace />;
+  return <Outlet />;
+}
