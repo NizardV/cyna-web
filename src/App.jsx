@@ -27,7 +27,7 @@ import Loading from "./pages/specials/loading"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
-import { UserRoute, AdminRoute } from "./wrapper"
+import { UserRoute, AdminRoute, AuthRoute } from "./wrapper"
 
 /**
  * Composant racine du routeur.
@@ -43,7 +43,6 @@ function App() {
           <Route path="/unauthorized"      element={<Unauthorized />} />
           <Route path="/login"             element={<Login />} />
           <Route path="/register"          element={<Register />} />
-          <Route path="/account/profile" element={<Profile />} />
           <Route path="/cgu"               element={<CGU />} />
           <Route path="/mentions-legales"  element={<MentionsLegales />} />
           <Route path="/privacy"           element={<Privacy />} />
@@ -71,6 +70,11 @@ function App() {
             <Route path="/admin/products"          element={<AdminProducts />} />
             <Route path="/admin/products/new"      element={<AdminProductForm />} />
             <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+          </Route>
+
+          {/* ── Routes protégées par authentification ── */}
+          <Route element={<AuthRoute />}>
+            <Route path="/account/profile" element={<Profile />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
