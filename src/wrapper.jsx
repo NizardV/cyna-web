@@ -27,13 +27,27 @@ export function AdminRoute() {
 }
 
 /**
- * Garde de route pour les utilisateurs authentifiés.
- * Redirige les utilisateurs non authentifiés vers la page de connexion.
+ * Garde de route pour les utilisateurs connectés non-admin.
+ * Redirige les invités vers la page de connexion.
+ * Redirige les admins vers le tableau de bord.
  * @returns {React.ReactElement}
  */
 export function AuthRoute() {
   const { loading, user } = useAuth();
   if (loading) return <Loading />;
   if (!user) return <Navigate to="/login" replace />;
+  return <Outlet />;
+}
+
+/**
+ * Garde de route pour les utilisateurs authentifiés.
+ * Redirige les utilisateurs (User) non authentifiés vers la page de connexion.
+ * @returns {React.ReactElement}
+ */
+export function UserAuthRoute() {
+  const { loading, isAuthenticated, isAdminView } = useAuth();
+  if (loading) return <Loading />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (isAdminView) return <Navigate to="/admin/dashboard" replace />;
   return <Outlet />;
 }

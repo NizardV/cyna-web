@@ -27,7 +27,7 @@ import Loading from "./pages/specials/loading"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
-import { UserRoute, AdminRoute, AuthRoute } from "./wrapper"
+import { UserRoute, AdminRoute, AuthRoute, UserAuthRoute } from "./wrapper"
 
 /**
  * Composant racine du routeur.
@@ -60,7 +60,6 @@ function App() {
             <Route path="/cart"            element={<Cart />} />
             <Route path="/checkout"        element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/account/orders"  element={<OrderHistory />} />
           </Route>
 
           {/* ── Backoffice admin ── */}
@@ -75,6 +74,11 @@ function App() {
           {/* ── Routes protégées par authentification ── */}
           <Route element={<AuthRoute />}>
             <Route path="/account/profile" element={<Profile />} />
+          </Route>
+
+          {/* ── Routes protégées par authentification utilisateur ── */}
+          <Route element={<UserAuthRoute />}>
+            <Route path="/account/orders" element={<OrderHistory />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
