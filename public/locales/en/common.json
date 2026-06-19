@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "home": "Home",
+    "catalog": "Catalog",
+    "contact": "Contact",
+    "clientArea": "Client Area",
+    "android": "Android App",
+    "categories": "Categories",
+    "products": "Products"
+  },
+  "footer": {
+    "description": "Your trusted partner for the security of your IT infrastructure. High-performance and scalable SaaS solutions.",
+    "information": "INFORMATION",
+    "aboutCyna": "About Cyna",
+    "contactUs": "Contact us",
+    "legal": "LEGAL",
+    "legalNotice": "Legal Notice",
+    "termsOfService": "Terms of Service (ToS)",
+    "privacyPolicy": "Privacy Policy",
+    "followUs": "FOLLOW US",
+    "copyright": "CYNA DIIAGE PROJECT. © 2025 All rights reserved."
+  },
+  "accountNav": {
+    "profile": "Profile & Security",
+    "billing": "Billing & Payment",
+    "guest": "Guest",
+    "notConnected": "Not connected",
+    "logout": "Sign out",
+    "loggingOut": "Signing out…"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page Not Found",
+    "message": "The page you're looking for doesn't exist or has been moved. Check the URL or return to the homepage.",
+    "backHome": "Go to Home"
+  },
+  "unauthorized": {
+    "code": "403",
+    "title": "Access Denied",
+    "message": "You don't have permission to access this page. This area requires administrator privileges.",
+    "backHome": "Go to Home"
+  },
+  "loading": {
+    "title": "Loading...",
+    "subtitle": "Please wait while we get everything ready for you"
+  },
+  "product": {
+    "notFound": "Product not found",
+    "notFoundDesc": "This product does not exist or has been removed.",
+    "backToCatalog": "← Back to catalog",
+    "loading": "Loading...",
+    "perUser": "/ user",
+    "perDevice": "/ device",
+    "onQuote": "On request"
+  },
+  "admin": {
+    "langFr": "🇫🇷 French",
+    "langEn": "🇬🇧 English",
+    "invalidUrl": "Invalid URL",
+    "optional": "(optional)"
+  }
+}

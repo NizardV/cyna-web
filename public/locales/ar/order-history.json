@@ -1,0 +1,25 @@
+{
+  "title": "سجل الطلبات",
+  "subtitle": "ابحث عن جميع فواتيرك واشتراكاتك.",
+  "searchPlaceholder": "ابحث عن طلب...",
+  "allYears": "كل السنوات",
+  "year": "السنة: {{year}}",
+  "noOrders": "لا توجد طلبات",
+  "noOrdersHint": "جرّب مصطلح بحث مختلفاً.",
+  "noOrdersEmpty": "لم تقم بأي طلب حتى الآن.",
+  "error": "خطأ: {{message}}",
+  "orderedOn": "تم الطلب في {{date}}",
+  "orderType": "{{type}}",
+  "paidVia": "تم الدفع عبر {{method}}",
+  "paidViaCard": "تم الدفع عبر {{method}} المنتهية بـ {{last4}}",
+  "invoicePdf": "فاتورة PDF",
+  "ordersIn": "طلبات {{year}}",
+  "status": {
+    "active": "نشط",
+    "terminated": "منتهٍ",
+    "refunded": "مسترد",
+    "paid": "مدفوع",
+    "pending": "قيد الانتظار",
+    "failed": "فاشل"
+  }
+}

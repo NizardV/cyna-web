@@ -1,0 +1,98 @@
+{
+  "products": {
+    "title": "Products",
+    "total": "{{count}} product total",
+    "total_plural": "{{count}} products total",
+    "new": "New product",
+    "searchPlaceholder": "Search for a product…",
+    "deleteConfirm": "Permanently delete this product?",
+    "deleteSuccess": "Product deleted",
+    "deleteError": "Error while deleting",
+    "deleteErrorReferenced": "This product cannot be deleted because it is linked to existing orders or subscriptions."
+  },
+  "status": {
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "outofstock": "Out of stock",
+    "preview": "Preview"
+  },
+  "featured": {
+    "yes": "⭐ Yes",
+    "no": "No"
+  },
+  "table": {
+    "product": "Product",
+    "status": "Status",
+    "featured": "Featured",
+    "actions": "Actions",
+    "noResults": "No products match the selected filters.",
+    "apply": "Apply"
+  },
+  "form": {
+    "back": "Back",
+    "editTitle": "Edit product",
+    "newTitle": "New product",
+    "productId": "ID #{{id}}",
+    "saving": "Saving…",
+    "update": "Update",
+    "create": "Create product",
+    "cancel": "Cancel",
+    "errors": {
+      "nameRequired": "Product name is required",
+      "notFound": "Product not found",
+      "saveFailed": "Error while saving",
+      "categoriesFailed": "Failed to load categories"
+    },
+    "success": {
+      "updated": "Product updated",
+      "created": "Product created"
+    }
+  },
+  "general": {
+    "title": "General information",
+    "name": "Product name",
+    "namePlaceholder": "E.g. Cyna SOC Manager",
+    "description": "Description",
+    "descriptionPlaceholder": "Describe the product in a few sentences…",
+    "status": "Status",
+    "lang": {
+      "fr": "🇫🇷 Français",
+      "en": "🇬🇧 English"
+    }
+  },
+  "media": {
+    "title": "Media & Category",
+    "imageUrl": "Main image URL",
+    "imageUrlInvalid": "URL must start with http:// or https://",
+    "imageAlt": "Preview",
+    "category": "Category",
+    "noCategory": "— No category —",
+    "featured": "Feature on the home page",
+    "displayOrder": "Display order",
+    "displayOrderHelp": "Position in the Top Products section (1 = first)."
+  },
+  "specs": {
+    "title": "Technical specifications",
+    "label": "Specifications",
+    "placeholder": "E.g. Multi-device protection…",
+    "help": "Press Enter to add a specification."
+  },
+  "pricing": {
+    "title": "Pricing",
+    "monthly": "Monthly",
+    "yearly": "Yearly",
+    "lifetime": "Lifetime",
+    "users": "Users",
+    "devices": "Devices",
+    "enablePlan": "Enable this plan",
+    "minQty": "Min qty",
+    "maxQty": "Max qty",
+    "unitPrice": "Price / unit (€)",
+    "addTier": "Add tier",
+    "invalidTier": "Max qty must be greater than the calculated min.",
+    "errors": {
+      "incomplete": "{{plan}} / {{unit}}: tier {{tier}} incomplete",
+      "invalidMax": "{{plan}} / {{unit}}: tier {{tier}} — max must be greater than {{min}}"
+    }
+  }
+}

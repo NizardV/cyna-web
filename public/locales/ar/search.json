@@ -1,0 +1,42 @@
+{
+  "title": "كتالوج الخدمات",
+  "results": "{{count}} خدمة",
+  "results_plural": "{{count}} خدمات",
+  "resultsLabel": "نتائج البحث",
+  "noResults": "لا توجد نتائج",
+  "noResultsHint": "حاول تعديل معايير البحث.",
+  "resetFilters": "إعادة تعيين المرشحات",
+  "sortBy": "ترتيب حسب",
+  "sort": {
+    "relevance": "ترتيب حسب: الصلة",
+    "price_asc": "السعر: الأقل أولاً",
+    "price_desc": "السعر: الأعلى أولاً",
+    "name": "الاسم أ–ي"
+  },
+  "filter": {
+    "title": "تصفية الخدمات",
+    "search": "بحث",
+    "searchPlaceholder": "العنوان أو الوصف...",
+    "categories": "الفئات",
+    "budget": "الميزانية (شهرية)",
+    "budgetMax": "الحد الأقصى",
+    "onlyAvailable": "المتاح فقط",
+    "apply": "عرض النتائج"
+  },
+  "product": {
+    "available": "متاح",
+    "unavailable": "غير متاح",
+    "outOfStock": "نفد المخزون",
+    "from": "ابتداءً من",
+    "perMonth": "/شهر",
+    "perYear": "/سنة",
+    "perLifetime": "دفعة واحدة",
+    "details": "التفاصيل",
+    "solutions": "الحلول"
+  },
+  "pagination": {
+    "previous": "السابق",
+    "next": "التالي",
+    "page": "الصفحة {{current}} من {{total}}"
+  }
+}

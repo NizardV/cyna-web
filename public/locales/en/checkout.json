@@ -1,0 +1,58 @@
+{
+  "title": "Complete your order",
+  "badge": "100% Secure Payment",
+  "step1": {
+    "title": "Customer Account",
+    "loggedAs": "Logged in as",
+    "edit": "Edit",
+    "loginHintLink": "Log in",
+    "loginHintAfter": "or continue as guest."
+  },
+  "step2": {
+    "title": "Billing Address",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "address": "Address",
+    "addressPlaceholder": "Street number and name",
+    "postalCode": "Postal Code",
+    "city": "City",
+    "country": "Country"
+  },
+  "step3": {
+    "title": "Payment Method",
+    "cardType": "Credit Card",
+    "cardName": "Name on card",
+    "cardNumber": "Card number",
+    "expiry": "Expiry (MM/YY)",
+    "cvv": "CVV"
+  },
+  "summary": {
+    "title": "Order Summary",
+    "duration": {
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "users_one": "{{count}} user",
+    "users_other": "{{count}} users",
+    "subtotal": "Subtotal (excl. tax)",
+    "vat": "VAT (20%)",
+    "total": "Total incl. tax",
+    "confirm": "CONFIRM PURCHASE",
+    "confirming": "Processing…",
+    "cgvBefore": "By confirming your purchase, you agree to our",
+    "cgvLink": "Terms of Sale"
+  },
+  "errors": {
+    "missingAddress": "Please fill in all address fields",
+    "missingPayment": "Please fill in payment information",
+    "orderFailed": "An error occurred during checkout"
+  },
+  "toast": {
+    "success": "Order confirmed!"
+  },
+  "footer": {
+    "legal": "Legal Notice",
+    "cgu": "Terms",
+    "contact": "Contact"
+  }
+}

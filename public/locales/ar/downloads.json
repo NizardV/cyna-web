@@ -1,0 +1,10 @@
+{
+  "title": "تطبيق أندرويد",
+  "badge": "أندرويد",
+  "appName": "تطبيق CYNA",
+  "description": "حمّل تطبيق CYNA على جهاز أندرويد الخاص بك.",
+  "downloadBtn": "تحميل ملف APK",
+  "installNote": "تذكّر تفعيل",
+  "unknownSources": "المصادر غير المعروفة",
+  "installPath": "في الإعدادات ← الأمان قبل التثبيت."
+}

@@ -1,0 +1,42 @@
+{
+  "title": "Service Catalog",
+  "results": "{{count}} service",
+  "results_plural": "{{count}} services",
+  "resultsLabel": "Search results",
+  "noResults": "No results",
+  "noResultsHint": "Try adjusting your search criteria.",
+  "resetFilters": "Reset filters",
+  "sortBy": "Sort by",
+  "sort": {
+    "relevance": "Sort by: Relevance",
+    "price_asc": "Price: Lowest first",
+    "price_desc": "Price: Highest first",
+    "name": "Name A–Z"
+  },
+  "filter": {
+    "title": "Filter services",
+    "search": "Search",
+    "searchPlaceholder": "Title or description...",
+    "categories": "Categories",
+    "budget": "Budget (Monthly)",
+    "budgetMax": "max",
+    "onlyAvailable": "Available only",
+    "apply": "Show results"
+  },
+  "product": {
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "outOfStock": "Out of Stock",
+    "from": "From",
+    "perMonth": "/month",
+    "perYear": "/year",
+    "perLifetime": "one-time",
+    "details": "Details",
+    "solutions": "Solutions"
+  },
+  "pagination": {
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page {{current}} of {{total}}"
+  }
+}

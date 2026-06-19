@@ -1,0 +1,139 @@
+/**
+ * @file handlers/user.js
+ * @description Handlers mock pour les routes de profil utilisateur et sécurité.
+ *
+ * Routes v1 :
+ *   GET /user/profile          → UserProfileDto
+ *   PUT /user/profile          → UpdateProfileDto body, returns UserProfileDto
+ *   PUT /user/password         → UpdatePasswordDto body
+ *   GET /user/subscriptions    → SubscriptionDto[]
+ *   GET /user/orders           → OrderSummaryDto[]
+ */
+
+import { faker } from "@faker-js/faker"
+import { makeUser, makeSubscription, makeOrder, makeMany } from "../factories/factories.js"
+
+// ---------------------------------------------------------------------------
+// État en mémoire
+// ---------------------------------------------------------------------------
+
+let _currentUser = makeUser({
+  email: "jean.dupont@entreprise.com",
+  firstName: "Jean",
+  lastName: "Dupont",
+  role: "user",
+  isEmailVerified: true,
+})
+
+/**
+ * Abonnements actifs — shape SubscriptionDto (status PascalCase "Active").
+ */
+const _activeSubscriptions = makeMany(
+  faker.number.int({ min: 1, max: 3 }),
+  () => makeSubscription({
+    status: "Active",
+    currentPeriodEnd: faker.date.future().toISOString(),
+  })
+)
+
+const TAUX_ECHEC = 0.3
+
+function erreurAleatoire() {
+  const messages = [
+    "Erreur serveur interne — veuillez réessayer.",
+    "Session expirée — reconnectez-vous.",
+    "Données invalides reçues par le serveur.",
+    "Service temporairement indisponible (503).",
+  ]
+  throw new Error(faker.helpers.arrayElement(messages))
+}
+
+/**
+ * Commandes — shape OrderSummaryDto (status PascalCase).
+ */
+const _accountOrders = [
+  makeOrder({ status: "Paid" }),
+  makeOrder({ status: "Pending" }),
+  makeOrder({ status: "Failed" }),
+  makeOrder({ status: "Refunded" }),
+  ...makeMany(4, makeOrder),
+]
+
+// ---------------------------------------------------------------------------
+// Handlers
+// ---------------------------------------------------------------------------
+
+/** @type {import("../registry.js").MockHandler[]} */
+export const userHandlers = [
+
+  // GET /user/profile
+  {
+    method: "GET",
+    path: "/user/profile",
+    resolver: () => _currentUser,
+  },
+
+  // PUT /user/profile — UpdateProfileDto : { firstName, lastName, email }
+  {
+    method: "PUT",
+    path: "/user/profile",
+    resolver: ({ body }) => {
+      if (faker.datatype.boolean({ probability: TAUX_ECHEC })) erreurAleatoire()
+      const { firstName, lastName, email } = body ?? {}
+      _currentUser = {
+        ..._currentUser,
+        ...(firstName && { firstName }),
+        ...(lastName && { lastName }),
+        ...(email && { email }),
+      }
+      return _currentUser
+    },
+  },
+
+  // PUT /user/password — UpdatePasswordDto : { currentPassword, newPassword }
+  {
+    method: "PUT",
+    path: "/user/password",
+    resolver: ({ body }) => {
+      if (!body?.currentPassword) {
+        throw new Error("Le mot de passe actuel est requis.")
+      }
+      if (faker.datatype.boolean({ probability: TAUX_ECHEC })) erreurAleatoire()
+      return { message: "Mot de passe mis à jour avec succès." }
+    },
+  },
+
+  // GET /user/subscriptions → SubscriptionDto[]
+  {
+    method: "GET",
+    path: "/user/subscriptions",
+    resolver: () => _activeSubscriptions,
+  },
+
+  // DELETE /user/subscriptions/:id
+  {
+    method: "DELETE",
+    path: "/user/subscriptions/:id",
+    resolver: ({ params }) => {
+      const idx = _activeSubscriptions.findIndex((s) => String(s.id) === params.id)
+      if (idx !== -1) _activeSubscriptions.splice(idx, 1)
+      return null
+    },
+    status: 204,
+  },
+
+  // GET /user/orders → OrderSummaryDto[]
+  {
+    method: "GET",
+    path: "/user/orders",
+    resolver: () => _accountOrders,
+  },
+
+  // GET /user/orders/:id
+  {
+    method: "GET",
+    path: "/user/orders/:id",
+    resolver: ({ params }) =>
+      _accountOrders.find((o) => String(o.id) === params.id) ?? null,
+  },
+]

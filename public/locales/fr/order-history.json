@@ -1,0 +1,25 @@
+{
+  "title": "Historique des commandes",
+  "subtitle": "Retrouvez toutes vos factures et abonnements souscrits.",
+  "searchPlaceholder": "Rechercher une commande...",
+  "allYears": "Toutes les années",
+  "year": "Année : {{year}}",
+  "noOrders": "Aucune commande trouvée",
+  "noOrdersHint": "Essayez un autre terme.",
+  "noOrdersEmpty": "Vous n'avez pas encore passé de commande.",
+  "error": "Erreur : {{message}}",
+  "orderedOn": "Commande passée le {{date}}",
+  "orderType": "{{type}}",
+  "paidVia": "Payé via {{method}}",
+  "paidViaCard": "Payé via {{method}} terminant par {{last4}}",
+  "invoicePdf": "Facture PDF",
+  "ordersIn": "Commandes en {{year}}",
+  "status": {
+    "active": "Actif",
+    "terminated": "Terminée",
+    "refunded": "Remboursé",
+    "paid": "Payé",
+    "pending": "En attente",
+    "failed": "Échoué"
+  }
+}

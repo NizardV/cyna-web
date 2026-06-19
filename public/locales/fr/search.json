@@ -1,0 +1,42 @@
+{
+  "title": "Catalogue de services",
+  "results": "{{count}} service",
+  "results_plural": "{{count}} services",
+  "resultsLabel": "Résultats de recherche",
+  "noResults": "Aucun résultat",
+  "noResultsHint": "Essayez de modifier vos critères de recherche.",
+  "resetFilters": "Réinitialiser les filtres",
+  "sortBy": "Trier par",
+  "sort": {
+    "relevance": "Trier par : Pertinence",
+    "price_asc": "Prix : Croissant",
+    "price_desc": "Prix : Décroissant",
+    "name": "Nom A–Z"
+  },
+  "filter": {
+    "title": "Filtrer les services",
+    "search": "Recherche",
+    "searchPlaceholder": "Titre ou description...",
+    "categories": "Catégories",
+    "budget": "Budget (Mensuel)",
+    "budgetMax": "max",
+    "onlyAvailable": "Uniquement disponibles",
+    "apply": "Voir les résultats"
+  },
+  "product": {
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "outOfStock": "Rupture de stock",
+    "from": "À partir de",
+    "perMonth": "/mois",
+    "perYear": "/an",
+    "perLifetime": "paiement unique",
+    "details": "Détails",
+    "solutions": "Solutions"
+  },
+  "pagination": {
+    "previous": "Précédent",
+    "next": "Suivant",
+    "page": "Page {{current}} sur {{total}}"
+  }
+}

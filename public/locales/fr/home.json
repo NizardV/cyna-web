@@ -1,0 +1,14 @@
+{
+  "loading": "Chargement en cours...",
+  "fixedTextTitle": "Notre mission",
+  "categoriesTitle": "Nos Catégories de Services",
+  "topProductsTitle": "Les Top Produits du moment",
+  "from": "À partir de",
+  "perMonth": "/mois",
+  "perYear": "/an",
+  "perLifetime": "paiement unique",
+  "discover": "Découvrir",
+  "unavailable": "Indisponible",
+  "outOfStock": "Stock épuisé",
+  "onEstimate": "Sur devis"
+}
