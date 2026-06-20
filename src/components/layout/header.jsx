@@ -17,7 +17,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
 
         {/* Gauche : Logo + Search */}
         <div className="flex items-center gap-4 flex-1">
-          <Link to={isAdminView ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0">
+          <Link to={isAdminView ? "/admin" : "/"} className="flex items-center gap-2 shrink-0">
             <div className="flex items-center justify-center h-8 w-8 rounded-lg bg-[#7C3AED]">
               <span className="text-white font-bold text-sm">C</span>
             </div>

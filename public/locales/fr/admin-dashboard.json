@@ -1,0 +1,63 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Vue d'ensemble de l'activité de la plateforme.",
+  "loadError": "Erreur lors du chargement du dashboard.",
+  "empty": "Aucune donnée sur cette période.",
+
+  "period": {
+    "week": "7 jours",
+    "month": "30 jours",
+    "year": "12 mois",
+    "all": "Depuis le début"
+  },
+
+  "mock": {
+    "off": "Données factices",
+    "on": "Données factices ✓",
+    "tooltip": "Génère des données aléatoires — utile tant que le module de paiement n'est pas finalisé.",
+    "banner": "Mode démo activé : les chiffres affichés sont générés aléatoirement (mock=true), le module de paiement n'étant pas encore totalement intégré."
+  },
+
+  "kpi": {
+    "revenue": "Chiffre d'affaires",
+    "orders": "Commandes",
+    "users": "Utilisateurs",
+    "activeSubscriptions": "Abonnements actifs",
+    "vsPrevious": "vs période précédente",
+    "onPeriod": "sur la période",
+    "newUsers": "+{{count}} sur la période",
+    "createdOnPeriod": "{{count}} créés sur la période"
+  },
+
+  "chart": {
+    "revenueOrders": "Chiffre d'affaires & commandes",
+    "revenue": "CA",
+    "orders": "Commandes",
+    "newUsersTitle": "Nouvelles inscriptions",
+    "newUsers": "Nouveaux utilisateurs"
+  },
+
+  "statuses": {
+    "title": "Répartition des statuts",
+    "orders": "Commandes",
+    "subscriptions": "Abonnements"
+  },
+
+  "status": {
+    "empty": "Aucune donnée.",
+    "paid": "Payées",
+    "pending": "En attente",
+    "failed": "Échouées",
+    "refunded": "Remboursées",
+    "cancelled": "Annulées",
+    "active": "Actifs",
+    "expired": "Expirés",
+    "suspended": "Suspendus"
+  },
+
+  "topProducts": {
+    "title": "Top produits par chiffre d'affaires",
+    "empty": "Aucun produit sur cette période.",
+    "orderCount": "{{count}} commande(s)"
+  }
+}
