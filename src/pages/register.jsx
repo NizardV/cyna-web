@@ -89,9 +89,20 @@ export function Register() {
               <CheckCircle2 className="size-16 text-green-500" />
             </div>
             <h2 className="text-center text-2xl font-bold mb-2">{t("register.success")}</h2>
-            <p className="text-center text-gray-600 mb-6">{t("register.successMessage")}</p>
-            <Link to="/login">
-              <Button className="w-full" variant="default">
+            <p className="text-center text-gray-600 mb-1">{t("register.successMessage")}</p>
+            <p className="text-center text-sm text-gray-500 mb-6">
+              Un code de vérification à 6 chiffres a été envoyé à{" "}
+              <span className="font-medium text-gray-800">{formData.email}</span>.
+            </p>
+
+            <Link to={`/confirm-email?email=${encodeURIComponent(formData.email)}`}>
+              <Button className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white">
+                Vérifier mon email →
+              </Button>
+            </Link>
+
+            <Link to="/login" className="block mt-3">
+              <Button className="w-full" variant="outline">
                 {t("register.returnToLogin")}
               </Button>
             </Link>

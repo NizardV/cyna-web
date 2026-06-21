@@ -4,7 +4,9 @@
     "catalog": "Catalogue",
     "contact": "Contact",
     "clientArea": "Espace Client",
-    "android": "Application Android"
+    "android": "Application Android",
+    "categories": "Catégories",
+    "products": "Produits"
   },
   "footer": {
     "description": "Votre partenaire de confiance pour la sécurité de vos infrastructures IT. Solutions SaaS performantes et évolutives.",

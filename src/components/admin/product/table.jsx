@@ -204,6 +204,19 @@ function TableWrapper({ children }) {
   )
 }
 
+/**
+ * Tableau d'administration des produits avec filtre par statut et tri par mise en avant.
+ *
+ * @param {{
+ *   products: object[],
+ *   onDelete: (id: string) => void,
+ *   loading: boolean,
+ *   statusFilter: string[],
+ *   onStatusFilter: (values: string[]) => void,
+ *   featuredSort: "yes"|"no"|null,
+ *   onFeaturedSort: (value: "yes"|"no"|null) => void
+ * }} props
+ */
 export function ProductAdminTable({
   products,
   onDelete,

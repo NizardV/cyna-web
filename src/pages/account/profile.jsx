@@ -2,6 +2,10 @@
  * @file pages/account/profile.jsx
  * Uses shared AccountNav component for sidebar navigation.
  * Subscription cancellation uses a confirmation Dialog before calling the API.
+ *
+ * Aligned on UserProfileDto (v1): isEmailVerified (not isConfirmed).
+ * Changing the email resets isEmailVerified server-side and triggers a new
+ * OTP email — the user is pointed to /confirm-email afterwards.
  */
 
 import { useEffect, useState } from "react"
@@ -106,6 +110,7 @@ export function Profile() {
   const handleProfileSubmit = async (e) => {
     e.preventDefault()
     setProfileSaving(true)
+    const emailChanged = profileForm.email.trim().toLowerCase() !== (user?.email ?? "").toLowerCase()
     try {
       const updated = await updateProfile(profileForm)
       setUser(updated)
@@ -114,7 +119,21 @@ export function Profile() {
         setGlobalUser(updated)
       }
 
-      toast.success(t("personalInfo.success"))
+      if (emailChanged) {
+        toast.success(
+          "Profil mis à jour. Un code de vérification a été envoyé à votre nouvelle adresse.",
+          {
+            action: {
+              label: "Vérifier",
+              onClick: () => {
+                window.location.href = `/confirm-email?email=${encodeURIComponent(updated.email)}`
+              },
+            },
+          }
+        )
+      } else {
+        toast.success(t("personalInfo.success"))
+      }
     } catch (err) {
       toast.error(err.message || t("personalInfo.error"))
     } finally { setProfileSaving(false) }
@@ -228,14 +247,25 @@ export function Profile() {
                             value={profileForm.email}
                             onChange={(e) => setProfileForm((f) => ({ ...f, email: e.target.value }))}
                             required
-                            className={user?.isConfirmed ? "rounded-r-none" : ""}
+                            className={user?.isEmailVerified ? "rounded-r-none" : ""}
                           />
-                          {user?.isConfirmed && (
+                          {user?.isEmailVerified && (
                             <span className="inline-flex items-center border border-l-0 border-input rounded-lg rounded-l-none bg-muted px-2.5 text-xs text-muted-foreground">
                               {t("personalInfo.verified")}
                             </span>
                           )}
                         </div>
+                        {!user?.isEmailVerified && (
+                          <p className="text-xs text-amber-600">
+                            Adresse non vérifiée.{" "}
+                            <Link
+                              to={`/confirm-email?email=${encodeURIComponent(user?.email ?? "")}`}
+                              className="underline underline-offset-2 hover:text-amber-700"
+                            >
+                              Vérifier maintenant
+                            </Link>
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex justify-end md:col-span-2">
@@ -295,6 +325,23 @@ export function Profile() {
                       </div>
                     </div>
                   </form>
+
+                  {/* 2FA — visible only to Admin / SuperAdmin */}
+                  {(user?.role === "Admin" || user?.role === "SuperAdmin") && (
+                    <div className="mt-4 flex items-center justify-between rounded-lg border border-border px-4 py-3">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          Double authentification (2FA)
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Requis pour la connexion à l'espace administrateur.
+                        </p>
+                      </div>
+                      <Link to="/account/security/2fa">
+                        <Button variant="outline" size="sm">Configurer</Button>
+                      </Link>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 

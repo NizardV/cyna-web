@@ -5,7 +5,12 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { X } from "lucide-react"
 
-// value : string[]
+/**
+ * Formulaire de saisie des spécifications techniques d'un produit (tags).
+ * Ajout par touche Entrée, suppression individuelle ou par Backspace.
+ *
+ * @param {{ value: string[], onChange: (specs: string[]) => void }} props
+ */
 export function FormSpecs({ value, onChange }) {
   const { t }             = useTranslation("admin-products")
   const [draft, setDraft] = useState("")

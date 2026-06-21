@@ -1,5 +1,16 @@
 import { Skeleton } from "@/components/ui/skeleton"
 
+/**
+ * Bannière d'en-tête d'une page de catalogue de catégorie.
+ * Affiche un squelette pendant le chargement, puis l'image et le nom de la catégorie.
+ *
+ * @param {{
+ *   loading: boolean,
+ *   imageUrl: string,
+ *   name: string,
+ *   description?: string
+ * }} props
+ */
 export function CategoryHeader({ loading, imageUrl, name, description }) {
   return (
     <div className="relative w-full bg-muted">

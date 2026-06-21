@@ -1,6 +1,16 @@
 import { useTranslation } from "react-i18next"
 import { FilterContent } from "./filter-content"
 
+/**
+ * Panneau de filtres latéral visible sur desktop (≥ md).
+ *
+ * @param {{
+ *   categories: object[],
+ *   filters: object,
+ *   onChange: (patch: object) => void,
+ *   hideCategories?: boolean
+ * }} props
+ */
 export function FilterSidebar({ categories, filters, onChange, hideCategories = false }) {
   const { t } = useTranslation("search")
 

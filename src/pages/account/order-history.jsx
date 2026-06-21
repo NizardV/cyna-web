@@ -42,6 +42,9 @@ function orderMatchesSearch(order, query) {
 // Page principale
 // ---------------------------------------------------------------------------
 
+/**
+ * Page historique des commandes : liste paginée groupée par année avec recherche sur les noms de produit.
+ */
 export function OrderHistory() {
   const { t } = useTranslation("order-history")
 
@@ -88,15 +91,11 @@ export function OrderHistory() {
     <Layout>
       <main className="flex w-full flex-col gap-8 py-8 md:flex-row">
 
-        {/* Sidebar */}
         <div className="w-full md:w-52 md:shrink-0">
           <AccountNav user={loadingUser ? undefined : user ?? undefined} />
         </div>
 
-        {/* Contenu principal */}
         <div className="min-w-0 flex-1">
-
-          {/* En-tête + filtres */}
           <div className="mb-6 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
             <div>
               <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
@@ -118,7 +117,6 @@ export function OrderHistory() {
             </div>
           </div>
 
-          {/* États */}
           {loading && <OrderHistorySkeleton />}
 
           {error && (

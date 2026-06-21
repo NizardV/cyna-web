@@ -2,6 +2,12 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { cn, formatPrice } from "@/lib/utils";
 
+/**
+ * Grille des produits mis en avant (top produits) sur la page d'accueil.
+ * Calcule le prix d'entrée à partir des pricingTiers du premier plan disponible.
+ *
+ * @param {{ products: object[] }} props
+ */
 export function FeaturedProducts({ products }) {
   const { t } = useTranslation("home");
 

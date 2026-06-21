@@ -27,6 +27,17 @@ import { useTranslation } from "react-i18next"
 // CancelSubscriptionDialog
 // ---------------------------------------------------------------------------
 
+/**
+ * Dialog de confirmation de résiliation d'un abonnement.
+ *
+ * @param {{
+ *   sub: object|null,
+ *   open: boolean,
+ *   onOpenChange: (open: boolean) => void,
+ *   onConfirm: () => void,
+ *   loading: boolean
+ * }} props
+ */
 export function CancelSubscriptionDialog({ sub, open, onOpenChange, onConfirm, loading }) {
   const { t } = useTranslation("profile")
 

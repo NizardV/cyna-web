@@ -5,13 +5,13 @@
  *   { id, email, firstName, lastName, role, isEmailVerified, createdAt }
  */
 
-import { NavLink, useNavigate } from "react-router-dom"
+import { NavLink } from "react-router-dom"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { cn } from "@/lib/utils"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Button } from "@/components/ui/button"
-import { logout } from "@/api/auth.js"
+import { useAuth } from "@/hooks/use-auth"
 import { IconUser } from "../icons/IconUser"
 import { IconLogOut } from "../icons/IconLogOut"
 import { IconReceipt } from "../icons/IconReceipt"
@@ -32,6 +32,8 @@ function getFullName(user, guestLabel) {
   return parts.length ? parts.join(" ") : guestLabel
 }
 
+const ROLE_OVERRIDE = import.meta.env.VITE_OVERRIDE_ROLE === "true";
+
 // ---------------------------------------------------------------------------
 // Composant
 // ---------------------------------------------------------------------------
@@ -41,26 +43,23 @@ function getFullName(user, guestLabel) {
  * @param {{ user?: object }} props
  */
 export function AccountNav({ user }) {
-  const navigate = useNavigate()
   const { t } = useTranslation("common")
   const [loggingOut, setLoggingOut] = useState(false)
+  const { logout, isAdminView } = useAuth()
 
   const NAV_ITEMS = [
-    { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser    },
-    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt },
+    { to: "/account/profile", labelKey: "accountNav.profile",  Icon: IconUser , canView: true    },
+    { to: "/account/orders",  labelKey: "accountNav.billing",  Icon: IconReceipt, canView: (!isAdminView || ROLE_OVERRIDE)},
   ]
 
   const handleLogout = async () => {
-    setLoggingOut(true)
+    setLoggingOut(true);
     try {
-      await logout()
-    } catch {
-      localStorage.removeItem("cyna_token")
+      await logout();
     } finally {
-      setLoggingOut(false)
-      navigate("/")
+      setLoggingOut(false);
     }
-  }
+  };
 
   return (
     <nav
@@ -92,7 +91,7 @@ export function AccountNav({ user }) {
       <div className="mb-2 h-px bg-border" />
 
       {/* Liens */}
-      {NAV_ITEMS.map(({ to, labelKey, Icon }) => (
+      {NAV_ITEMS.filter(({ canView }) => canView).map(({ to, labelKey, Icon }) => (
         <NavLink
           key={to}
           to={to}

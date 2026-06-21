@@ -1,20 +1,42 @@
 import { clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
 
+/**
+ * Fusionne des classes Tailwind CSS en résolvant les conflits.
+ * Combine clsx (valeurs conditionnelles) et tailwind-merge (déduplication).
+ *
+ * @param {...import('clsx').ClassValue} inputs
+ * @returns {string}
+ */
 export function cn(...inputs) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Formate un montant en euros selon la locale française.
+ * @param {number} amount
+ * @returns {string} Ex : « 12,50 € »
+ */
 export function formatPrice(amount) {
   return new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(amount)
 }
 
+/**
+ * Formate une date ISO en chaîne lisible selon la locale du navigateur.
+ * @param {string} isoDate - Date au format ISO 8601
+ * @returns {string} Ex : « 12 juin 2025 »
+ */
 export function formatDate(isoDate) {
   return new Date(isoDate).toLocaleDateString(undefined, {
     day: "numeric", month: "long", year: "numeric",
   })
 }
 
+/**
+ * Extrait l'année d'une date ISO.
+ * @param {string} isoDate
+ * @returns {number}
+ */
 export function getYear(isoDate) {
   return new Date(isoDate).getFullYear()
 }
@@ -45,6 +67,11 @@ export function buildPageRange(current, total) {
   return result
 }
 
+/**
+ * Mappe un statut produit vers les props de Badge et la clé i18n associée.
+ * @param {"available"|"out_of_stock"|"unavailable"|string} status
+ * @returns {{ variant: string, labelKey: string }}
+ */
 export function getStatusBadge(status) {
   switch (status) {
     case "available":

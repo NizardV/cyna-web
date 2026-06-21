@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { MapPin, Mail, Phone } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
+/**
+ * @param {{ className?: string }} props
+ */
 function LinkedinIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -12,6 +15,9 @@ function LinkedinIcon({ className }) {
   );
 }
 
+/**
+ * @param {{ className?: string }} props
+ */
 function XIcon({ className }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -20,6 +26,20 @@ function XIcon({ className }) {
   );
 }
 
+/**
+ * Pied de page de l'application avec coordonnées, liens informatifs, liens légaux et réseaux sociaux.
+ *
+ * @param {{
+ *   hideDescription?: boolean,
+ *   hideInfoSection?: boolean,
+ *   hideLegalSection?: boolean,
+ *   hideSocial?: boolean
+ * }} props
+ * @param {boolean} [props.hideDescription=false] - Masque le texte de description
+ * @param {boolean} [props.hideInfoSection=false] - Masque la colonne "Informations"
+ * @param {boolean} [props.hideLegalSection=false] - Masque la colonne "Légal"
+ * @param {boolean} [props.hideSocial=false] - Masque les liens vers les réseaux sociaux
+ */
 export function Footer({
   hideDescription = false,
   hideInfoSection = false,
@@ -79,11 +99,6 @@ export function Footer({
                 <li>
                   <Link to="#" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
                     {t("footer.aboutCyna")}
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/catalog" className="text-gray-400 hover:text-[#7C3AED] transition text-sm">
-                    {t("nav.catalog")}
                   </Link>
                 </li>
                 <li>
