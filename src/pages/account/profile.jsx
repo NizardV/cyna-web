@@ -2,6 +2,10 @@
  * @file pages/account/profile.jsx
  * Uses shared AccountNav component for sidebar navigation.
  * Subscription cancellation uses a confirmation Dialog before calling the API.
+ *
+ * Aligned on UserProfileDto (v1): isEmailVerified (not isConfirmed).
+ * Changing the email resets isEmailVerified server-side and triggers a new
+ * OTP email — the user is pointed to /confirm-email afterwards.
  */
 
 import { useEffect, useState } from "react"
@@ -60,9 +64,6 @@ function ProfileSkeleton() {
 // Page principale
 // ---------------------------------------------------------------------------
 
-/**
- * Page profil : modification des informations personnelles, mot de passe et gestion des abonnements actifs.
- */
 export function Profile() {
   const { t } = useTranslation("profile")
 
@@ -109,6 +110,7 @@ export function Profile() {
   const handleProfileSubmit = async (e) => {
     e.preventDefault()
     setProfileSaving(true)
+    const emailChanged = profileForm.email.trim().toLowerCase() !== (user?.email ?? "").toLowerCase()
     try {
       const updated = await updateProfile(profileForm)
       setUser(updated)
@@ -117,7 +119,21 @@ export function Profile() {
         setGlobalUser(updated)
       }
 
-      toast.success(t("personalInfo.success"))
+      if (emailChanged) {
+        toast.success(
+          "Profil mis à jour. Un code de vérification a été envoyé à votre nouvelle adresse.",
+          {
+            action: {
+              label: "Vérifier",
+              onClick: () => {
+                window.location.href = `/confirm-email?email=${encodeURIComponent(updated.email)}`
+              },
+            },
+          }
+        )
+      } else {
+        toast.success(t("personalInfo.success"))
+      }
     } catch (err) {
       toast.error(err.message || t("personalInfo.error"))
     } finally { setProfileSaving(false) }
@@ -143,15 +159,18 @@ export function Profile() {
     } finally { setPasswordSaving(false) }
   }
 
+  // Open dialog for the chosen subscription
   const handleCancelRequest = (sub) => {
     setCancelTarget(sub)
   }
 
+  // Actually call the API once the user confirms
   const handleCancelConfirm = async () => {
     if (!cancelTarget) return
     setCancelling(true)
     try {
       await cancelSubscription(cancelTarget.id)
+      // Optimistically remove from local list
       setSubscriptions((prev) => prev.filter((s) => s.id !== cancelTarget.id))
       setCancelTarget(null)
       toast.success(t("subscriptions.cancelDialog.successMessage", {
@@ -171,10 +190,12 @@ export function Profile() {
     <Layout>
       <main className="flex w-full flex-col gap-8 py-8 md:flex-row">
 
+        {/* Sidebar */}
         <div className="w-full md:w-52 md:shrink-0">
           <AccountNav user={loadingUser ? undefined : user ?? undefined} />
         </div>
 
+        {/* Main content */}
         <div className="min-w-0 flex-1 space-y-4">
           <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
 
@@ -182,6 +203,7 @@ export function Profile() {
             <ProfileSkeleton />
           ) : (
             <>
+              {/* Informations personnelles */}
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle>{t("personalInfo.title")}</CardTitle>
@@ -191,6 +213,7 @@ export function Profile() {
                   <form onSubmit={handleProfileSubmit}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
+                      {/* CHAMP 1 : Prénom (First Name) */}
                       <div className="flex flex-col gap-1.5">
                         <Label htmlFor="firstName">First name</Label>
                         <Input
@@ -202,6 +225,7 @@ export function Profile() {
                         />
                       </div>
 
+                      {/* CHAMP 2 : Nom (Last Name) */}
                       <div className="flex flex-col gap-1.5">
                         <Label htmlFor="lastName">Last name</Label>
                         <Input
@@ -213,6 +237,7 @@ export function Profile() {
                         />
                       </div>
 
+                      {/* CHAMP 3 : Adresse Email */}
                       <div className="flex flex-col gap-1.5 md:col-span-2">
                         <Label htmlFor="email">{t("personalInfo.email")}</Label>
                         <div className="flex">
@@ -222,14 +247,25 @@ export function Profile() {
                             value={profileForm.email}
                             onChange={(e) => setProfileForm((f) => ({ ...f, email: e.target.value }))}
                             required
-                            className={user?.isConfirmed ? "rounded-r-none" : ""}
+                            className={user?.isEmailVerified ? "rounded-r-none" : ""}
                           />
-                          {user?.isConfirmed && (
+                          {user?.isEmailVerified && (
                             <span className="inline-flex items-center border border-l-0 border-input rounded-lg rounded-l-none bg-muted px-2.5 text-xs text-muted-foreground">
                               {t("personalInfo.verified")}
                             </span>
                           )}
                         </div>
+                        {!user?.isEmailVerified && (
+                          <p className="text-xs text-amber-600">
+                            Adresse non vérifiée.{" "}
+                            <Link
+                              to={`/confirm-email?email=${encodeURIComponent(user?.email ?? "")}`}
+                              className="underline underline-offset-2 hover:text-amber-700"
+                            >
+                              Vérifier maintenant
+                            </Link>
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex justify-end md:col-span-2">
@@ -242,6 +278,7 @@ export function Profile() {
                 </CardContent>
               </Card>
 
+              {/* Sécurité */}
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle>{t("security.title")}</CardTitle>
@@ -288,9 +325,27 @@ export function Profile() {
                       </div>
                     </div>
                   </form>
+
+                  {/* 2FA — visible only to Admin / SuperAdmin */}
+                  {(user?.role === "Admin" || user?.role === "SuperAdmin") && (
+                    <div className="mt-4 flex items-center justify-between rounded-lg border border-border px-4 py-3">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          Double authentification (2FA)
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          Requis pour la connexion à l'espace administrateur.
+                        </p>
+                      </div>
+                      <Link to="/account/security/2fa">
+                        <Button variant="outline" size="sm">Configurer</Button>
+                      </Link>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
+              {/* Abonnements */}
               <Card>
                 <CardHeader className="border-b">
                   <div className="flex items-center justify-between">

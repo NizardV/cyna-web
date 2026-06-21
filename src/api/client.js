@@ -148,7 +148,7 @@ async function coreFetch(path, options = {}) {
 
   if (!response.ok) {
     const error = await response.json().catch(() => ({ message: "Unknown error" }));
-    throw new ApiError(error.message ?? "Request failed", response.status);
+    throw new ApiError(error.message ?? "Request failed", response.status, error);
   }
 
   // 204 No Content
@@ -182,10 +182,11 @@ export class ApiError extends Error {
    * @param {string} message
    * @param {number} status
    */
-  constructor(message, status) {
+  constructor(message, status, data = {}) {
     super(message);
     this.name = "ApiError";
     this.status = status;
+    this.data = data;
   }
 }
 
