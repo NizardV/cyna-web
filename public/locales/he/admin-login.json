@@ -1,0 +1,22 @@
+{
+  "title": "אזור מנהלים",
+  "subtitlePhase1": "כניסה מאובטחת עם אימות דו-שלבי.",
+  "subtitlePhase2": "הזן את קוד ה-TOTP מאפליקציית האימות שלך.",
+  "emailLabel": "אימייל",
+  "emailPlaceholder": "admin@cyna.com",
+  "passwordLabel": "סיסמה",
+  "continue": "המשך ←",
+  "verifying": "מאמת…",
+  "totpLabel": "קוד TOTP",
+  "totpHint": "הקוד מתחלף כל 30 שניות.",
+  "submit": "התחבר",
+  "editCredentials": "← ערוך פרטי כניסה",
+  "standardLoginLink": "כניסת משתמש רגיל",
+  "errorInvalidCredentials": "פרטי כניסה שגויים. בדוק את האימייל והסיסמה שלך.",
+  "errorInvalidTotp": "קוד לא תקין או פג תוקף. בדוק את אפליקציית האימות.",
+  "otpDigit": "ספרה {{n}}",
+  "appHint": {
+    "title": "אפליקציית אימות",
+    "description": "פתח את Google Authenticator, Authy או כל אפליקציית TOTP אחרת והזן את הקוד בן 6 הספרות המוצג עבור {{email}}."
+  }
+}

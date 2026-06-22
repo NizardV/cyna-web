@@ -1,0 +1,22 @@
+{
+  "title": "Admin area",
+  "subtitlePhase1": "Secure login with two-factor authentication.",
+  "subtitlePhase2": "Enter the TOTP code from your authenticator app.",
+  "emailLabel": "Email",
+  "emailPlaceholder": "admin@cyna.com",
+  "passwordLabel": "Password",
+  "continue": "Continue →",
+  "verifying": "Verifying…",
+  "totpLabel": "TOTP code",
+  "totpHint": "The code changes every 30 seconds.",
+  "submit": "Log in",
+  "editCredentials": "← Edit credentials",
+  "standardLoginLink": "Standard user login",
+  "errorInvalidCredentials": "Invalid credentials. Check your email and password.",
+  "errorInvalidTotp": "Invalid or expired code. Check your authenticator app.",
+  "otpDigit": "Digit {{n}}",
+  "appHint": {
+    "title": "Authenticator app",
+    "description": "Open Google Authenticator, Authy, or any other TOTP app and enter the 6-digit code shown for {{email}}."
+  }
+}

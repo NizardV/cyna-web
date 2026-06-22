@@ -1,0 +1,63 @@
+{
+  "title": "المستخدمون",
+  "subtitle": "إدارة الحسابات والأدوار والوصول إلى المنصة.",
+  "search": {
+    "placeholder": "البحث بالاسم أو البريد الإلكتروني…"
+  },
+  "filter": {
+    "allRoles": "جميع الأدوار"
+  },
+  "count": "{{count}} مستخدم",
+  "count_plural": "{{count}} مستخدمون",
+  "roles": {
+    "User": "مستخدم",
+    "Admin": "مشرف",
+    "SuperAdmin": "مشرف عام"
+  },
+  "status": {
+    "active": "نشط",
+    "disabled": "معطّل"
+  },
+  "verified": {
+    "yes": "البريد الإلكتروني محقَّق",
+    "no": "البريد الإلكتروني غير محقَّق"
+  },
+  "table": {
+    "user": "المستخدم",
+    "email": "البريد الإلكتروني",
+    "role": "الدور",
+    "status": "الحالة",
+    "verified": "محقَّق",
+    "createdAt": "تاريخ التسجيل",
+    "actions": "الإجراءات",
+    "twoFactorEnabled": "2FA مفعّل",
+    "noResults": "لا يوجد مستخدمون يطابقون بحثك.",
+    "clearSearch": "مسح البحث",
+    "loadError": "تعذّر تحميل المستخدمين.",
+    "retry": "إعادة المحاولة"
+  },
+  "actions": {
+    "enable": "إعادة التفعيل",
+    "disable": "تعطيل"
+  },
+  "dialog": {
+    "enableTitle": "إعادة تفعيل هذا الحساب؟",
+    "disableTitle": "تعطيل هذا الحساب؟",
+    "enableDescription": "سيتمكن {{name}} من تسجيل الدخول والوصول إلى حسابه مجدداً.",
+    "disableDescription": "لن يتمكن {{name}} من تسجيل الدخول أو تجديد جلسته طالما الحساب معطّل.",
+    "cancel": "إلغاء",
+    "confirmEnable": "إعادة التفعيل",
+    "confirmDisable": "تعطيل",
+    "saving": "جارٍ الحفظ…"
+  },
+  "toast": {
+    "roleUpdated": "تم تحديث دور {{name}}.",
+    "roleError": "تعذّر تغيير الدور. أعد المحاولة.",
+    "disabled": "تم تعطيل {{name}}.",
+    "enabled": "تم إعادة تفعيل {{name}}.",
+    "statusError": "حدث خطأ. أعد المحاولة."
+  },
+  "pagination": {
+    "page": "الصفحة {{current}} من {{total}}"
+  }
+}

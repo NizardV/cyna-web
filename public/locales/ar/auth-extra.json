@@ -1,0 +1,11 @@
+{
+  "adminLoginLink": "تسجيل دخول المشرف (2FA)",
+  "registerVerifySent": "تم إرسال رمز تحقق مكوّن من 6 أرقام إلى {{email}}.",
+  "registerVerifyCta": "تحقق من بريدي الإلكتروني ←",
+  "profileEmailUnverified": "العنوان غير محقَّق.",
+  "profileVerifyNow": "تحقق الآن",
+  "profileEmailChangedToast": "تم تحديث الملف الشخصي. تم إرسال رمز تحقق إلى عنوانك الجديد.",
+  "profile2faTitle": "المصادقة الثنائية (2FA)",
+  "profile2faDescription": "مطلوب لتسجيل الدخول إلى لوحة المشرف.",
+  "profile2faConfigure": "إعداد"
+}

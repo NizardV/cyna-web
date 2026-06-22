@@ -1,0 +1,20 @@
+{
+  "title": "Verify your email",
+  "subtitle": "A 6-digit code has been sent to your email address. It expires in 30 minutes.",
+  "emailLabel": "Email",
+  "emailPlaceholder": "you@example.com",
+  "codeLabel": "Verification code",
+  "submit": "Confirm my email",
+  "submitting": "Verifying…",
+  "errorInvalidCode": "Invalid or expired code. Check your email or request a new code.",
+  "errorResend": "Unable to resend the code. Please try again in a moment.",
+  "noCode": "Didn't receive a code?",
+  "resend": "Resend",
+  "backToLogin": "Back to login",
+  "otpDigit": "Digit {{n}}",
+  "success": {
+    "title": "Email confirmed!",
+    "description": "Your email address has been successfully verified.",
+    "cta": "Continue to home"
+  }
+}

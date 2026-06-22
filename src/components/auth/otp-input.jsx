@@ -7,11 +7,17 @@ import { useRef } from "react"
 import { cn } from "@/lib/utils"
 
 /**
- * @param {{ value: string, onChange: (v: string) => void, disabled?: boolean }} props
+ * @param {{
+ *   value: string,
+ *   onChange: (v: string) => void,
+ *   disabled?: boolean,
+ *   digitLabel?: (n: number) => string, // e.g. (n) => t("otp.digit", { n })
+ * }} props
  */
-export function OtpInput({ value, onChange, disabled = false }) {
+export function OtpInput({ value, onChange, disabled = false, digitLabel }) {
   const inputs = useRef([])
   const digits = (value + "      ").slice(0, 6).split("")
+  const labelFor = digitLabel ?? ((n) => `Digit ${n}`)
 
   const focus = (i) => inputs.current[i]?.focus()
 
@@ -55,7 +61,7 @@ export function OtpInput({ value, onChange, disabled = false }) {
           onChange={(e) => handleChange(i, e)}
           onKeyDown={(e) => handleKeyDown(i, e)}
           disabled={disabled}
-          aria-label={`Chiffre ${i + 1}`}
+          aria-label={labelFor(i + 1)}
           className={cn(
             "size-11 rounded-lg border text-center text-lg font-bold tabular-nums",
             "border-input bg-background text-foreground",
