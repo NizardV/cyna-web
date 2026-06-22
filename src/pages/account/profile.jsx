@@ -24,17 +24,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { CancelSubscriptionDialog, SubscriptionItem } from "@/components/account/subscription"
 
-// ---------------------------------------------------------------------------
-// API helper — cancel a subscription
-// Calls DELETE /subscriptions/:id (mock handler already registered)
-// ---------------------------------------------------------------------------
-
 const cancelSubscription = (id) =>
   apiClient.delete("/subscriptions/:id", { params: { id } })
-
-// ---------------------------------------------------------------------------
-// ProfileSkeleton
-// ---------------------------------------------------------------------------
 
 function ProfileSkeleton() {
   return (
@@ -60,14 +51,11 @@ function ProfileSkeleton() {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Page principale
-// ---------------------------------------------------------------------------
-
 export function Profile() {
   const { t } = useTranslation("profile")
+  const { t: tx } = useTranslation("auth-extra")
 
-  const {setUser: setGlobalUser } = useAuth()
+  const { setUser: setGlobalUser } = useAuth()
 
   const [user, setUser] = useState(null)
   const [loadingUser, setLoadingUser] = useState(true)
@@ -120,17 +108,14 @@ export function Profile() {
       }
 
       if (emailChanged) {
-        toast.success(
-          "Profil mis à jour. Un code de vérification a été envoyé à votre nouvelle adresse.",
-          {
-            action: {
-              label: "Vérifier",
-              onClick: () => {
-                window.location.href = `/confirm-email?email=${encodeURIComponent(updated.email)}`
-              },
+        toast.success(tx("profileEmailChangedToast"), {
+          action: {
+            label: tx("profileVerifyNow"),
+            onClick: () => {
+              window.location.href = `/confirm-email?email=${encodeURIComponent(updated.email)}`
             },
-          }
-        )
+          },
+        })
       } else {
         toast.success(t("personalInfo.success"))
       }
@@ -159,18 +144,15 @@ export function Profile() {
     } finally { setPasswordSaving(false) }
   }
 
-  // Open dialog for the chosen subscription
   const handleCancelRequest = (sub) => {
     setCancelTarget(sub)
   }
 
-  // Actually call the API once the user confirms
   const handleCancelConfirm = async () => {
     if (!cancelTarget) return
     setCancelling(true)
     try {
       await cancelSubscription(cancelTarget.id)
-      // Optimistically remove from local list
       setSubscriptions((prev) => prev.filter((s) => s.id !== cancelTarget.id))
       setCancelTarget(null)
       toast.success(t("subscriptions.cancelDialog.successMessage", {
@@ -190,12 +172,10 @@ export function Profile() {
     <Layout>
       <main className="flex w-full flex-col gap-8 py-8 md:flex-row">
 
-        {/* Sidebar */}
         <div className="w-full md:w-52 md:shrink-0">
           <AccountNav user={loadingUser ? undefined : user ?? undefined} />
         </div>
 
-        {/* Main content */}
         <div className="min-w-0 flex-1 space-y-4">
           <h1 className="text-lg font-bold text-foreground">{t("title")}</h1>
 
@@ -203,7 +183,6 @@ export function Profile() {
             <ProfileSkeleton />
           ) : (
             <>
-              {/* Informations personnelles */}
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle>{t("personalInfo.title")}</CardTitle>
@@ -213,7 +192,6 @@ export function Profile() {
                   <form onSubmit={handleProfileSubmit}>
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
 
-                      {/* CHAMP 1 : Prénom (First Name) */}
                       <div className="flex flex-col gap-1.5">
                         <Label htmlFor="firstName">First name</Label>
                         <Input
@@ -225,7 +203,6 @@ export function Profile() {
                         />
                       </div>
 
-                      {/* CHAMP 2 : Nom (Last Name) */}
                       <div className="flex flex-col gap-1.5">
                         <Label htmlFor="lastName">Last name</Label>
                         <Input
@@ -237,7 +214,6 @@ export function Profile() {
                         />
                       </div>
 
-                      {/* CHAMP 3 : Adresse Email */}
                       <div className="flex flex-col gap-1.5 md:col-span-2">
                         <Label htmlFor="email">{t("personalInfo.email")}</Label>
                         <div className="flex">
@@ -257,12 +233,12 @@ export function Profile() {
                         </div>
                         {!user?.isEmailVerified && (
                           <p className="text-xs text-amber-600">
-                            Adresse non vérifiée.{" "}
+                            {tx("profileEmailUnverified")}{" "}
                             <Link
                               to={`/confirm-email?email=${encodeURIComponent(user?.email ?? "")}`}
                               className="underline underline-offset-2 hover:text-amber-700"
                             >
-                              Vérifier maintenant
+                              {tx("profileVerifyNow")}
                             </Link>
                           </p>
                         )}
@@ -278,7 +254,6 @@ export function Profile() {
                 </CardContent>
               </Card>
 
-              {/* Sécurité */}
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle>{t("security.title")}</CardTitle>
@@ -326,26 +301,20 @@ export function Profile() {
                     </div>
                   </form>
 
-                  {/* 2FA — visible only to Admin / SuperAdmin */}
                   {(user?.role === "Admin" || user?.role === "SuperAdmin") && (
                     <div className="mt-4 flex items-center justify-between rounded-lg border border-border px-4 py-3">
                       <div>
-                        <p className="text-sm font-medium text-foreground">
-                          Double authentification (2FA)
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          Requis pour la connexion à l'espace administrateur.
-                        </p>
+                        <p className="text-sm font-medium text-foreground">{tx("profile2faTitle")}</p>
+                        <p className="text-xs text-muted-foreground">{tx("profile2faDescription")}</p>
                       </div>
                       <Link to="/account/security/2fa">
-                        <Button variant="outline" size="sm">Configurer</Button>
+                        <Button variant="outline" size="sm">{tx("profile2faConfigure")}</Button>
                       </Link>
                     </div>
                   )}
                 </CardContent>
               </Card>
 
-              {/* Abonnements */}
               <Card>
                 <CardHeader className="border-b">
                   <div className="flex items-center justify-between">
@@ -384,7 +353,6 @@ export function Profile() {
         </div>
       </main>
 
-      {/* Cancel confirmation dialog — rendered outside the card flow */}
       <CancelSubscriptionDialog
         sub={cancelTarget}
         open={!!cancelTarget}

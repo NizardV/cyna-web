@@ -1,0 +1,63 @@
+{
+  "title": "Utilisateurs",
+  "subtitle": "Gérez les comptes, les rôles et les accès de la plateforme.",
+  "search": {
+    "placeholder": "Rechercher un nom ou un email…"
+  },
+  "filter": {
+    "allRoles": "Tous les rôles"
+  },
+  "count": "{{count}} utilisateur",
+  "count_plural": "{{count}} utilisateurs",
+  "roles": {
+    "User": "Utilisateur",
+    "Admin": "Administrateur",
+    "SuperAdmin": "Super administrateur"
+  },
+  "status": {
+    "active": "Actif",
+    "disabled": "Désactivé"
+  },
+  "verified": {
+    "yes": "Email vérifié",
+    "no": "Email non vérifié"
+  },
+  "table": {
+    "user": "Utilisateur",
+    "email": "Email",
+    "role": "Rôle",
+    "status": "Statut",
+    "verified": "Vérifié",
+    "createdAt": "Inscrit le",
+    "actions": "Actions",
+    "twoFactorEnabled": "2FA activé",
+    "noResults": "Aucun utilisateur ne correspond à votre recherche.",
+    "clearSearch": "Effacer la recherche",
+    "loadError": "Impossible de charger les utilisateurs.",
+    "retry": "Réessayer"
+  },
+  "actions": {
+    "enable": "Réactiver",
+    "disable": "Désactiver"
+  },
+  "dialog": {
+    "enableTitle": "Réactiver ce compte ?",
+    "disableTitle": "Désactiver ce compte ?",
+    "enableDescription": "{{name}} pourra à nouveau se connecter et accéder à son compte.",
+    "disableDescription": "{{name}} ne pourra plus se connecter ni renouveler sa session tant que le compte est désactivé.",
+    "cancel": "Annuler",
+    "confirmEnable": "Réactiver",
+    "confirmDisable": "Désactiver",
+    "saving": "Enregistrement…"
+  },
+  "toast": {
+    "roleUpdated": "Rôle de {{name}} mis à jour.",
+    "roleError": "Impossible de changer le rôle. Réessayez.",
+    "disabled": "{{name}} a été désactivé.",
+    "enabled": "{{name}} a été réactivé.",
+    "statusError": "Une erreur est survenue. Réessayez."
+  },
+  "pagination": {
+    "page": "Page {{current}} sur {{total}}"
+  }
+}

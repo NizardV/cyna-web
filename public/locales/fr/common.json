@@ -6,7 +6,8 @@
     "clientArea": "Espace Client",
     "android": "Application Android",
     "categories": "Catégories",
-    "products": "Produits"
+    "products": "Produits",
+    "users": "Utilisateur"
   },
   "footer": {
     "description": "Votre partenaire de confiance pour la sécurité de vos infrastructures IT. Solutions SaaS performantes et évolutives.",

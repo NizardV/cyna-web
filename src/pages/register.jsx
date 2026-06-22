@@ -22,7 +22,6 @@ export function Register() {
   const { t } = useTranslation("auth");
   const { setLoading } = useAuth();
 
-  // ALIGNEMENT : Remplacement de fullName par firstName et lastName
   const [formData, setFormData] = useState({ firstName: "", lastName: "", email: "", password: "" });
   const [loading, setLoadingState] = useState(false);
   const [error, setError] = useState("");
@@ -35,8 +34,6 @@ export function Register() {
   }));
 
   const isPasswordValid = passwordValidation.every((rule) => rule.satisfied);
-
-  // ALIGNEMENT : Validation mise à jour
   const isFormValid = formData.firstName.trim() && formData.lastName.trim() && formData.email.trim() && isPasswordValid;
 
   const handleChange = (e) => {
@@ -62,7 +59,6 @@ export function Register() {
     setError("");
 
     try {
-      // ALIGNEMENT : Envoi direct du nouveau format de DTO propre
       const response = await registerUser({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -91,13 +87,12 @@ export function Register() {
             <h2 className="text-center text-2xl font-bold mb-2">{t("register.success")}</h2>
             <p className="text-center text-gray-600 mb-1">{t("register.successMessage")}</p>
             <p className="text-center text-sm text-gray-500 mb-6">
-              Un code de vérification à 6 chiffres a été envoyé à{" "}
-              <span className="font-medium text-gray-800">{formData.email}</span>.
+              {t("auth-extra:registerVerifySent", { email: formData.email })}
             </p>
 
             <Link to={`/confirm-email?email=${encodeURIComponent(formData.email)}`}>
               <Button className="w-full bg-[#7C3AED] hover:bg-[#6D28D9] text-white">
-                Vérifier mon email →
+                {t("auth-extra:registerVerifyCta")}
               </Button>
             </Link>
 
@@ -126,7 +121,6 @@ export function Register() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
 
-            {/* ALIGNEMENT : Grille responsive pour Prénom et Nom côte à côte */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First name</Label>

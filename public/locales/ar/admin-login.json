@@ -1,0 +1,22 @@
+{
+  "title": "لوحة المشرف",
+  "subtitlePhase1": "تسجيل دخول آمن مع المصادقة الثنائية.",
+  "subtitlePhase2": "أدخل رمز TOTP من تطبيق المصادقة الخاص بك.",
+  "emailLabel": "البريد الإلكتروني",
+  "emailPlaceholder": "admin@cyna.com",
+  "passwordLabel": "كلمة المرور",
+  "continue": "متابعة ←",
+  "verifying": "جارٍ التحقق…",
+  "totpLabel": "رمز TOTP",
+  "totpHint": "يتغير الرمز كل 30 ثانية.",
+  "submit": "تسجيل الدخول",
+  "editCredentials": "← تعديل بيانات الاعتماد",
+  "standardLoginLink": "تسجيل دخول المستخدم العادي",
+  "errorInvalidCredentials": "بيانات اعتماد غير صالحة. تحقق من بريدك الإلكتروني وكلمة المرور.",
+  "errorInvalidTotp": "الرمز غير صالح أو منتهي الصلاحية. تحقق من تطبيق المصادقة.",
+  "otpDigit": "الرقم {{n}}",
+  "appHint": {
+    "title": "تطبيق المصادقة",
+    "description": "افتح Google Authenticator أو Authy أو أي تطبيق TOTP آخر وأدخل الرمز المكوّن من 6 أرقام المعروض لـ {{email}}."
+  }
+}
