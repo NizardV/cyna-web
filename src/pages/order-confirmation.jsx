@@ -5,6 +5,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatPrice } from "@/lib/utils"
 
+/**
+ * Page de confirmation de commande affichée après un paiement réussi.
+ * Lit le total depuis le state de navigation passé par la page Checkout.
+ */
 export function OrderConfirmation() {
   const { t } = useTranslation("order-confirmation")
   const { state } = useLocation()
@@ -15,7 +19,6 @@ export function OrderConfirmation() {
       <main className="flex min-h-[60vh] items-center justify-center py-16">
         <Card className="w-full max-w-md">
           <CardContent className="space-y-5 p-8 text-center">
-            {/* Icône succès */}
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
               <svg
                 className="h-8 w-8 text-green-600"

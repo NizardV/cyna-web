@@ -143,6 +143,15 @@ function PlanPanel({ plan, onChange }) {
 // FormPricing
 // ---------------------------------------------------------------------------
 
+/**
+ * Formulaire de saisie de la tarification d'un produit.
+ * Affiche un onglet par période (mensuel, annuel, définitif) avec les paliers de prix.
+ *
+ * @param {{
+ *   value: { monthly: object, yearly: object, lifetime: object },
+ *   onChange: (value: object) => void
+ * }} props
+ */
 export function FormPricing({ value, onChange }) {
   const { t }      = useTranslation("admin-products")
   const [activeTab, setActiveTab] = useState("monthly")
@@ -169,7 +178,6 @@ export function FormPricing({ value, onChange }) {
               )}
             >
               {t(`pricing.${key}`)}
-              {/* Point indicateur : le plan est activé */}
               {value[key].enabled && (
                 <span className="ml-1.5 inline-block h-1.5 w-1.5 rounded-full bg-primary align-middle" />
               )}

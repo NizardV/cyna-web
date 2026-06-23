@@ -15,17 +15,13 @@ import { getCategories } from "@/api/categories"
 import { toast } from "sonner"
 import { ArrowLeft } from "lucide-react"
 
-// ---------------------------------------------------------------------------
-// État initial
-// ---------------------------------------------------------------------------
-
 const DEFAULT_GENERAL = { nameFr: "", nameEn: "", descriptionFr: "", descriptionEn: "", status: "Available" }
 const DEFAULT_MEDIA   = { imageUrl: "", categoryId: "", isFeatured: false, displayOrder: 1 }
 
-// ---------------------------------------------------------------------------
-// AdminProductForm
-// ---------------------------------------------------------------------------
-
+/**
+ * Page formulaire produit (admin) : création et édition avec sections Général, Médias, Spécifications, Tarifs.
+ * En mode édition, charge le produit via l'endpoint admin qui expose les deux locales et les pricingTiers.
+ */
 export function AdminProductForm() {
   const { t }       = useTranslation("admin-products")
   const { id }      = useParams()

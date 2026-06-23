@@ -6,6 +6,15 @@ import { useTranslation } from "react-i18next";
 import { LangSwitcher } from "./lang-switcher";
 import { Search } from "./search";
 
+/**
+ * En-tête de l'application avec logo, barre de recherche, navigation et actions utilisateur.
+ * Adaptatif mobile/desktop avec menu burger. Affiche une navigation différente
+ * selon que l'utilisateur est en vue admin ou en vue utilisateur.
+ *
+ * @param {{ hideNav?: boolean, hideUserSection?: boolean }} props
+ * @param {boolean} [props.hideNav=false] - Masque les liens de navigation
+ * @param {boolean} [props.hideUserSection=false] - Masque les icônes panier et compte
+ */
 export function Header({ hideNav = false, hideUserSection = false }) {
   const { user, isAdminView } = useAuth();
   const { t } = useTranslation("common");
@@ -45,7 +54,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
             ) : (
               <>
                 <Link to="/"        className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.home")}</Link>
-                <Link to="/catalog"  className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.catalog")}</Link>
+                <Link to="/search"  className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.catalog")}</Link>
                 <Link to="/contact" className="text-sm font-medium text-gray-700 hover:text-gray-900">{t("nav.contact")}</Link>
               </>
             )}
@@ -116,7 +125,7 @@ export function Header({ hideNav = false, hideUserSection = false }) {
             <Link to="/" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
               {t("nav.home")}
             </Link>
-            <Link to="/catalog" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
+            <Link to="/search" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
               {t("nav.catalog")}
             </Link>
             <Link to="/contact" onClick={() => setMenuOpen(false)} className="rounded-lg px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">

@@ -16,6 +16,12 @@ import './index.css'
 import App from './App'
 import "./lib/i18n";
 
+/**
+ * Composant racine intermédiaire qui résout la direction RTL/LTR depuis i18n
+ * et charge conditionnellement les mock handlers avant tout rendu.
+ * Le chargement des mocks doit précéder le premier render pour intercepter
+ * les appels API des composants enfants dès leur montage.
+ */
 function Root() {
   const { i18n } = useTranslation()
   const dir = i18n.dir(i18n.language)

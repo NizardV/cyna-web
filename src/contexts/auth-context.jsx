@@ -4,8 +4,18 @@ import { apiClient } from "@/api/client";
 // Rôles reconnus comme admin (à adapter si le backend évolue)
 const ADMIN_ROLE = ["Administrateur", "Super Administrateur"];
 
+/**
+ * Contexte React d'authentification.
+ * Consommer via le hook `useAuth` — ne pas utiliser `useContext(AuthContext)` directement.
+ */
 export const AuthContext = createContext();
 
+/**
+ * Fournisseur du contexte d'authentification.
+ * Rehydrate la session au montage via GET /auth/me et expose les actions login/logout.
+ *
+ * @param {{ children: React.ReactNode }} props
+ */
 export function AuthProvider({ children }) {
   const [user, setUser]       = useState(null);
   const [loading, setLoading] = useState(true);

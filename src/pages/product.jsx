@@ -10,6 +10,11 @@ import { ProductPricing } from "@/components/product/product-pricing";
 import { FeaturedProducts } from "@/components/home/featured-products";
 import { findTier, UnitType } from "@/lib/pricing-utils";
 
+/**
+ * Page détail d'un produit : galerie, informations, paliers de tarification,
+ * panneau d'achat et produits similaires.
+ * Réinitialise les quantités à chaque changement de période de facturation.
+ */
 export function Product() {
   const { id } = useParams();
   const { t } = useTranslation("product");

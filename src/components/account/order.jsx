@@ -129,6 +129,12 @@ function OrderRow({ order, isLast }) {
 // OrderGroup — une Card par année
 // ---------------------------------------------------------------------------
 
+/**
+ * Groupe d'historique de commandes pour une année donnée.
+ *
+ * @param {{ year: number, orders: object[], dimmed?: boolean }} props
+ * @param {boolean} [props.dimmed=false] - Réduit l'opacité pour les années antérieures
+ */
 export function OrderGroup({ year, orders, dimmed }) {
   const { t } = useTranslation("order-history")
 
@@ -152,6 +158,9 @@ export function OrderGroup({ year, orders, dimmed }) {
 // Squelette
 // ---------------------------------------------------------------------------
 
+/**
+ * Squelette de chargement pour la liste des commandes (2 années × 2 commandes).
+ */
 export function OrderHistorySkeleton() {
   return (
     <div className="space-y-6">

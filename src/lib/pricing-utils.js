@@ -30,13 +30,21 @@ export const computeMin = (tiers, i) =>
 // État initial / conversion API ↔ formulaire
 // ---------------------------------------------------------------------------
 
+/**
+ * Retourne l'état de tarification vide (aucun plan activé).
+ * @returns {{ monthly: object, yearly: object, lifetime: object }}
+ */
 export const defaultPricingState = () => ({
   monthly:  { enabled: false, userTiers: [], deviceTiers: [] },
   yearly:   { enabled: false, userTiers: [], deviceTiers: [] },
   lifetime: { enabled: false, userTiers: [], deviceTiers: [] },
 })
 
-// Convertit les plans API → état du formulaire (chargement en mode édition)
+/**
+ * Convertit les plans API vers l'état du formulaire (chargement en mode édition).
+ * @param {object[]} [plans] - Tableau de PricingPlanDto
+ * @returns {{ monthly: object, yearly: object, lifetime: object }}
+ */
 export function pricingPlansToState(plans = []) {
   const state = defaultPricingState()
   for (const plan of plans) {
@@ -51,7 +59,12 @@ export function pricingPlansToState(plans = []) {
   return state
 }
 
-// Convertit l'état du formulaire → plans API (soumission)
+/**
+ * Convertit l'état du formulaire en tableau de plans API prêt à être soumis.
+ * Ignore les plans non activés.
+ * @param {{ monthly: object, yearly: object, lifetime: object }} state
+ * @returns {object[]} Tableau de PricingPlanDto
+ */
 export function stateToPricingPlans(state) {
   return TABS
     .filter(key => state[key].enabled)
@@ -77,6 +90,11 @@ export function stateToPricingPlans(state) {
 // Validation
 // ---------------------------------------------------------------------------
 
+/**
+ * Retourne les indices des paliers invalides (maxQty manquant ou ≤ minQty calculé).
+ * @param {object[]} tiers
+ * @returns {Set<number>}
+ */
 export function getInvalidIndices(tiers) {
   const invalid = new Set()
   for (let i = 0; i < tiers.length; i++) {
@@ -87,6 +105,12 @@ export function getInvalidIndices(tiers) {
   return invalid
 }
 
+/**
+ * Valide l'intégralité de l'état de tarification.
+ * @param {{ monthly: object, yearly: object, lifetime: object }} state
+ * @param {Function} [t] - Fonction de traduction i18n (optionnelle, défaut : identité)
+ * @returns {string[]} Liste des messages d'erreur (vide si valide)
+ */
 export function validatePricing(state, t = (k) => k) {
   const errors = []
   for (const [period, plan] of Object.entries(state)) {

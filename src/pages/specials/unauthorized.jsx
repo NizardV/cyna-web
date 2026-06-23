@@ -1,6 +1,10 @@
 import { Link, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
+/**
+ * Page 401 affichée par le garde AdminRoute.
+ * Lit `location.state.redirectTo` pour proposer un retour contextuel après connexion.
+ */
 export const Unauthorized = () => {
   const location = useLocation();
   const { t } = useTranslation("common");

@@ -11,8 +11,18 @@ import {
 // YearCombobox — replaces the Select for year filtering
 // ---------------------------------------------------------------------------
 
+/**
+ * Combobox de filtre par année pour l'historique de commandes.
+ * L'option "all" représente toutes les années.
+ *
+ * @param {{
+ *   value: string,
+ *   onChange: (value: string|null) => void,
+ *   years: number[],
+ *   t: Function
+ * }} props
+ */
 export function YearCombobox({ value, onChange, years, t }) {
-  // Build items: "all" + each year string
   const items = [
     { value: "all", label: t("allYears") },
     ...years.map((y) => ({ value: String(y), label: t("year", { year: y }) })),

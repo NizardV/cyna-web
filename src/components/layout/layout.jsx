@@ -2,6 +2,21 @@ import { Header } from "./header";
 import { Footer } from "./footer";
 import { useTranslation } from "react-i18next"
 
+/**
+ * Enveloppe de mise en page standard : Header + slot principal + Footer.
+ * Toutes les props de masquage sont transmises directement à Header et Footer.
+ *
+ * @param {{
+ *   children: React.ReactNode,
+ *   hideSearch?: boolean,
+ *   hideNav?: boolean,
+ *   hideUserSection?: boolean,
+ *   hideDescription?: boolean,
+ *   hideInfoSection?: boolean,
+ *   hideLegalSection?: boolean,
+ *   hideSocial?: boolean
+ * }} props
+ */
 export function Layout({
   children,
   hideSearch = false,

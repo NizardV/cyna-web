@@ -27,8 +27,15 @@ import Loading from "./pages/specials/loading"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
-import { UserRoute, AdminRoute } from "./wrapper"
+import { UserRoute, AdminRoute, AuthRoute, UserAuthRoute } from "./wrapper"
 import AdminDashboard from "./pages/admin/dashboard.jsx"
+
+/**
+ * Composant racine du routeur.
+ * Définit l'arbre de routes de l'application, protégées par `UserRoute` et `AdminRoute`.
+ * Les routes sont enveloppées dans `Suspense` pour afficher une page de chargement
+ * pendant le chargement paresseux des modules.
+ */
 function App() {
   return (
     <BrowserRouter>
@@ -37,7 +44,6 @@ function App() {
           <Route path="/unauthorized"      element={<Unauthorized />} />
           <Route path="/login"             element={<Login />} />
           <Route path="/register"          element={<Register />} />
-          <Route path="/account/profile" element={<Profile />} />
           <Route path="/cgu"               element={<CGU />} />
           <Route path="/mentions-legales"  element={<MentionsLegales />} />
           <Route path="/privacy"           element={<Privacy />} />
@@ -55,7 +61,6 @@ function App() {
             <Route path="/cart"            element={<Cart />} />
             <Route path="/checkout"        element={<Checkout />} />
             <Route path="/order-confirmation" element={<OrderConfirmation />} />
-            <Route path="/account/orders"  element={<OrderHistory />} />
           </Route>
 
           {/* ── Backoffice admin ── */}
@@ -65,6 +70,16 @@ function App() {
             <Route path="/admin/products"          element={<AdminProducts />} />
             <Route path="/admin/products/new"      element={<AdminProductForm />} />
             <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+          </Route>
+
+          {/* ── Routes protégées par authentification ── */}
+          <Route element={<AuthRoute />}>
+            <Route path="/account/profile" element={<Profile />} />
+          </Route>
+
+          {/* ── Routes protégées par authentification utilisateur ── */}
+          <Route element={<UserAuthRoute />}>
+            <Route path="/account/orders" element={<OrderHistory />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />

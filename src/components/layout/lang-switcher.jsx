@@ -14,6 +14,10 @@ const LANGUAGES = [
   { code: "he", label: "HE", flag: "🇮🇱" },
 ]
 
+/**
+ * Sélecteur de langue affiché dans le Header.
+ * Persiste le choix dans localStorage (clé `i18n_lang`) et notifie i18next.
+ */
 export function LangSwitcher() {
   const { i18n } = useTranslation()
   const current = LANGUAGES.find((l) => l.code === i18n.language?.split("-")[0]) ?? LANGUAGES[0]

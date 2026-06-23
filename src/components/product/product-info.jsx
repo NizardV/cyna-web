@@ -6,6 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 
+/**
+ * Panneau d'information d'un produit : statut, titre, description, specs et sélection de plan.
+ *
+ * @param {{
+ *   product: object,
+ *   billingPeriod: string|null,
+ *   onBillingPeriodChange: (period: string) => void
+ * }} props
+ */
 export function ProductInfo({ product, billingPeriod, onBillingPeriodChange }) {
   const { t } = useTranslation("product");
 

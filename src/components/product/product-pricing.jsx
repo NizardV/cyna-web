@@ -7,6 +7,25 @@ import { Badge } from "@/components/ui/badge";
 import { addToCart } from "@/api/cart";
 import { toast } from "sonner";
 
+/**
+ * Panneau d'achat d'un produit : sélection des quantités, prix total calculé,
+ * et actions (ajouter au panier, demander un devis, essai 14 jours).
+ *
+ * @param {{
+ *   currentPlan: object,
+ *   billingPeriod: string,
+ *   quantityUsers: number,
+ *   quantityDevices: number,
+ *   onUsersChange: (updater: (q: number) => number) => void,
+ *   onDevicesChange: (updater: (q: number) => number) => void,
+ *   tierUser: object|null,
+ *   tierDevice: object|null,
+ *   totalPrice: number,
+ *   isQuoteRequired: boolean,
+ *   productName: string,
+ *   isAvailable: boolean
+ * }} props
+ */
 export function ProductPricing({
   currentPlan,
   billingPeriod,
@@ -118,6 +137,19 @@ export function ProductPricing({
   );
 }
 
+/**
+ * Ligne de sélection de quantité avec indicateur de dépassement de limite.
+ *
+ * @param {{
+ *   label: string,
+ *   sublabel: string|null,
+ *   quantity: number,
+ *   onDecrement: () => void,
+ *   onIncrement: () => void,
+ *   isOverLimit: boolean,
+ *   overLimitLabel: string
+ * }} props
+ */
 function QuantityRow({ label, sublabel, quantity, onDecrement, onIncrement, isOverLimit, overLimitLabel }) {
   return (
     <div className={cn(

@@ -4,6 +4,18 @@ import { formatPrice } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
+/**
+ * Récapitulatif du panier avec sous-total, TVA, total et bouton de passage en caisse.
+ *
+ * @param {{
+ *   subtotal: number,
+ *   tva: number,
+ *   total: number,
+ *   hasItems: boolean,
+ *   hasQuoteItem: boolean,
+ *   onCheckout: () => void
+ * }} props
+ */
 export function CartSummary({ subtotal, tva, total, hasItems, hasQuoteItem, onCheckout }) {
   const { t } = useTranslation("cart");
   const isLoggedIn = !!localStorage.getItem("cyna_token");

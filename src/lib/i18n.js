@@ -1,3 +1,12 @@
+/**
+ * @file lib/i18n.js
+ * @description Configuration i18next : détection automatique de la langue du navigateur,
+ * chargement HTTP des fichiers de traduction depuis /public/locales/,
+ * et support de 4 langues (fr, en, ar, he).
+ *
+ * Les fichiers de traduction sont organisés par langue et namespace :
+ *   /public/locales/{langue}/{namespace}.json
+ */
 import i18n from 'i18next'
 import { initReactI18next } from 'react-i18next'
 import HttpBackend from 'i18next-http-backend'

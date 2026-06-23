@@ -17,6 +17,15 @@ function isValidUrl(url) {
   }
 }
 
+/**
+ * Formulaire de saisie des métadonnées média d'un produit (image, catégorie, mise en avant).
+ *
+ * @param {{
+ *   value: { imageUrl: string, categoryId: string, isFeatured: boolean, displayOrder: number },
+ *   onChange: (value: object) => void,
+ *   categories: object[]
+ * }} props
+ */
 export function FormMedia({ value, onChange, categories }) {
   const { t } = useTranslation("admin-products")
   const [urlError, setUrlError] = useState(false)
@@ -31,7 +40,7 @@ export function FormMedia({ value, onChange, categories }) {
 
   const handleUrlBlur = () => setUrlError(!isValidUrl(value.imageUrl))
   const handleUrlChange = (e) => {
-    if (urlError) setUrlError(false) // efface l'erreur dès que l'utilisateur retape
+    if (urlError) setUrlError(false)
     set("imageUrl")(e)
   }
 

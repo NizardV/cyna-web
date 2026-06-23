@@ -1,6 +1,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
+/**
+ * Squelette de chargement de la page panier (2 lignes d'articles + résumé).
+ */
 export function CartSkeleton() {
   return (
     <div className="flex flex-col gap-8 md:flex-row">
