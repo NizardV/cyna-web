@@ -50,6 +50,9 @@ export function Header({ hideNav = false, hideUserSection = false }) {
                 <Link to="/admin/products" className="text-sm font-medium text-gray-700 hover:text-gray-900">
                   {t("nav.products")}
                 </Link>
+                <Link to='/admin/users' className="text-sm font-medium text-gray-700 hover:text-gray-900">
+                  {t("nav.users")}
+                </Link>
               </>
             ) : (
               <>

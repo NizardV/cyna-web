@@ -1,0 +1,27 @@
+{
+  "title": "Double authentification",
+  "subtitle": "Sécurisez votre compte administrateur avec un code TOTP.",
+  "errorSetup": "Impossible de générer la clé 2FA. Réessayez plus tard.",
+  "errorInvalidCode": "Code invalide. Vérifiez l'heure de votre téléphone et réessayez.",
+  "toastActivated": "Authentification à deux facteurs activée.",
+  "activatedTitle": "2FA activé avec succès",
+  "activatedDescription": "Vous devrez désormais utiliser la connexion administrateur avec votre code TOTP.",
+  "goToDashboard": "Accéder au tableau de bord",
+  "backToProfile": "Retour au profil",
+  "activating": "Activation…",
+  "activate": "Activer le 2FA",
+  "otpDigit": "Chiffre {{n}}",
+  "step1": {
+    "title": "1. Scannez le QR code",
+    "description": "Avec Google Authenticator, Authy, ou toute autre application TOTP.",
+    "qrAlt": "QR code 2FA",
+    "manualHint": "Vous ne pouvez pas scanner ? Entrez cette clé manuellement :",
+    "copy": "Copier",
+    "copyError": "Impossible de copier automatiquement.",
+    "typeHint": "Type : Basé sur le temps (TOTP), 6 chiffres, 30 secondes."
+  },
+  "step2": {
+    "title": "2. Confirmez l'activation",
+    "description": "Saisissez le code à 6 chiffres affiché dans votre application."
+  }
+}

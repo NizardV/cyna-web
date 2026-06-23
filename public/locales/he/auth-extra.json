@@ -1,0 +1,11 @@
+{
+  "adminLoginLink": "כניסת מנהל (2FA)",
+  "registerVerifySent": "קוד אימות בן 6 ספרות נשלח אל {{email}}.",
+  "registerVerifyCta": "אמת את האימייל שלי ←",
+  "profileEmailUnverified": "הכתובת לא אומתה.",
+  "profileVerifyNow": "אמת עכשיו",
+  "profileEmailChangedToast": "הפרופיל עודכן. קוד אימות נשלח לכתובתך החדשה.",
+  "profile2faTitle": "אימות דו-שלבי (2FA)",
+  "profile2faDescription": "נדרש לכניסה לאזור המנהלים.",
+  "profile2faConfigure": "הגדרה"
+}

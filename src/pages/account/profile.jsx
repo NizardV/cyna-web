@@ -2,6 +2,10 @@
  * @file pages/account/profile.jsx
  * Uses shared AccountNav component for sidebar navigation.
  * Subscription cancellation uses a confirmation Dialog before calling the API.
+ *
+ * Aligned on UserProfileDto (v1): isEmailVerified (not isConfirmed).
+ * Changing the email resets isEmailVerified server-side and triggers a new
+ * OTP email — the user is pointed to /confirm-email afterwards.
  */
 
 import { useEffect, useState } from "react"
@@ -20,17 +24,8 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { CancelSubscriptionDialog, SubscriptionItem } from "@/components/account/subscription"
 
-// ---------------------------------------------------------------------------
-// API helper — cancel a subscription
-// Calls DELETE /subscriptions/:id (mock handler already registered)
-// ---------------------------------------------------------------------------
-
 const cancelSubscription = (id) =>
   apiClient.delete("/subscriptions/:id", { params: { id } })
-
-// ---------------------------------------------------------------------------
-// ProfileSkeleton
-// ---------------------------------------------------------------------------
 
 function ProfileSkeleton() {
   return (
@@ -56,17 +51,11 @@ function ProfileSkeleton() {
   )
 }
 
-// ---------------------------------------------------------------------------
-// Page principale
-// ---------------------------------------------------------------------------
-
-/**
- * Page profil : modification des informations personnelles, mot de passe et gestion des abonnements actifs.
- */
 export function Profile() {
   const { t } = useTranslation("profile")
+  const { t: tx } = useTranslation("auth-extra")
 
-  const {setUser: setGlobalUser } = useAuth()
+  const { setUser: setGlobalUser } = useAuth()
 
   const [user, setUser] = useState(null)
   const [loadingUser, setLoadingUser] = useState(true)
@@ -109,6 +98,7 @@ export function Profile() {
   const handleProfileSubmit = async (e) => {
     e.preventDefault()
     setProfileSaving(true)
+    const emailChanged = profileForm.email.trim().toLowerCase() !== (user?.email ?? "").toLowerCase()
     try {
       const updated = await updateProfile(profileForm)
       setUser(updated)
@@ -117,7 +107,18 @@ export function Profile() {
         setGlobalUser(updated)
       }
 
-      toast.success(t("personalInfo.success"))
+      if (emailChanged) {
+        toast.success(tx("profileEmailChangedToast"), {
+          action: {
+            label: tx("profileVerifyNow"),
+            onClick: () => {
+              window.location.href = `/confirm-email?email=${encodeURIComponent(updated.email)}`
+            },
+          },
+        })
+      } else {
+        toast.success(t("personalInfo.success"))
+      }
     } catch (err) {
       toast.error(err.message || t("personalInfo.error"))
     } finally { setProfileSaving(false) }
@@ -222,14 +223,25 @@ export function Profile() {
                             value={profileForm.email}
                             onChange={(e) => setProfileForm((f) => ({ ...f, email: e.target.value }))}
                             required
-                            className={user?.isConfirmed ? "rounded-r-none" : ""}
+                            className={user?.isEmailVerified ? "rounded-r-none" : ""}
                           />
-                          {user?.isConfirmed && (
+                          {user?.isEmailVerified && (
                             <span className="inline-flex items-center border border-l-0 border-input rounded-lg rounded-l-none bg-muted px-2.5 text-xs text-muted-foreground">
                               {t("personalInfo.verified")}
                             </span>
                           )}
                         </div>
+                        {!user?.isEmailVerified && (
+                          <p className="text-xs text-amber-600">
+                            {tx("profileEmailUnverified")}{" "}
+                            <Link
+                              to={`/confirm-email?email=${encodeURIComponent(user?.email ?? "")}`}
+                              className="underline underline-offset-2 hover:text-amber-700"
+                            >
+                              {tx("profileVerifyNow")}
+                            </Link>
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex justify-end md:col-span-2">
@@ -288,6 +300,18 @@ export function Profile() {
                       </div>
                     </div>
                   </form>
+
+                  {(user?.role === "Admin" || user?.role === "SuperAdmin") && (
+                    <div className="mt-4 flex items-center justify-between rounded-lg border border-border px-4 py-3">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">{tx("profile2faTitle")}</p>
+                        <p className="text-xs text-muted-foreground">{tx("profile2faDescription")}</p>
+                      </div>
+                      <Link to="/account/security/2fa">
+                        <Button variant="outline" size="sm">{tx("profile2faConfigure")}</Button>
+                      </Link>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
@@ -329,7 +353,6 @@ export function Profile() {
         </div>
       </main>
 
-      {/* Cancel confirmation dialog — rendered outside the card flow */}
       <CancelSubscriptionDialog
         sub={cancelTarget}
         open={!!cancelTarget}

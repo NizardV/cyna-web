@@ -1,0 +1,63 @@
+{
+  "title": "משתמשים",
+  "subtitle": "נהל חשבונות, תפקידים וגישה לפלטפורמה.",
+  "search": {
+    "placeholder": "חפש לפי שם או אימייל…"
+  },
+  "filter": {
+    "allRoles": "כל התפקידים"
+  },
+  "count": "{{count}} משתמש",
+  "count_plural": "{{count}} משתמשים",
+  "roles": {
+    "User": "משתמש",
+    "Admin": "מנהל",
+    "SuperAdmin": "מנהל על"
+  },
+  "status": {
+    "active": "פעיל",
+    "disabled": "מושבת"
+  },
+  "verified": {
+    "yes": "אימייל מאומת",
+    "no": "אימייל לא מאומת"
+  },
+  "table": {
+    "user": "משתמש",
+    "email": "אימייל",
+    "role": "תפקיד",
+    "status": "סטטוס",
+    "verified": "מאומת",
+    "createdAt": "נרשם בתאריך",
+    "actions": "פעולות",
+    "twoFactorEnabled": "2FA פעיל",
+    "noResults": "לא נמצאו משתמשים התואמים לחיפוש שלך.",
+    "clearSearch": "נקה חיפוש",
+    "loadError": "לא ניתן לטעון משתמשים.",
+    "retry": "נסה שנית"
+  },
+  "actions": {
+    "enable": "הפעל",
+    "disable": "השבת"
+  },
+  "dialog": {
+    "enableTitle": "להפעיל חשבון זה?",
+    "disableTitle": "להשבית חשבון זה?",
+    "enableDescription": "{{name}} יוכל להתחבר ולגשת לחשבונו שוב.",
+    "disableDescription": "{{name}} לא יוכל להתחבר או לחדש את הסשן שלו כל עוד החשבון מושבת.",
+    "cancel": "ביטול",
+    "confirmEnable": "הפעל",
+    "confirmDisable": "השבת",
+    "saving": "שומר…"
+  },
+  "toast": {
+    "roleUpdated": "תפקידו של {{name}} עודכן.",
+    "roleError": "לא ניתן לשנות תפקיד. נסה שנית.",
+    "disabled": "{{name}} הושבת.",
+    "enabled": "{{name}} הופעל.",
+    "statusError": "אירעה שגיאה. נסה שנית."
+  },
+  "pagination": {
+    "page": "עמוד {{current}} מתוך {{total}}"
+  }
+}

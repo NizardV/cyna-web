@@ -1,0 +1,63 @@
+{
+  "title": "Users",
+  "subtitle": "Manage accounts, roles, and platform access.",
+  "search": {
+    "placeholder": "Search by name or email…"
+  },
+  "filter": {
+    "allRoles": "All roles"
+  },
+  "count": "{{count}} user",
+  "count_plural": "{{count}} users",
+  "roles": {
+    "User": "User",
+    "Admin": "Administrator",
+    "SuperAdmin": "Super administrator"
+  },
+  "status": {
+    "active": "Active",
+    "disabled": "Disabled"
+  },
+  "verified": {
+    "yes": "Email verified",
+    "no": "Email not verified"
+  },
+  "table": {
+    "user": "User",
+    "email": "Email",
+    "role": "Role",
+    "status": "Status",
+    "verified": "Verified",
+    "createdAt": "Registered on",
+    "actions": "Actions",
+    "twoFactorEnabled": "2FA enabled",
+    "noResults": "No users match your search.",
+    "clearSearch": "Clear search",
+    "loadError": "Unable to load users.",
+    "retry": "Retry"
+  },
+  "actions": {
+    "enable": "Enable",
+    "disable": "Disable"
+  },
+  "dialog": {
+    "enableTitle": "Enable this account?",
+    "disableTitle": "Disable this account?",
+    "enableDescription": "{{name}} will be able to log in and access their account again.",
+    "disableDescription": "{{name}} will not be able to log in or renew their session while the account is disabled.",
+    "cancel": "Cancel",
+    "confirmEnable": "Enable",
+    "confirmDisable": "Disable",
+    "saving": "Saving…"
+  },
+  "toast": {
+    "roleUpdated": "{{name}}'s role updated.",
+    "roleError": "Unable to change role. Try again.",
+    "disabled": "{{name}} has been disabled.",
+    "enabled": "{{name}} has been enabled.",
+    "statusError": "An error occurred. Try again."
+  },
+  "pagination": {
+    "page": "Page {{current}} of {{total}}"
+  }
+}
