@@ -19,6 +19,8 @@ import {
 } from "./handlers/orders.js"
 import { seedCart } from "./handlers/cart.js"
 import { categoryHandlers } from "./handlers/categories.js"
+import { dashboardHandlers } from "./handlers/dashboard.js"
+
 
 mockRegistry.registerMany([
   ...productHandlers,
@@ -32,6 +34,7 @@ mockRegistry.registerMany([
   ...catalogHandlers,
   ...categoryHandlers,
   ...carouselHandlers,
+  ...dashboardHandlers,
 ])
 
 if (import.meta.env.DEV) {

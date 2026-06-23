@@ -1,0 +1,63 @@
+{
+  "title": "Dashboard",
+  "subtitle": "Overview of platform activity.",
+  "loadError": "Failed to load dashboard data.",
+  "empty": "No data available for this period.",
+
+  "period": {
+    "week": "7 days",
+    "month": "30 days",
+    "year": "12 months",
+    "all": "All time"
+  },
+
+  "mock": {
+    "off": "Mock data",
+    "on": "Mock data ✓",
+    "tooltip": "Generates random data — useful while the payment module is still being integrated.",
+    "banner": "Demo mode active: the figures shown are randomly generated (mock=true), as the payment module is not yet fully integrated."
+  },
+
+  "kpi": {
+    "revenue": "Revenue",
+    "orders": "Orders",
+    "users": "Users",
+    "activeSubscriptions": "Active subscriptions",
+    "vsPrevious": "vs previous period",
+    "onPeriod": "in this period",
+    "newUsers": "+{{count}} in this period",
+    "createdOnPeriod": "{{count}} created in this period"
+  },
+
+  "chart": {
+    "revenueOrders": "Revenue & orders",
+    "revenue": "Revenue",
+    "orders": "Orders",
+    "newUsersTitle": "New sign-ups",
+    "newUsers": "New users"
+  },
+
+  "statuses": {
+    "title": "Status breakdown",
+    "orders": "Orders",
+    "subscriptions": "Subscriptions"
+  },
+
+  "status": {
+    "empty": "No data.",
+    "paid": "Paid",
+    "pending": "Pending",
+    "failed": "Failed",
+    "refunded": "Refunded",
+    "cancelled": "Cancelled",
+    "active": "Active",
+    "expired": "Expired",
+    "suspended": "Suspended"
+  },
+
+  "topProducts": {
+    "title": "Top products by revenue",
+    "empty": "No products in this period.",
+    "orderCount": "{{count}} order(s)"
+  }
+}

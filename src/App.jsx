@@ -34,6 +34,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
 import { UserRoute, AdminRoute, AuthRoute, UserAuthRoute } from "./wrapper"
+import AdminDashboard from "./pages/admin/dashboard.jsx"
 
 /**
  * Composant racine du routeur.
@@ -74,7 +75,7 @@ function App() {
 
           {/* ── Backoffice admin ── */}
           <Route element={<AdminRoute />}>
-            <Route path="/admin/dashboard"         element={<Loading />} />
+            <Route path="/admin"         element={<AdminDashboard />} />
             <Route path="/admin/categories"        element={<AdminCategories />} />
             <Route path="/admin/products"          element={<AdminProducts />} />
             <Route path="/admin/products/new"      element={<AdminProductForm />} />

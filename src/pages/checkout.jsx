@@ -1,15 +1,16 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import { useTranslation } from "react-i18next"
+import { loadStripe } from "@stripe/stripe-js"
+import { Elements, PaymentElement, useStripe, useElements } from "@stripe/react-stripe-js"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Badge } from "@/components/ui/badge"
 import { cn, formatPrice } from "@/lib/utils"
 import { getCart, clearCart } from "@/api/cart"
-import { getMe } from "@/api/user"
-import { apiClient } from "@/api/client"
+import { useAuth } from "@/hooks/use-auth"
+import { apiClient, ApiError } from "@/api/client"
 import { toast } from "sonner"
 
 // ---------------------------------------------------------------------------
@@ -64,10 +65,63 @@ function StepBlock({ number, title, done = false, active = false, children }) {
 }
 
 // ---------------------------------------------------------------------------
+// StripePaymentForm — rendu à l'intérieur de <Elements> (a accès aux hooks Stripe)
+// ---------------------------------------------------------------------------
+
+function StripePaymentForm({ total, onSuccess }) {
+  const { t } = useTranslation("checkout")
+  const stripe = useStripe()
+  const elements = useElements()
+  const [paying, setPaying] = useState(false)
+
+  const handlePay = async () => {
+    if (!stripe || !elements) return
+    setPaying(true)
+
+    const { error, paymentIntent } = await stripe.confirmPayment({
+      elements,
+      redirect: "if_required",
+      confirmParams: {
+        return_url: `${window.location.origin}/order-confirmation`,
+      },
+    })
+
+    if (error) {
+      toast.error(error.message ?? t("errors.paymentFailed", { defaultValue: "Le paiement a échoué." }))
+      setPaying(false)
+      return
+    }
+
+    if (paymentIntent && (paymentIntent.status === "succeeded" || paymentIntent.status === "processing")) {
+      onSuccess()
+      return
+    }
+
+    // Statut inattendu (ex. requires_action sans redirection)
+    toast.error(t("errors.paymentFailed", { defaultValue: "Le paiement a échoué." }))
+    setPaying(false)
+  }
+
+  return (
+    <div className="space-y-4">
+      <PaymentElement />
+      <Button className="w-full font-bold" onClick={handlePay} disabled={!stripe || paying}>
+        {paying
+          ? t("summary.confirming", { defaultValue: "Paiement en cours…" })
+          : t("payNow", { defaultValue: "Payer {{amount}}", amount: formatPrice(total) })}
+      </Button>
+      <p className="text-center text-xs text-muted-foreground">
+        {t("step3.secured", { defaultValue: "Paiement sécurisé par Stripe." })}
+      </p>
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------------------
 // CheckoutSummary
 // ---------------------------------------------------------------------------
 
-function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting }) {
+function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing, paymentStarted }) {
   const { t } = useTranslation("checkout")
 
   return (
@@ -115,13 +169,21 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
             </span>
           </div>
 
-          <Button
-            className="w-full font-bold"
-            onClick={onConfirm}
-            disabled={submitting}
-          >
-            {submitting ? t("summary.confirming") : t("summary.confirm")}
-          </Button>
+          {paymentStarted ? (
+            <p className="text-center text-xs text-muted-foreground">
+              {t("summary.completePayment", { defaultValue: "Complétez le paiement à l'étape 3." })}
+            </p>
+          ) : (
+            <Button
+              className="w-full font-bold"
+              onClick={onProceed}
+              disabled={initializing}
+            >
+              {initializing
+                ? t("summary.confirming", { defaultValue: "Chargement…" })
+                : t("summary.proceed", { defaultValue: "Procéder au paiement" })}
+            </Button>
+          )}
 
           <p className="text-center text-xs text-muted-foreground">
             {t("summary.cgvBefore")}{" "}
@@ -140,29 +202,27 @@ function CheckoutSummary({ items, subtotal, tva, total, onConfirm, submitting })
 // ---------------------------------------------------------------------------
 
 /**
- * Page de paiement en 3 étapes : compte client, adresse de facturation, paiement par carte.
- * Enrichit les articles du panier avec les prix confirmés par le backend avant affichage.
- * Les données de formulaire sont pré-remplies en mode développement pour accélérer les tests.
+ * Page de paiement en 3 étapes : compte client, adresse de facturation, paiement par carte (Stripe Elements).
+ * 1. On enrichit les articles du panier avec les prix confirmés par le backend.
+ * 2. Au clic « Procéder au paiement », le backend crée la commande (Pending) + l'abonnement Stripe
+ *    et renvoie un client secret.
+ * 3. Stripe Elements confirme le paiement ; le webhook backend confirmera la commande.
  */
 export function Checkout() {
   const { t } = useTranslation("checkout")
   const navigate = useNavigate()
+  const { user } = useAuth()
   const [items, setItems] = useState([])
-  const [user, setUser] = useState(null)
-  const [submitting, setSubmitting] = useState(false)
   const [backendSummary, setBackendSummary] = useState(null)
+  const [initializing, setInitializing] = useState(false)
+  // { clientSecret, publishableKey, orderId } une fois le paiement initialisé côté backend
+  const [payment, setPayment] = useState(null)
   const initialized = useRef(false)
 
   const [address, setAddress] = useState(
     import.meta.env.DEV
-      ? { firstName: "Jean", lastName: "Dupont", line1: "12 rue de la Paix", postalCode: "75001", city: "Paris", country: "France" }
-      : { firstName: "", lastName: "", line1: "", postalCode: "", city: "", country: "France" }
-  )
-
-  const [payment, setPayment] = useState(
-    import.meta.env.DEV
-      ? { cardName: "JEAN DUPONT", cardNumber: "4242 4242 4242 4242", expiry: "12/28", cvv: "123" }
-      : { cardName: "", cardNumber: "", expiry: "", cvv: "" }
+      ? { firstName: "Jean", lastName: "Dupont", line1: "12 rue de la Paix", postalCode: "75001", city: "Paris", country: "FR" }
+      : { firstName: "", lastName: "", line1: "", postalCode: "", city: "", country: "FR" }
   )
 
   useEffect(() => {
@@ -172,10 +232,6 @@ export function Checkout() {
     const init = async () => {
       const cartItems = await getCart()
       setItems(cartItems)
-
-      if (localStorage.getItem("cyna_token")) {
-        getMe().then(setUser).catch(() => {})
-      }
 
       if (cartItems.length > 0) {
         try {
@@ -198,7 +254,7 @@ export function Checkout() {
           if (enriched.length > 0) setItems(enriched)
           if (lastCartSummary)     setBackendSummary(lastCartSummary)
         } catch {
-          // Backend indisponible → prix à 0
+          // Backend indisponible / non connecté → prix à 0
         }
       }
     }
@@ -209,49 +265,44 @@ export function Checkout() {
   const tva      = backendSummary?.taxAmount ?? 0
   const total    = backendSummary?.total     ?? 0
 
-  const handleConfirm = async () => {
+  // Promesse Stripe créée une fois la clé publiable reçue du backend.
+  const stripePromise = useMemo(
+    () => (payment?.publishableKey ? loadStripe(payment.publishableKey) : null),
+    [payment?.publishableKey]
+  )
+
+  const handleProceed = async () => {
     if (!address.firstName || !address.lastName || !address.line1 || !address.postalCode || !address.city) {
       toast.error(t("errors.missingAddress"))
       return
     }
-    if (!payment.cardName || !payment.cardNumber || !payment.expiry || !payment.cvv) {
-      toast.error(t("errors.missingPayment"))
-      return
-    }
 
-    setSubmitting(true)
+    setInitializing(true)
     try {
-      const order = await apiClient.post("/orders", {
-        items: items.map(i => ({
-          pricingPlanId:    i.pricingPlanId,
-          productName:      i.productName,
-          billingPeriod:    i.billingPeriod,
-          quantityUsers:    i.quantityUsers,
-          quantityDevices:  i.quantityDevices,
-        })),
-        address,
-        total,
-        stripePaymentIntentId: `pi_mock_${crypto.randomUUID()}`,
+      const res = await apiClient.post("/payments/subscription", { address })
+      if (!res?.clientSecret || !res?.publishableKey) {
+        throw new Error("Réponse de paiement invalide")
+      }
+      setPayment({
+        clientSecret:   res.clientSecret,
+        publishableKey: res.publishableKey,
+        orderId:        res.orderId,
       })
-      await clearCart()
-      toast.success(t("toast.success"))
-      navigate("/order-confirmation", { state: { order, total } })
-    } catch {
-      toast.error(t("errors.orderFailed"))
-      setSubmitting(false)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
+        toast.error(t("errors.notLoggedIn", { defaultValue: "Connectez-vous pour finaliser votre commande." }))
+      } else {
+        toast.error(t("errors.orderFailed"))
+      }
+    } finally {
+      setInitializing(false)
     }
   }
 
-  const handleCardNumber = (e) => {
-    const raw = e.target.value.replace(/\D/g, "").slice(0, 16)
-    const formatted = raw.match(/.{1,4}/g)?.join(" ") ?? raw
-    setPayment((p) => ({ ...p, cardNumber: formatted }))
-  }
-
-  const handleExpiry = (e) => {
-    const raw = e.target.value.replace(/\D/g, "").slice(0, 4)
-    const formatted = raw.length > 2 ? `${raw.slice(0, 2)}/${raw.slice(2)}` : raw
-    setPayment((p) => ({ ...p, expiry: formatted }))
+  const handleSuccess = async () => {
+    await clearCart()
+    toast.success(t("toast.success"))
+    navigate("/order-confirmation", { state: { total } })
   }
 
   return (
@@ -280,9 +331,6 @@ export function Checkout() {
                     {t("step1.loggedAs")}{" "}
                     <span className="font-medium text-foreground">{user.email}</span>
                   </p>
-                  <button className="text-xs text-primary underline">
-                    {t("step1.edit")}
-                  </button>
                 </div>
               ) : (
                 <p className="text-xs text-muted-foreground">
@@ -295,68 +343,46 @@ export function Checkout() {
             </StepBlock>
 
             {/* Étape 2 — Adresse */}
-            <StepBlock number={2} title={t("step2.title")} active>
+            <StepBlock number={2} title={t("step2.title")} active={!payment} done={!!payment}>
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.firstName")}</Label>
-                  <Input value={address.firstName} onChange={(e) => setAddress((p) => ({ ...p, firstName: e.target.value }))} placeholder="Jean" />
+                  <Input value={address.firstName} disabled={!!payment} onChange={(e) => setAddress((p) => ({ ...p, firstName: e.target.value }))} placeholder="Jean" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.lastName")}</Label>
-                  <Input value={address.lastName} onChange={(e) => setAddress((p) => ({ ...p, lastName: e.target.value }))} placeholder="Dupont" />
+                  <Input value={address.lastName} disabled={!!payment} onChange={(e) => setAddress((p) => ({ ...p, lastName: e.target.value }))} placeholder="Dupont" />
                 </div>
                 <div className="col-span-2 space-y-1">
                   <Label className="text-xs">{t("step2.address")}</Label>
-                  <Input value={address.line1} onChange={(e) => setAddress((p) => ({ ...p, line1: e.target.value }))} placeholder={t("step2.addressPlaceholder")} />
+                  <Input value={address.line1} disabled={!!payment} onChange={(e) => setAddress((p) => ({ ...p, line1: e.target.value }))} placeholder={t("step2.addressPlaceholder")} />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.postalCode")}</Label>
-                  <Input value={address.postalCode} onChange={(e) => setAddress((p) => ({ ...p, postalCode: e.target.value }))} placeholder="75001" />
+                  <Input value={address.postalCode} disabled={!!payment} onChange={(e) => setAddress((p) => ({ ...p, postalCode: e.target.value }))} placeholder="75001" />
                 </div>
                 <div className="space-y-1">
                   <Label className="text-xs">{t("step2.city")}</Label>
-                  <Input value={address.city} onChange={(e) => setAddress((p) => ({ ...p, city: e.target.value }))} placeholder="Paris" />
+                  <Input value={address.city} disabled={!!payment} onChange={(e) => setAddress((p) => ({ ...p, city: e.target.value }))} placeholder="Paris" />
                 </div>
                 <div className="col-span-2 space-y-1">
                   <Label className="text-xs">{t("step2.country")}</Label>
-                  <Input value={address.country} onChange={(e) => setAddress((p) => ({ ...p, country: e.target.value }))} />
+                  <Input value={address.country} disabled={!!payment} onChange={(e) => setAddress((p) => ({ ...p, country: e.target.value.toUpperCase().slice(0, 2) }))} placeholder="FR" />
                 </div>
               </div>
             </StepBlock>
 
-            {/* Étape 3 — Paiement */}
-            <StepBlock number={3} title={t("step3.title")} active>
-              <div className="mb-4 flex items-center gap-2 rounded-lg border border-primary bg-primary/5 px-3 py-2.5">
-                <div className="flex h-4 w-4 items-center justify-center rounded-full border-2 border-primary bg-primary">
-                  <div className="h-1.5 w-1.5 rounded-full bg-white" />
-                </div>
-                <span className="text-sm font-medium">{t("step3.cardType")}</span>
-                <div className="ml-auto flex gap-1">
-                  <Badge variant="outline" className="px-1.5 py-0 text-xs">VISA</Badge>
-                  <Badge variant="outline" className="px-1.5 py-0 text-xs">MC</Badge>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="space-y-1">
-                  <Label className="text-xs">{t("step3.cardName")}</Label>
-                  <Input value={payment.cardName} onChange={(e) => setPayment((p) => ({ ...p, cardName: e.target.value.toUpperCase() }))} placeholder="JEAN DUPONT" />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-xs">{t("step3.cardNumber")}</Label>
-                  <Input value={payment.cardNumber} onChange={handleCardNumber} placeholder="0000 0000 0000 0000" maxLength={19} inputMode="numeric" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <Label className="text-xs">{t("step3.expiry")}</Label>
-                    <Input value={payment.expiry} onChange={handleExpiry} placeholder="MM/AA" maxLength={5} inputMode="numeric" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-xs">{t("step3.cvv")}</Label>
-                    <Input value={payment.cvv} onChange={(e) => setPayment((p) => ({ ...p, cvv: e.target.value.replace(/\D/g, "").slice(0, 3) }))} placeholder="123" maxLength={3} type="password" inputMode="numeric" />
-                  </div>
-                </div>
-              </div>
+            {/* Étape 3 — Paiement (Stripe Elements) */}
+            <StepBlock number={3} title={t("step3.title")} active={!!payment}>
+              {!payment ? (
+                <p className="text-xs text-muted-foreground">
+                  {t("step3.hint", { defaultValue: "Renseignez votre adresse puis cliquez sur « Procéder au paiement »." })}
+                </p>
+              ) : (
+                <Elements stripe={stripePromise} options={{ clientSecret: payment.clientSecret, locale: "fr" }}>
+                  <StripePaymentForm total={total} onSuccess={handleSuccess} />
+                </Elements>
+              )}
             </StepBlock>
           </div>
 
@@ -365,8 +391,9 @@ export function Checkout() {
             subtotal={subtotal}
             tva={tva}
             total={total}
-            onConfirm={handleConfirm}
-            submitting={submitting}
+            onProceed={handleProceed}
+            initializing={initializing}
+            paymentStarted={!!payment}
           />
         </div>
       </div>

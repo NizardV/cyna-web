@@ -26,6 +26,9 @@ docs/
 │   ├── product-page.md   Décomposition page produit + state lifting
 │   └── cart-page.md      Décomposition page panier + recalcul prix
 │
+├── paiement/
+│   └── stripe-checkout.md   Stripe Elements, flux checkout, proxy Vite
+│
 ├── admin/
 │   └── product-admin-crud.md   Interface back-office gestion produits
 │
@@ -45,12 +48,15 @@ docs/
 | Quelle route API appeler | `api/endpoints.md` |
 | La page produit en détail | `components/product-page.md` |
 | Comment fonctionne le panier | `components/cart-page.md` + `api/cart.md` |
+| Le paiement Stripe (checkout) | `paiement/stripe-checkout.md` |
 | Comment gérer les produits en admin | `admin/product-admin-crud.md` |
 
 ---
 
-## Points d'attention (TODO backend)
+## Points d'attention
 
-- `POST /orders` — le body `items` utilise encore l'ancienne structure (avant refonte pricing)
-- `POST /cart` (mock) — handler non synchronisé avec la nouvelle structure
+- **Paiement** : l'ancien `POST /orders` (qui passait la commande `Paid` à l'aveugle) a été
+  **retiré**. Le paiement passe désormais par `POST /payments/subscription` + webhook Stripe
+  (voir `paiement/stripe-checkout.md`).
+- `POST /cart` (mock) — handler non synchronisé avec la nouvelle structure (mock uniquement)
 - `PUT /cart/:id` (mock) — idem
