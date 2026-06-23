@@ -10,8 +10,6 @@ pool:
   name: 'CyanPool'
 variables:
   - group: 'GHCR'
-  - group: 'CYNA-PROD'
-  - group: 'CYNA-STAGING'
   - name: FULL_IMAGE
     value: 'ghcr.io/nizardv/cyna-frontend'
 
@@ -19,37 +17,56 @@ stages:
 - stage: CD_Cloud
   displayName: 'CD Cloud — Deploy OVH'
   jobs:
-  - deployment: Deploy
+  # ══════════════════════════════════════════
+  # JOB STAGING — déclenché sur dev
+  # ══════════════════════════════════════════
+  - deployment: DeployStaging
+    displayName: 'Deploy Staging'
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/dev')
     environment: 'OVH-Cloud'
     strategy:
       runOnce:
         deploy:
           steps:
-          # ── STEP 1 : Calcul des variables ──
-          - bash: |
-              BRANCH_NAME=$(echo "$BUILD_SOURCEBRANCH" | sed 's|refs/heads/||')
-              if [ "$BRANCH_NAME" = "main" ]; then
-                echo "##vso[task.setvariable variable=envName]prod"
-                echo "##vso[task.setvariable variable=composeProject]cyna-prod"
-                echo "##vso[task.setvariable variable=WEB_PORT]3000"
-                echo "##vso[task.setvariable variable=IS_PROD]true"
-              else
-                echo "##vso[task.setvariable variable=envName]staging"
-                echo "##vso[task.setvariable variable=composeProject]cyna-staging"
-                echo "##vso[task.setvariable variable=WEB_PORT]3001"
-                echo "##vso[task.setvariable variable=IS_PROD]false"
-              fi
-            displayName: "Calcul dynamique de l'environnement cible"
+          - task: SSH@0
+            displayName: 'Deploy Frontend staging'
+            inputs:
+              sshEndpoint: 'OVH-SSH-Connection'
+              runOptions: 'inline'
+              failOnStdErr: false
+              inline: |
+                echo "$GHCR_PAT_ENV" | docker login ghcr.io -u NizardV --password-stdin
+                cd ~/cyna-infra && git pull origin main
+                cd docker-compose/
+                echo "─── Pull & Relance Frontend staging sur le port 3001 ───"
+                docker compose -p cyna-staging -f docker-compose.staging.yml pull web
+                docker compose -p cyna-staging -f docker-compose.staging.yml up -d --no-build --force-recreate --no-deps web
             env:
-              BUILD_SOURCEBRANCH: $(Build.SourceBranch)
+              GHCR_PAT_ENV: $(GHCR_PAT)
 
-          # ── STEP 2 : Versioning (prod uniquement) ──
+          - task: SSH@0
+            displayName: 'Health check staging'
+            inputs:
+              sshEndpoint: 'OVH-SSH-Connection'
+              runOptions: 'inline'
+              failOnStdErr: false
+              inline: |
+                sleep 5
+                curl -f http://localhost:3001 || exit 1
+
+  # ══════════════════════════════════════════
+  # JOB PROD — déclenché sur main
+  # ══════════════════════════════════════════
+  - deployment: DeployProd
+    displayName: 'Deploy Production'
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+    environment: 'OVH-Cloud'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+          # ── Versioning ──
           - bash: |
-              if [ "$(IS_PROD)" != "true" ]; then
-                echo "Staging — versioning ignoré"
-                exit 0
-              fi
-
               git fetch --tags
               LAST_TAG=$(git tag --sort=-v:refname | grep -E '^web/v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
 
@@ -94,12 +111,8 @@ stages:
               echo "Tag $NEW_TAG créé ✅"
             displayName: 'Versioning — Calcul et tag Git'
 
-          # ── STEP 3 : Tag image Docker avec version (prod uniquement) ──
+          # ── Tag image Docker ──
           - bash: |
-              if [ "$(IS_PROD)" != "true" ]; then
-                echo "Staging — tag version ignoré"
-                exit 0
-              fi
               echo "$(GHCR_PAT)" | docker login ghcr.io -u NizardV --password-stdin
               docker pull $(FULL_IMAGE):prod
               docker tag $(FULL_IMAGE):prod $(FULL_IMAGE):$(NEW_VERSION)
@@ -107,38 +120,30 @@ stages:
               echo "Image taguée $(NEW_VERSION) ✅"
             displayName: 'Tag image Docker avec version'
 
-          # ── STEP 4 : Déploiement SSH ──
-          # Note : VITE_STRIPE_PUBLISHABLE_KEY est déjà bakée dans l'image au moment du CI
-          # (passée en --build-arg). Ici on se contente de pull + relancer le conteneur.
+          # ── Déploiement ──
           - task: SSH@0
-            displayName: 'Deploy Frontend sur OVH via Docker Compose'
+            displayName: 'Deploy Frontend prod'
             inputs:
               sshEndpoint: 'OVH-SSH-Connection'
               runOptions: 'inline'
               failOnStdErr: false
               inline: |
                 echo "$GHCR_PAT_ENV" | docker login ghcr.io -u NizardV --password-stdin
-                cd ~/cyna-infra
-                git pull origin main
+                cd ~/cyna-infra && git pull origin main
                 cd docker-compose/
-
-                echo "─── Pull & Relance du Frontend ($(envName)) ───"
-
-                WEB_PORT=$(WEB_PORT) \
-                  docker compose -p cyna-$(envName) -f docker-compose.$(envName).yml pull web
-
-                WEB_PORT=$(WEB_PORT) \
-                  docker compose -p cyna-$(envName) -f docker-compose.$(envName).yml up -d --no-build --force-recreate --no-deps web
+                echo "─── Pull & Relance Frontend prod sur le port 3000 ───"
+                docker compose -p cyna-prod -f docker-compose.prod.yml pull web
+                docker compose -p cyna-prod -f docker-compose.prod.yml up -d --no-build --force-recreate --no-deps web
             env:
               GHCR_PAT_ENV: $(GHCR_PAT)
 
-          # ── STEP 5 : Health check ──
+          # ── Health check ──
           - task: SSH@0
-            displayName: 'Health check post-deploy'
+            displayName: 'Health check prod'
             inputs:
               sshEndpoint: 'OVH-SSH-Connection'
               runOptions: 'inline'
               failOnStdErr: false
               inline: |
                 sleep 5
-                curl -f http://localhost:$(WEB_PORT) || exit 1
+                curl -f http://localhost:3000 || exit 1
