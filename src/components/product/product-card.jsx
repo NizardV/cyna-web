@@ -1,13 +1,9 @@
-/**
- * @file components/home/home-product-card.jsx
- */
-
-import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { useTranslation } from "react-i18next";
 
 // Helper pour le badge (repris de ton composant original)
 function resolveStatusBadge(status) {
@@ -24,9 +20,8 @@ function resolveStatusBadge(status) {
 }
 
 export function ProductCard({ product }) {
-  
-  const { t } = useTranslation("search"); 
 
+  const { t } = useTranslation("product");
   const { variant: badgeVariant, labelKey, isAvailable } = resolveStatusBadge(product.status);
 
   return (
@@ -52,7 +47,7 @@ export function ProductCard({ product }) {
               {product.name}
             </h3>
             <p className="line-clamp-2 text-sm text-muted-foreground">
-              {product.shortDescription}
+              {product.description}
             </p>
           </div>
 
@@ -62,6 +57,7 @@ export function ProductCard({ product }) {
             </Badge>
 
             <Button
+              
             >
               {t("product.details", { defaultValue: "Détails" })}
             </Button>

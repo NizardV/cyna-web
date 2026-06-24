@@ -28,5 +28,11 @@
   "perUnit": "{{price}} / {{unit}}",
   "overLimit": "Limit exceeded → quote required",
   "requestQuote": "CONTACT SALES TEAM",
-  "quoteInfo": "Beyond online limits, contact us for a custom quote."
+  "quoteInfo": "Beyond online limits, contact us for a custom quote.",
+  "product": {
+    "available": "Available",
+    "unavailable": "Unavailable",
+    "outOfStock": "Out of Stock",
+    "details": "Details"
+  }
 }
