@@ -150,3 +150,23 @@ export function findTier(tiers, unitType, quantity) {
     t => t.unitType === unitType && quantity >= t.minQty && quantity <= t.maxQty
   ) ?? null
 }
+
+/**
+ * Indique si une quantité dépasse les paliers de prix d'un type d'unité.
+ * Vrai lorsqu'au moins un palier existe pour ce type d'unité mais qu'aucun
+ * ne couvre la quantité choisie (> 0) → un devis est requis.
+ *
+ * C'est la source de vérité du « devis requis » : on se base sur la couverture
+ * réelle des tranches, et non sur maxUsersCheckout/maxDevicesCheckout qui peuvent
+ * valoir 999 par défaut en base et ne jamais se déclencher.
+ *
+ * @param {Array}  tiers    - pricingTiers du plan courant
+ * @param {string} unitType - UnitType.USER ou UnitType.DEVICE
+ * @param {number} quantity - quantité choisie par l'utilisateur
+ * @returns {boolean}
+ */
+export function isOverTier(tiers, unitType, quantity) {
+  if (quantity <= 0) return false
+  const hasTiers = tiers?.some(t => t.unitType === unitType)
+  return Boolean(hasTiers) && !findTier(tiers, unitType, quantity)
+}

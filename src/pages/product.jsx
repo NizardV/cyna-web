@@ -8,7 +8,7 @@ import { ProductInfo } from "@/components/product/product-info";
 import { PricingTiersTable } from "@/components/product/pricing-tiers-table";
 import { ProductPricing } from "@/components/product/product-pricing";
 import { FeaturedProducts } from "@/components/home/featured-products";
-import { findTier, UnitType } from "@/lib/pricing-utils";
+import { findTier, isOverTier, UnitType } from "@/lib/pricing-utils";
 
 /**
  * Page détail d'un produit : galerie, informations, paliers de tarification,
@@ -57,9 +57,9 @@ export function Product() {
   const tierDevice     = hasDeviceTiers ? findTier(currentPlan.pricingTiers, UnitType.DEVICE, quantityDevices) : null;
   const totalPrice     = (tierUser   ? tierUser.unitPrice   * quantityUsers   : 0)
                        + (tierDevice ? tierDevice.unitPrice * quantityDevices : 0);
-  const isQuoteRequired = currentPlan && (
-    (hasUserTiers   && quantityUsers   > currentPlan.maxUsersCheckout)   ||
-    (hasDeviceTiers && quantityDevices > currentPlan.maxDevicesCheckout)
+  const isQuoteRequired = Boolean(currentPlan) && (
+    isOverTier(currentPlan.pricingTiers, UnitType.USER,   quantityUsers) ||
+    isOverTier(currentPlan.pricingTiers, UnitType.DEVICE, quantityDevices)
   );
 
   const handleBillingPeriodChange = (period) => {
