@@ -22,7 +22,11 @@ variables:
         value: 'https://api.projet-cyna.fr'
       - name: VITE_STRIPE_PUBLISHABLE_KEY
         value: $(STRIPE_PUBLISHABLE_KEY_PROD)   # nom de la var dans CYNA-PROD
-        
+      - name: VITE_APP_TITLE
+        value: 'Cyna'
+      - name: VITE_APP_DESCRIPTION
+        value: 'Vente de solutions SaaS de cybersécurité'
+
   - ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/dev') }}:
       - name: envName
         value: 'staging'
@@ -30,6 +34,10 @@ variables:
         value: 'https://api.staging.projet-cyna.fr'
       - name: VITE_STRIPE_PUBLISHABLE_KEY
         value: $(STRIPE_PUBLISHABLE_KEY_STAGING) # nom de la var dans CYNA-STAGING
+      - name: VITE_APP_TITLE
+        value: 'Cyna [Staging]'
+      - name: VITE_APP_DESCRIPTION
+        value: 'Vente de solutions SaaS de cybersécurité'
 
 stages:
 - stage: CI
@@ -67,6 +75,8 @@ stages:
         docker build \
           --build-arg VITE_API_URL=$(VITE_API_URL) \
           --build-arg VITE_STRIPE_PUBLISHABLE_KEY=$(VITE_STRIPE_PUBLISHABLE_KEY) \
+          --build-arg "VITE_APP_TITLE=$(VITE_APP_TITLE)" \
+          --build-arg "VITE_APP_DESCRIPTION=$(VITE_APP_DESCRIPTION)" \
           -t $(FULL_IMAGE):$(envName) \
           -t $(FULL_IMAGE):sha-$(Build.SourceVersion) \
           -t $(FULL_IMAGE):build-$(Build.BuildId) \
