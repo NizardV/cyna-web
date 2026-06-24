@@ -1,5 +1,42 @@
 # Routing et gardes de routes
 
+## Le principe SPA (rendu côté client)
+
+Cyna-Web est une **Single Page Application** : le serveur ne sert qu'**un seul**
+fichier HTML (`index.html` → `<div id="root">`). Toute la navigation est ensuite
+gérée **côté client** par React Router, sans rechargement complet du navigateur.
+
+```mermaid
+flowchart LR
+    A["Navigateur charge<br/>index.html"] --> B["Charge le bundle JS<br/>(main.tsx)"]
+    B --> C["React monte #root"]
+    C --> D["BrowserRouter lit<br/>window.location"]
+    D --> E["Affiche le composant<br/>de la route courante"]
+    E -->|"clic sur &lt;Link&gt; / navigate()"| F["History API (pushState)"]
+    F -->|"pas de requête réseau"| E
+```
+
+Conséquences pratiques :
+
+- **Navigation interne** : toujours via `<Link to>` ou `useNavigate()` — jamais
+  `<a href>` ni `window.location` (qui forcent un rechargement et perdent l'état
+  React). Exception assumée : `logout()` fait `window.location.href = "/"` pour
+  repartir d'un état propre.
+- **Deep-linking / rechargement (F5)** ⚠️ : ouvrir directement
+  `https://cyna.app/products/abc-123` envoie cette URL au **serveur**, qui ne
+  connaît que `index.html`. Sans configuration, il renverrait un 404. La solution
+  (**fallback SPA** : toute route inconnue → `index.html`) est assurée par nginx
+  en production — voir
+  [11 CI/CD et déploiement](./11%20cicd%20et%20deploiement.md#nginxconf--spa-routing).
+  En dev, le serveur Vite gère ce fallback automatiquement.
+- **404 applicatif** : une fois `index.html` chargé, c'est React Router qui décide
+  si l'URL correspond à une route connue ou à la page `NotFound` (`path="*"`).
+- **Code-splitting** : aujourd'hui les pages sont importées statiquement, mais le
+  `<Suspense>` est déjà en place pour passer au lazy-loading (voir
+  [12 Scalabilité](./12%20scalabilite%20et%20performance.md#1-taille-du-bundle--code-splitting)).
+
+---
+
 ## Vue d'ensemble
 
 ```

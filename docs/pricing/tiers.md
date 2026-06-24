@@ -9,7 +9,7 @@ Si la quantité sort de toutes les tranches → le checkout est bloqué et un de
 
 ## Fonction `findTier`
 
-`src/lib/pricing.js`
+`src/lib/pricing-utils.js`
 
 ```js
 export function findTier(tiers, unitType, quantity) {
@@ -80,7 +80,7 @@ flowchart LR
 
 | Responsabilité | Frontend | Backend |
 |---|---|---|
-| Calcul d'affichage (prix live) | `findTier` dans `pricing.js` | — |
+| Calcul d'affichage (prix live) | `findTier` dans `pricing-utils.js` | — |
 | Validation finale de la commande | — | Recalcul indépendant |
 | ID tier envoyé au backend | Non (non nécessaire) | — |
 | Prix snapshot dans le panier | Stocké à l'ajout | Revalidé au checkout |

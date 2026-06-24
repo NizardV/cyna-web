@@ -1,192 +1,234 @@
-# Routes API
+# Référence des endpoints API
 
-Toutes les routes sont interceptées par MSW en développement. Les handlers sont dans `src/mocks/handlers/`.
+Table de toutes les routes appelées par le frontend, regroupées par domaine.
+Chaque route est définie par une fonction métier dans `src/api/` (jamais
+appelée directement, voir [Faire un appel API](./Appels%20api.md)) et, en mode
+mock, par un handler dans `src/mocks/handlers/` (voir
+[Lier l'API et le mock](./Lier%20api%20et%20mock.md)).
+
+> Base d'URL : `VITE_API_URL` (défaut `/api`, proxifié vers le backend .NET en
+> dev). Toutes les requêtes envoient le cookie de session
+> (`credentials: "include"`) — l'auth **n'utilise pas** de token Bearer.
+>
+> ℹ️ L'interception mock se fait via un **`MockRegistry` maison**
+> (`src/mocks/registry.js`), pas via MSW.
+
+Légende **Accès** : 🟢 public · 🔵 connecté · 🟠 admin.
 
 ---
 
-## Authentification
+## Authentification — `src/api/auth.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `POST` | `/auth/login` | `auth.js` | Connexion utilisateur → token + user |
-| `POST` | `/auth/register` | `auth.js` | Inscription → token + user + OTP email envoyé |
-| `POST` | `/auth/refresh` | `auth.js` | Renouvellement de token |
-| `POST` | `/auth/logout` | `auth.js` | Déconnexion (204) |
-| `GET` | `/auth/me` | `auth.js` | Profil courant (rehydratation session) |
-| `POST` | `/auth/forgot-password` | `auth.js` | Envoi OTP reset mdp (toujours 204) |
-| `POST` | `/auth/reset-password` | `auth.js` | Validation OTP + nouveau mdp |
-| `POST` | `/auth/confirm-email` | `auth.js` | Validation OTP confirmation email |
-| `POST` | `/auth/admin/login` | `auth.js` | Connexion admin (2FA TOTP — 2 phases) |
-| `POST` | `/auth/2fa/setup` | `auth.js` | Génère secret TOTP + otpAuthUrl |
-| `POST` | `/auth/2fa/confirm` | `auth.js` | Active définitivement le 2FA |
+| Méthode | Route | Fonction | Accès | Handler mock |
+|---|---|---|---|---|
+| GET | `/auth/me` | *(via `AuthContext`)* | 🔵 | `auth.js` |
+| POST | `/auth/login` | `loginUser` | 🟢 | `auth.js` |
+| POST | `/auth/register` | `registerUser` | 🟢 | `auth.js` |
+| POST | `/auth/refresh` | `refreshToken` | 🟢 | `auth.js` |
+| POST | `/auth/logout` | `logout` | 🔵 | `auth.js` |
+| POST | `/auth/forgot-password` | `forgotPassword` | 🟢 | `auth.js` |
+| POST | `/auth/reset-password` | `resetPassword` | 🟢 | `auth.js` |
+| POST | `/auth/confirm-email` | `confirmEmail` | 🟢 | `auth.js` |
+| POST | `/auth/admin/login` | `adminLogin` | 🟢 | `auth.js` |
+| POST | `/auth/2fa/setup` | `setupTwoFactor` | 🟠 | `auth.js` |
+| POST | `/auth/2fa/confirm` | `confirmTwoFactor` | 🟠 | `auth.js` |
 
 ### Body de `POST /auth/admin/login`
 
 ```json
 // Phase 1 (sans code)
-{ "email": "admin@cyna.fr", "password": "password", "totpCode": null }
+{ "email": "admin@cyna.fr", "password": "password" }
 
-// Phase 2 (avec code)
+// Phase 2 (avec code TOTP)
 { "email": "admin@cyna.fr", "password": "password", "totpCode": "000000" }
 ```
 
-### Réponse de `POST /auth/admin/login`
+### Réponses de `POST /auth/admin/login`
 
 | Scénario | Réponse |
-|----------|---------|
+|---|---|
 | Identifiants invalides | `401` |
 | Non-admin | `403` |
 | Admin sans 2FA configuré | `200` + `{ requiresTwoFactorSetup: true }` |
 | Credentials OK, TOTP attendu | `200` + `{ totpRequired: true }` |
 | TOTP invalide | `401` |
-| Succès complet | `200` + `{ token, user }` |
+| Succès complet | `200` + session (cookie posé) |
+
+Détails du flux : [Authentification](../04%20authentification.md).
 
 ---
 
-## Produits
+## Produits — `src/api/products.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/products` | `products.js` | Liste tous les produits |
-| `GET` | `/products/:id` | `products.js` | Détail d'un produit |
-| `GET` | `/products/similar/:id` | `products.js` | 6 produits similaires |
-| `POST` | `/products` | `products.js` | Crée un produit (admin) |
-| `PUT` | `/products/:id` | `products.js` | Met à jour un produit (admin) |
-| `DELETE` | `/products/:id` | `products.js` | Supprime un produit (admin) |
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/products` | `getProducts` | 🟢 |
+| GET | `/products/:id` | `getProduct` | 🟢 |
+| GET | `/products/similar/:id` | `getSimilarProducts` | 🟢 |
+| GET | `/products/:id/admin` | `getProductAdmin` (bilingue FR/EN) | 🟠 |
+| GET | `/catalog/category/:slug` | `getCategoryCatalog` | 🟢 |
+| POST | `/products` | `createProduct` | 🟠 |
+| PUT | `/products/:id` | `updateProduct` | 🟠 |
+| DELETE | `/products/:id` | `deleteProduct` | 🟠 |
+
+Détails : [CRUD Produits admin](../admin/product-admin-crud.md) ·
+[Page Catalogue](../components/catalog-page.md).
 
 ---
 
-## Catalogue
+## Recherche / Catalogue — `src/api/search.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/catalog/products` | `orders.js` | Produits filtrés + paginés |
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/search` | `getCatalogProducts` | 🟢 |
 
-### Paramètres de `/catalog/products`
+### Paramètres de `/search`
 
 | Paramètre | Type | Description |
-|-----------|------|-------------|
+|---|---|---|
 | `q` | string | Recherche dans nom et description |
 | `categoryIds` | string | IDs séparés par virgule |
 | `maxPrice` | number | Prix mensuel d'entrée max |
-| `available` | boolean | Filtre "disponible uniquement" |
+| `available` | boolean | Filtre « disponible uniquement » |
 | `sortBy` | `relevance\|price_asc\|price_desc\|name` | Tri |
 | `page` | number | Page courante (défaut : 1) |
 | `pageSize` | number | Taille de page (défaut : 9) |
+| `locale` | `fr\|en` | Langue des libellés (défaut `fr`) |
 
-**Réponse :**
+**Réponse (page paginée) :**
 ```json
-{
-  "items": [...],
-  "total": 40,
-  "page": 1,
-  "pageSize": 9,
-  "totalPages": 5
-}
+{ "items": [...], "total": 40, "page": 1, "pageSize": 9, "totalPages": 5 }
 ```
 
 ---
 
-## Catégories
+## Catégories — `src/api/categories.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/categories` | `orders.js` | Liste toutes les catégories |
-| `GET` | `/categories/:id` | `orders.js` | Détail d'une catégorie |
-| `POST` | `/categories` | (à créer) | Crée une catégorie (admin) |
-| `PUT` | `/categories/:id` | (à créer) | Met à jour une catégorie (admin) |
-| `DELETE` | `/categories/:id` | (à créer) | Supprime une catégorie (admin) |
-
----
-
-## Accueil
-
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/home/featured` | `home.js` | Produits mis en avant |
-| `GET` | `/home/carousel` | `home.js` | Slides du carrousel |
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/categories` | `getCategories` | 🟢 |
+| GET | `/categories/search` | `searchCategories` (admin : `q`, `page`, `sortBy`…) | 🟠 |
+| GET | `/categories/:id` | `getCategory` (inclut `translations[]`) | 🟠 |
+| POST | `/categories` | `createCategory` | 🟠 |
+| PUT | `/categories/:id` | `updateCategory` | 🟠 |
+| DELETE | `/categories/:id` | `deleteCategory` | 🟠 |
 
 ---
 
-## Commandes
+## Accueil — `src/api/home.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/orders` | `orders.js` | Liste toutes les commandes |
-| `GET` | `/orders/:id` | `orders.js` | Détail d'une commande |
-| `POST` | `/orders` | `orders.js` | Crée une commande (checkout) |
-| `GET` | `/account/orders` | `orders-account.js` | Commandes du compte utilisateur |
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/home` | `fetchHomeData` (carrousel, mission, catégories, top produits) | 🟢 |
 
-### Body de `POST /orders`
+---
 
-Envoyé depuis `src/pages/checkout.jsx` :
+## Compte utilisateur — `src/api/user.js`
+
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/user/profile` | `getMe` | 🔵 |
+| PUT | `/user/profile` | `updateProfile` | 🔵 |
+| PUT | `/user/password` | `updatePassword` | 🔵 |
+| GET | `/user/subscriptions` | `getSubscriptions` | 🔵 |
+| GET | `/user/orders` | `getAccountOrders` | 🔵 |
+
+---
+
+## Panier — `src/api/cart.js` (⚠️ pas d'HTTP)
+
+Le panier **n'appelle pas le réseau** : il est persisté dans `localStorage`
+(clé `cyna_cart`). Les fonctions retournent des `Promise` pour rester
+compatibles avec une future API. Détails : [API Panier](./cart.md).
+
+| « Route » logique | Fonction |
+|---|---|
+| lire le panier | `getCart` |
+| ajouter / fusionner | `addToCart` |
+| modifier une ligne | `updateCartItem` |
+| supprimer une ligne | `removeFromCart` |
+| vider | `clearCart` |
+
+> Des handlers mock HTTP `/cart` existent dans `handlers/orders.js` mais ne sont
+> **pas** appelés par le frontend actuel.
+
+---
+
+## Commandes & checkout — `handlers/orders.js`
+
+| Méthode | Route | Accès | Note |
+|---|---|---|---|
+| GET | `/orders` | 🟠 | Liste des commandes |
+| GET | `/orders/:id` | 🔵 | Détail d'une commande |
+| POST | `/orders` | 🔵 | Création au checkout |
+| GET | `/account/orders` | 🔵 | Commandes du compte (`handlers/orders-account.js`) |
+| GET | `/account/orders/:id` | 🔵 | Détail (`handlers/orders-account.js`) |
+
+### Body de `POST /orders` (depuis `pages/checkout.jsx`)
+
 ```json
-{
-  "items": [...],
-  "address": { ... },
-  "total": 1074.60
-}
+{ "items": [...], "address": { ... }, "total": 1074.60 }
 ```
 
-> ⚠️ Le champ `items` utilise encore l'ancienne structure. À mettre à jour pour le vrai backend.
+> ⚠️ Le champ `items` utilise encore l'ancienne structure tarifaire. À
+> resynchroniser avec le modèle à paliers ([pricing](../pricing/overview.md))
+> avant branchement backend.
 
 ---
 
-## Panier (mock — non utilisé par le frontend)
+## Abonnements & carrousel — `handlers/orders.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/cart` | `orders.js` | Contenu du panier |
-| `POST` | `/cart` | `orders.js` | Ajoute un article |
-| `PUT` | `/cart/:id` | `orders.js` | Modifie un article |
-| `DELETE` | `/cart/:id` | `orders.js` | Supprime un article |
-
-> Le frontend utilise `localStorage` via `src/api/cart.js`. Ces handlers ne sont pas appelés.
+| Méthode | Route | Accès |
+|---|---|---|
+| GET | `/subscriptions` | 🔵 |
+| DELETE | `/subscriptions/:id` | 🔵 |
+| GET | `/carousel` | 🟢 |
+| PUT | `/carousel/:id` | 🟠 |
 
 ---
 
-## Abonnements
+## Administration des utilisateurs — `src/api/admin-users.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/subscriptions` | `orders.js` | Abonnements actifs de l'utilisateur |
-| `DELETE` | `/subscriptions/:id` | `orders.js` | Annule un abonnement |
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/admin/users` | `getAdminUsers` (tous sauf l'admin connecté) | 🟠 |
+| PATCH | `/admin/users/:id/disable` | `disableUser` | 🟠 |
+| PATCH | `/admin/users/:id/enable` | `enableUser` | 🟠 |
+| PATCH | `/admin/users/:id/role` | `changeUserRole` (body `{ role }`) | 🟠 |
 
----
-
-## Utilisateur
-
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/user/profile` | `user.js` | Profil courant |
-| `PUT` | `/user/profile` | `user.js` | Met à jour le profil |
+Rôles : `User` · `Admin` · `SuperAdmin`. Handler mock : `handlers/admin-user.js`.
 
 ---
 
-## Admin — Utilisateurs
+## Tableau de bord admin — `src/api/dashboard.js`
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/admin/users` | (à créer) | Liste tous les utilisateurs |
-| `PUT` | `/admin/users/:id/role` | (à créer) | Change le rôle d'un utilisateur |
-| `PUT` | `/admin/users/:id/disable` | (à créer) | Désactive un compte |
-| `PUT` | `/admin/users/:id/enable` | (à créer) | Réactive un compte |
+Toutes les routes acceptent `period` (`week\|month\|year\|all`, défaut `month`),
+`from`/`to` (dates ISO) et `mock`. Handler mock : `handlers/dashboard.js`.
 
----
+| Méthode | Route | Fonction | Accès |
+|---|---|---|---|
+| GET | `/dashboard/ca` | `getRevenueStats` | 🟠 |
+| GET | `/dashboard/orders` | `getOrderStats` | 🟠 |
+| GET | `/dashboard/users` | `getUserStats` | 🟠 |
+| GET | `/dashboard/subscriptions` | `getSubscriptionStats` | 🟠 |
+| GET | `/dashboard/products/top` | `getTopProducts` (`sortBy`, `limit`) | 🟠 |
 
-## Carrousel (admin)
-
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/carousel` | `orders.js` | Slides du carrousel |
-| `PUT` | `/carousel/:id` | `orders.js` | Met à jour un slide |
+> `getDashboardData()` agrège ces 5 appels en parallèle (`Promise.all`) pour la
+> page dashboard.
 
 ---
 
-## Admin — Dashboard
+## Conventions de statut HTTP
 
-| Méthode | Route | Handler | Description |
-|---------|-------|---------|-------------|
-| `GET` | `/admin/dashboard` | `orders.js` | KPIs : CA, commandes, ventes/jour, ventes/catégorie |
+| Code | Signification | Géré côté front |
+|---|---|---|
+| 200 / 201 | Succès | Données retournées |
+| 204 | Succès sans contenu | `null` (ex. DELETE) |
+| 400 | Validation échouée | Toast d'erreur de formulaire |
+| 401 | Non authentifié | Session `null`, redirection `/login` |
+| 404 | Introuvable | Message « non trouvé » |
+| 409 | Conflit (ressource liée) | Toast spécifique (ex. produit lié à commandes) |
+| 5xx | Erreur serveur | Toast générique |
 
-> ⚠️ Le composant Dashboard (`/admin/dashboard`) est un placeholder — la page affiche `<Loading />` en attendant l'implémentation. Voir `admin/dashboard.md`.
+Toutes les erreurs non-2xx lèvent une `ApiError` exposant `.status` et
+`.message`. Voir [Gestion des erreurs](./Appels%20api.md#gestion-des-erreurs).

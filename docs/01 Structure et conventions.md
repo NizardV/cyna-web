@@ -203,7 +203,7 @@ Définies dans `.env.local` (non commité) à partir du modèle `.env.example`.
 | Variable | Obligatoire | Description |
 |----------|-------------|-------------|
 | `VITE_API_URL` | Oui | URL de base du backend .NET (`/api` par défaut via proxy Vite) |
-| `VITE_MOCK_API` | Non | `true` → active la couche mock MSW (aucune requête réseau) |
+| `VITE_MOCK_API` | Non | `true` → active la couche mock interne (`MockRegistry`, aucune requête réseau) |
 | `VITE_MOCK_DELAY` | Non | Délai simulé en ms (défaut : `400`) |
 | `VITE_OVERRIDE_ROLE` | Non | `true` → déduit le rôle admin depuis le préfixe `/admin` dans l'URL |
 

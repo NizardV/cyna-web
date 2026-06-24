@@ -43,7 +43,7 @@ Bien que la sélection de catégorie soit bloquée, les filtres textuels (`q`), 
 ### Algorithme de tri strict (`catalog_priority`)
 Contrairement à la recherche globale où l'utilisateur choisit son tri (Prix, Pertinence, etc.), la page catalogue impose un tri "marketing" défini par le back-office. 
 
-L'ordre de priorité (implémenté dans le Mock MSW et à reproduire côté Back-End) est le suivant :
+L'ordre de priorité (implémenté dans le mock `MockRegistry` et à reproduire côté Back-End) est le suivant :
 1. **Disponibilité :** Les produits actifs remontent en premier. Les produits épuisés (`Inactive`, `Archived`) sont systématiquement relégués en fin de liste. (Les cartes épuisées sont visuellement grisées via une opacité CSS sur la `ProductCard`).
 2. **Priorité Admin :** Les produits marqués comme `isFeatured` passent avant les autres.
 3. **Ordre d'affichage :** Tri ascendant sur la propriété `displayOrder`.

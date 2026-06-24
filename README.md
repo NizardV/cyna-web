@@ -1,75 +1,81 @@
-# React + TypeScript + Vite
+# Cyna-Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Frontend de **Cyna**, une plateforme e-commerce SaaS de cybersécurité. C'est une
+**Single Page Application (SPA)** React, totalement découplée du backend .NET, et
+capable de fonctionner **sans backend** grâce à une couche de mock interne.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Démarrage rapide
 
-## React Compiler
-
-The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
-
-Note: This will impact Vite dev & build performances.
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+git clone <url-du-depot> Cyna-Web
+cd Cyna-Web
+npm install
+cp .env.example .env.local      # PowerShell : Copy-Item .env.example .env.local
+npm run dev                     # http://localhost:5173
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Pour développer **sans backend**, mettez `VITE_MOCK_API=true` dans `.env.local`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+📖 Guide complet : [`docs/00 installation et demarrage.md`](./docs/00%20installation%20et%20demarrage.md)
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🧱 Stack
+
+| Domaine | Techno |
+|---|---|
+| Build / dev | Vite 8 |
+| UI | React 19 (+ React Compiler), Tailwind CSS 4, shadcn/ui |
+| Routing | React Router 7 |
+| i18n | i18next — 4 langues (fr, en, ar, he) avec support RTL |
+| Paiement | Stripe |
+| Mocks | Faker + registry maison |
+
+---
+
+## 📂 Structure (résumé)
+
 ```
+src/
+├── api/          # Couche d'accès aux données (apiClient + modules par domaine)
+├── mocks/        # Faux backend (actif si VITE_MOCK_API=true)
+├── components/   # Composants (ui/ = shadcn, + composants métier par domaine)
+├── contexts/     # État global (auth)
+├── hooks/        # Hooks réutilisables
+├── lib/          # Utilitaires purs (i18n, pricing-utils)
+├── pages/        # Une page = une route
+├── App.jsx       # Déclaration des routes
+├── wrapper.jsx   # Gardes de routes (rôles)
+└── main.tsx      # Point d'entrée + providers
+```
+
+Détail : [`docs/01 Structure et conventions.md`](./docs/01%20Structure%20et%20conventions.md) · [`docs/02 architecture.md`](./docs/02%20architecture.md)
+
+---
+
+## 📜 Scripts
+
+| Commande | Effet |
+|---|---|
+| `npm run dev` | Serveur de développement (HMR) |
+| `npm run build` | Build de production (`dist/`) |
+| `npm run preview` | Prévisualise le build |
+| `npm run lint` | Analyse ESLint |
+
+---
+
+## 📚 Documentation
+
+Toute la documentation technique est dans [`docs/`](./docs/README.md) (index complet) :
+
+- [00 Installation & démarrage](./docs/00%20installation%20et%20demarrage.md)
+- [02 Architecture](./docs/02%20architecture.md) · [05 Routing et gardes](./docs/05%20routing%20et%20gardes.md)
+- [04 Authentification](./docs/04%20authentification.md) · [07 i18n](./docs/07%20i18n.md)
+- [12 Scalabilité](./docs/12%20scalabilite%20et%20performance.md) · [13 RGPD](./docs/13%20rgpd%20et%20donnees%20personnelles.md)
+- [11 CI/CD et déploiement](./docs/11%20cicd%20et%20deploiement.md) · [Référence des endpoints API](./docs/api/endpoints.md)
+
+> ⚠️ **Déploiement** : en production, le **fallback SPA** (toute route inconnue →
+> `index.html`) est assuré par nginx. Voir
+> [11 CI/CD et déploiement](./docs/11%20cicd%20et%20deploiement.md#nginxconf--spa-routing).

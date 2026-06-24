@@ -20,7 +20,7 @@ Fournir aux administrateurs une interface intuitive et multilingue pour gérer l
 |-------|-----------|------|
 | `/admin/products` | `pages/admin/product/products.jsx` | Listing + suppression |
 | `/admin/products/new` | `pages/admin/product/product-form.jsx` | Création |
-| `/admin/products/:id` | `pages/admin/product/product-form.jsx` | Édition |
+| `/admin/products/:id/edit` | `pages/admin/product/product-form.jsx` | Édition |
 
 ---
 
@@ -121,7 +121,7 @@ const [submitting, setSubmitting] = useState(false)
 
 **Flux édition** :
 ```
-URL /admin/products/123
+URL /admin/products/123/edit
     ↓
 useEffect + useParams
     ↓
@@ -517,8 +517,8 @@ const { t } = useTranslation("admin")
 ### .env
 
 ```
-# URL API (défaut /api)
-VITE_API_URL=http://localhost:5104
+# URL API — garder /api en dev : passe par le proxy Vite vers le backend .NET
+VITE_API_URL=/api
 
 # Activer mocks (défaut false)
 VITE_MOCK_API=false
@@ -526,6 +526,9 @@ VITE_MOCK_API=false
 # Délai simulation réseau en mock (ms)
 VITE_MOCK_DELAY=400
 ```
+
+> Voir le [Guide d'installation](../00%20installation%20et%20demarrage.md#3-variables-denvironnement)
+> pour le détail des variables et des deux modes (mock / backend réel).
 
 ### Basculer mode
 
