@@ -43,10 +43,17 @@ export const changeUserRole = (id, role) =>
 
 /**
  * Rôles disponibles, dans l'ordre croissant de privilège.
- * @type {{ value: "User"|"Admin"|"SuperAdmin", label: string }[]}
+ * @type {string[]}
  */
 export const USER_ROLES = [
-  { value: "Utilisateur",       label: "Utilisateur" },
-  { value: "Administrateur",       label: "Administrateur" },
-  { value: "Super administrateur",  label: "Super administrateur" },
+  "Utilisateur",
+  "Administrateur",
+  "Super administrateur"
 ]
+
+// Mapping pour les clés de traduction
+export const ROLE_I18N_MAP = {
+  "Utilisateur": "User",
+  "Administrateur": "Admin",
+  "Super administrateur": "SuperAdmin"
+}
