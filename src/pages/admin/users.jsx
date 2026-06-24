@@ -8,7 +8,7 @@ import { useEffect, useState, useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 
-import { getAdminUsers, disableUser, enableUser, changeUserRole, USER_ROLES } from "@/api/admin-users.js"
+import { getAdminUsers, disableUser, enableUser, changeUserRole, USER_ROLES, ROLE_I18N_MAP } from "@/api/admin-users.js"
 import { useDebounce } from "@/hooks/useDebounce.js"
 
 import { Layout } from "@/components/layout/layout"
@@ -41,14 +41,22 @@ export function AdminUsers() {
 
   // Localized role options — recomputed whenever the language changes.
   const roleOptions = useMemo(
-    () => USER_ROLES.map((r) => ({ value: r.value, label: t(`roles.${r.value}`) })),
+    () => USER_ROLES.map(role => ({
+      value: role,  // Valeur stockée en base (français)
+      label: t(`roles.${ROLE_I18N_MAP[role]}`)  // Traduction affichée
+    })),
     [t]
   )
   const roleFilterOptions = useMemo(
-    () => [{ value: "all", label: t("filter.allRoles") }, ...roleOptions],
-    [roleOptions, t]
+    () => [
+      { value: "all", label: t("filter.allRoles") },
+      ...USER_ROLES.map(role => ({
+        value: role,
+        label: t(`roles.${ROLE_I18N_MAP[role]}`)
+      }))
+    ],
+    [t]
   )
-
   // ── Load ────────────────────────────────────────────────────────────────
   const load = useCallback(() => {
     setLoading(true)
@@ -77,13 +85,17 @@ export function AdminUsers() {
 
   // ── Actions ─────────────────────────────────────────────────────────────
 
-  const handleRoleChange = async (targetUser, newRole) => {
-    if (newRole === targetUser.role) return
-    setRoleSavingId(targetUser.id)
-    const fullName = `${targetUser.firstName} ${targetUser.lastName}`
+  const handleRoleChange = async (user, newRole) => {
+    if (newRole === user.role) return
+    
+    setRoleSavingId(user.id)
+    const fullName = `${user.firstName} ${user.lastName}`
     try {
-      await changeUserRole(targetUser.id, newRole)
-      setUsers((prev) => prev.map((u) => (u.id === targetUser.id ? { ...u, role: newRole } : u)))
+      // Envoi direct de la valeur française à l'API
+      await changeUserRole(user.id, newRole)
+      setUsers((prev) => prev.map((u) => 
+        u.id === user.id ? { ...u, role: newRole } : u
+      ))
       toast.success(t("toast.roleUpdated", { name: fullName }))
     } catch {
       toast.error(t("toast.roleError"))
@@ -143,7 +155,7 @@ export function AdminUsers() {
           onClearSearch={() => setSearch("")}
           roleOptions={roleOptions}
           roleSavingId={roleSavingId}
-          onRoleChange={handleRoleChange}
+          onRoleChange={(user, newRole) => handleRoleChange(user, newRole)}
           onStatusRequest={setStatusTarget}
           pageSize={PAGE_SIZE}
           locale={i18n.language}
