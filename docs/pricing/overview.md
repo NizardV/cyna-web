@@ -7,7 +7,7 @@ Cyna utilise un modèle **hybride à paliers (volume-based)** : le prix unitaire
 ## Enums
 
 ### BillingPeriod
-Défini dans `src/lib/pricing.js`.
+Défini dans `src/lib/pricing-utils.js`.
 
 | Valeur | Constante | Signification |
 |---|---|---|

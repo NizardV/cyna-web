@@ -138,17 +138,25 @@ try {
 
 ## Authentification
 
-Le token JWT est lu automatiquement depuis `localStorage` à chaque requête :
+L'authentification repose sur un **cookie de session `httpOnly`** posé par le
+backend, **pas** sur un token en `localStorage`. Chaque requête de `apiClient`
+envoie ce cookie automatiquement grâce à `credentials: "include"` :
 
 ```js
-// Stockage du token après login
-localStorage.setItem("cyna_token", data.token)
-
-// L'apiClient lit et injecte le token automatiquement :
-// Authorization: Bearer <token>
+// src/api/client.js — coreFetch
+fetch(`${BASE_URL}${path}`, {
+  credentials: "include",   // ← le cookie de session part avec chaque appel
+  headers: { "Content-Type": "application/json", ...options.headers },
+})
 ```
 
-Aucune configuration supplémentaire n'est nécessaire dans les fonctions API.
+Aucune injection manuelle d'en-tête `Authorization` n'est nécessaire dans les
+fonctions API. Pour le détail (réhydratation de session, rôles, 2FA), voir
+[Authentification](../04%20authentification.md).
+
+> ⚠️ Une référence héritée à `localStorage.getItem("cyna_token")` subsiste dans
+> `components/cart/cart-summary.jsx` mais n'est plus alimentée. La source de
+> vérité de l'état connecté est le hook `useAuth()`.
 
 ---
 
