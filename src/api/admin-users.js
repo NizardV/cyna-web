@@ -39,7 +39,7 @@ export const enableUser = (id) => apiClient.patch(`/admin/users/${id}/enable`)
  * @param {"User"|"Admin"|"SuperAdmin"} role
  */
 export const changeUserRole = (id, role) =>
-  apiClient.patch(`/admin/users/${id}/role`, { body: { role } })
+  apiClient.patch(`/admin/users/${id}/role`, { role })
 
 /**
  * Rôles disponibles, dans l'ordre croissant de privilège.
