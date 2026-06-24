@@ -24,10 +24,17 @@ import { AdminCategories } from "./pages/admin/categories"
 import { Unauthorized } from "./pages/specials/unauthorized"
 import NotFound from "./pages/specials/not-found"
 import Loading from "./pages/specials/loading"
+import { ForgotPassword } from "@/pages/auth/forgot-password"
+import { ResetPassword }  from "@/pages/auth/reset-password"
+import { ConfirmEmail }   from "@/pages/auth/confirm-email"
+import { AdminLogin }     from "@/pages/auth/admin-login"
+import { Security2FA }    from "@/pages/account/security-2fa"
+import { AdminUsers }     from "@/pages/admin/users"
 import { BrowserRouter, Route, Routes } from "react-router-dom"
 import { Suspense } from "react"
 import { Downloads } from "./pages/downloads"
 import { UserRoute, AdminRoute, AuthRoute, UserAuthRoute } from "./wrapper"
+import AdminDashboard from "./pages/admin/dashboard.jsx"
 
 /**
  * Composant racine du routeur.
@@ -42,7 +49,11 @@ function App() {
         <Routes>
           <Route path="/unauthorized"      element={<Unauthorized />} />
           <Route path="/login"             element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/register"          element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/confirm-email" element={<ConfirmEmail />} />
           <Route path="/cgu"               element={<CGU />} />
           <Route path="/mentions-legales"  element={<MentionsLegales />} />
           <Route path="/privacy"           element={<Privacy />} />
@@ -64,16 +75,18 @@ function App() {
 
           {/* ── Backoffice admin ── */}
           <Route element={<AdminRoute />}>
-            <Route path="/admin/dashboard"         element={<Loading />} />
+            <Route path="/admin"         element={<AdminDashboard />} />
             <Route path="/admin/categories"        element={<AdminCategories />} />
             <Route path="/admin/products"          element={<AdminProducts />} />
             <Route path="/admin/products/new"      element={<AdminProductForm />} />
             <Route path="/admin/products/:id/edit" element={<AdminProductForm />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
           </Route>
 
           {/* ── Routes protégées par authentification ── */}
           <Route element={<AuthRoute />}>
             <Route path="/account/profile" element={<Profile />} />
+            <Route path="/account/security/2fa" element={<Security2FA />} />
           </Route>
 
           {/* ── Routes protégées par authentification utilisateur ── */}

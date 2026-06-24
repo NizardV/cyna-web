@@ -1,0 +1,27 @@
+{
+  "title": "אימות דו-שלבי",
+  "subtitle": "אבטח את חשבון המנהל שלך עם קוד TOTP.",
+  "errorSetup": "לא ניתן ליצור את מפתח ה-2FA. נסה שוב מאוחר יותר.",
+  "errorInvalidCode": "קוד לא תקין. בדוק את השעה בטלפון שלך ונסה שנית.",
+  "toastActivated": "האימות הדו-שלבי הופעל.",
+  "activatedTitle": "ה-2FA הופעל בהצלחה",
+  "activatedDescription": "מעתה תצטרך להשתמש בכניסת מנהל עם קוד ה-TOTP שלך.",
+  "goToDashboard": "עבור ללוח הבקרה",
+  "backToProfile": "חזרה לפרופיל",
+  "activating": "מפעיל…",
+  "activate": "הפעל 2FA",
+  "otpDigit": "ספרה {{n}}",
+  "step1": {
+    "title": "1. סרוק את קוד ה-QR",
+    "description": "עם Google Authenticator, Authy, או כל אפליקציית TOTP אחרת.",
+    "qrAlt": "קוד QR לאימות דו-שלבי",
+    "manualHint": "לא יכול לסרוק? הזן את המפתח הזה ידנית:",
+    "copy": "העתק",
+    "copyError": "לא ניתן להעתיק אוטומטית.",
+    "typeHint": "סוג: מבוסס-זמן (TOTP), 6 ספרות, 30 שניות."
+  },
+  "step2": {
+    "title": "2. אשר את ההפעלה",
+    "description": "הזן את הקוד בן 6 הספרות המוצג באפליקציה שלך."
+  }
+}

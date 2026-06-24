@@ -1,0 +1,22 @@
+{
+  "title": "Espace administrateur",
+  "subtitlePhase1": "Connexion sécurisée avec authentification à deux facteurs.",
+  "subtitlePhase2": "Saisissez le code TOTP de votre application d'authentification.",
+  "emailLabel": "Email",
+  "emailPlaceholder": "admin@cyna.fr",
+  "passwordLabel": "Mot de passe",
+  "continue": "Continuer →",
+  "verifying": "Vérification…",
+  "totpLabel": "Code TOTP",
+  "totpHint": "Le code change toutes les 30 secondes.",
+  "submit": "Se connecter",
+  "editCredentials": "← Modifier mes identifiants",
+  "standardLoginLink": "Connexion utilisateur standard",
+  "errorInvalidCredentials": "Identifiants invalides. Vérifiez votre email et mot de passe.",
+  "errorInvalidTotp": "Code invalide ou expiré. Vérifiez votre application d'authentification.",
+  "otpDigit": "Chiffre {{n}}",
+  "appHint": {
+    "title": "Application d'authentification",
+    "description": "Ouvrez Google Authenticator, Authy ou toute autre application TOTP et saisissez le code à 6 chiffres affiché pour {{email}}."
+  }
+}

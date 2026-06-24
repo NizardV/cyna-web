@@ -7,8 +7,8 @@ import { ProductGallery } from "@/components/product/product-gallery";
 import { ProductInfo } from "@/components/product/product-info";
 import { PricingTiersTable } from "@/components/product/pricing-tiers-table";
 import { ProductPricing } from "@/components/product/product-pricing";
-import { FeaturedProducts } from "@/components/home/featured-products";
-import { findTier, UnitType } from "@/lib/pricing-utils";
+import { SimilarProducts } from "@/components/product/similar-product";
+import { findTier, isOverTier, UnitType } from "@/lib/pricing-utils";
 
 /**
  * Page détail d'un produit : galerie, informations, paliers de tarification,
@@ -57,9 +57,9 @@ export function Product() {
   const tierDevice     = hasDeviceTiers ? findTier(currentPlan.pricingTiers, UnitType.DEVICE, quantityDevices) : null;
   const totalPrice     = (tierUser   ? tierUser.unitPrice   * quantityUsers   : 0)
                        + (tierDevice ? tierDevice.unitPrice * quantityDevices : 0);
-  const isQuoteRequired = currentPlan && (
-    (hasUserTiers   && quantityUsers   > currentPlan.maxUsersCheckout)   ||
-    (hasDeviceTiers && quantityDevices > currentPlan.maxDevicesCheckout)
+  const isQuoteRequired = Boolean(currentPlan) && (
+    isOverTier(currentPlan.pricingTiers, UnitType.USER,   quantityUsers) ||
+    isOverTier(currentPlan.pricingTiers, UnitType.DEVICE, quantityDevices)
   );
 
   const handleBillingPeriodChange = (period) => {
@@ -139,16 +139,8 @@ export function Product() {
         )}
 
       </main>
-
       {similarProducts && similarProducts.length > 0 && (
-        <div className="bg-slate-50 border-t border-gray-200 py-12">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
-              {t("similarServicesTitle")}
-            </h2>
-            <FeaturedProducts products={similarProducts} />
-          </div>
-        </div>
+          <SimilarProducts products={similarProducts} />
       )}
     </Layout>
   );

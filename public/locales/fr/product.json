@@ -26,7 +26,13 @@
   "tiersUpTo": "jusqu'à {{max}}",
   "tiersFrom": "à partir de {{min}}",
   "perUnit": "{{price}} / {{unit}}",
-  "overLimit": "Limite dépassée → devis",
+  "overLimit": "Limite dépassée → devis requis",
   "requestQuote": "CONTACTER L'ÉQUIPE COMMERCIALE",
-  "quoteInfo": "Au-delà des limites en ligne, contactez-nous pour un devis personnalisé."
+  "quoteInfo": "Au-delà des limites en ligne, contactez-nous pour un devis personnalisé.",
+  "product": {
+    "available": "Disponible",
+    "unavailable": "Indisponible",
+    "outOfStock": "Rupture de stock",
+    "details": "Détails"
+  }
 }

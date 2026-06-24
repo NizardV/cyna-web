@@ -1,0 +1,11 @@
+{
+  "adminLoginLink": "Connexion administrateur (2FA)",
+  "registerVerifySent": "Un code de vérification à 6 chiffres a été envoyé à {{email}}.",
+  "registerVerifyCta": "Vérifier mon email →",
+  "profileEmailUnverified": "Adresse non vérifiée.",
+  "profileVerifyNow": "Vérifier maintenant",
+  "profileEmailChangedToast": "Profil mis à jour. Un code de vérification a été envoyé à votre nouvelle adresse.",
+  "profile2faTitle": "Double authentification (2FA)",
+  "profile2faDescription": "Requis pour la connexion à l'espace administrateur.",
+  "profile2faConfigure": "Configurer"
+}

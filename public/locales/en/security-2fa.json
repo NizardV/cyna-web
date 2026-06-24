@@ -1,0 +1,27 @@
+{
+  "title": "Two-factor authentication",
+  "subtitle": "Secure your admin account with a TOTP code.",
+  "errorSetup": "Unable to generate the 2FA key. Please try again later.",
+  "errorInvalidCode": "Invalid code. Check your phone's time and try again.",
+  "toastActivated": "Two-factor authentication enabled.",
+  "activatedTitle": "2FA successfully enabled",
+  "activatedDescription": "You will now need to use the admin login with your TOTP code.",
+  "goToDashboard": "Go to dashboard",
+  "backToProfile": "Back to profile",
+  "activating": "Activating…",
+  "activate": "Enable 2FA",
+  "otpDigit": "Digit {{n}}",
+  "step1": {
+    "title": "1. Scan the QR code",
+    "description": "With Google Authenticator, Authy, or any other TOTP app.",
+    "qrAlt": "2FA QR code",
+    "manualHint": "Can't scan? Enter this key manually:",
+    "copy": "Copy",
+    "copyError": "Unable to copy automatically.",
+    "typeHint": "Type: Time-based (TOTP), 6 digits, 30 seconds."
+  },
+  "step2": {
+    "title": "2. Confirm activation",
+    "description": "Enter the 6-digit code shown in your app."
+  }
+}

@@ -10,13 +10,9 @@ import { Layout } from "@/components/layout/layout";
 import { useAuth } from "@/hooks/use-auth";
 import { loginUser } from "@/api/auth";
 
-/**
- * Page de connexion : formulaire email/mot de passe avec option "Se souvenir de moi".
- * Masque la nav et la barre de recherche via les props de Layout.
- */
 export function Login() {
   const navigate = useNavigate();
-  const { t } = useTranslation("auth");
+  const { t } = useTranslation(["auth", "auth-extra"]);
   const { login, setLoading } = useAuth();
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [loading, setLoadingState] = useState(false);
@@ -48,7 +44,7 @@ export function Login() {
     setError("");
 
     try {
-      const response = await loginUser({ email: formData.email, password: formData.password });
+      await loginUser({ email: formData.email, password: formData.password });
       login();
       navigate("/");
     } catch (err) {
@@ -117,7 +113,7 @@ export function Login() {
                 />
                 <span className="text-gray-700">{t("login.rememberMe")}</span>
               </label>
-              <Link to="#" className="text-[#7C3AED] font-semibold hover:underline">
+              <Link to="/forgot-password" className="text-[#7C3AED] font-semibold hover:underline">
                 {t("login.forgotPassword")}
               </Link>
             </div>
@@ -137,6 +133,15 @@ export function Login() {
               )}
             </Button>
           </form>
+
+          <div className="mt-6 flex justify-center">
+            <Link
+              to="/admin/login"
+              className="text-xs text-gray-400 hover:text-gray-600 underline underline-offset-2"
+            >
+              {t("auth-extra:adminLoginLink")}
+            </Link>
+          </div>
         </div>
       </div>
     </Layout>

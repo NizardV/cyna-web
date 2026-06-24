@@ -10,7 +10,7 @@ import Loading from "./pages/specials/loading";
 export function UserRoute() {
   const { loading, isAdminView } = useAuth();
   if (loading) return <Loading />;
-  if (isAdminView) return <Navigate to="/admin/dashboard" replace />;
+  if (isAdminView) return <Navigate to="/admin" replace />;
   return <Outlet />;
 }
 
