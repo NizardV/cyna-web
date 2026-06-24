@@ -38,13 +38,13 @@ export function ProductCard({ product }) {
         )}
       >
        
-        <div className="relative aspect-video w-full overflow-hidden bg-muted">
+       
           <img
             src={product.imageUrl}
             alt={product.name}
             className="h-full w-full object-cover transition-transform hover:scale-105 duration-300"
           />
-        </div>
+        
 
         <CardContent className="flex flex-1 flex-col gap-3 pt-4">
           <div className="flex flex-col gap-1">
