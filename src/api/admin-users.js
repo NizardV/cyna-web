@@ -46,7 +46,7 @@ export const changeUserRole = (id, role) =>
  * @type {{ value: "User"|"Admin"|"SuperAdmin", label: string }[]}
  */
 export const USER_ROLES = [
-  { value: "User",       label: "Utilisateur" },
-  { value: "Admin",       label: "Administrateur" },
-  { value: "SuperAdmin",  label: "Super administrateur" },
+  { value: "Utilisateur",       label: "Utilisateur" },
+  { value: "Administrateur",       label: "Administrateur" },
+  { value: "Super administrateur",  label: "Super administrateur" },
 ]
