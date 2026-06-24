@@ -79,7 +79,7 @@ export function ProductPricing({
             quantity={quantityUsers}
             onDecrement={() => onUsersChange(q => Math.max(0, q - 1))}
             onIncrement={() => onUsersChange(q => q + 1)}
-            isOverLimit={quantityUsers > currentPlan.maxUsersCheckout}
+            isOverLimit={quantityUsers > 0 && !tierUser}
             overLimitLabel={t("overLimit")}
           />
         )}
@@ -90,7 +90,7 @@ export function ProductPricing({
             quantity={quantityDevices}
             onDecrement={() => onDevicesChange(q => Math.max(0, q - 1))}
             onIncrement={() => onDevicesChange(q => q + 1)}
-            isOverLimit={quantityDevices > currentPlan.maxDevicesCheckout}
+            isOverLimit={quantityDevices > 0 && !tierDevice}
             overLimitLabel={t("overLimit")}
           />
         )}

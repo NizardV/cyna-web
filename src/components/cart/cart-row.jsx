@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { formatPrice } from "@/lib/utils";
-import { findTier, UnitType } from "@/lib/pricing-utils";
+import { findTier, isOverTier, UnitType } from "@/lib/pricing-utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
@@ -29,8 +29,8 @@ export function CartRow({ item, onUsersChange, onDevicesChange, onRemove }) {
   const { t: tc } = useTranslation("common");
   const [updating, setUpdating] = useState(false);
 
-  const isOverLimitUsers   = item.quantityUsers   > item.maxUsersCheckout;
-  const isOverLimitDevices = item.quantityDevices > item.maxDevicesCheckout;
+  const isOverLimitUsers   = isOverTier(item.pricingTiers, UnitType.USER,   item.quantityUsers);
+  const isOverLimitDevices = isOverTier(item.pricingTiers, UnitType.DEVICE, item.quantityDevices);
   const isQuoteRequired    = isOverLimitUsers || isOverLimitDevices;
   const total              = lineTotal(item);
 

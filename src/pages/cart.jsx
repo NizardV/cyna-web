@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next"
 import { Layout } from "@/components/layout/layout"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { findTier, UnitType } from "@/lib/pricing-utils"
+import { findTier, isOverTier, UnitType } from "@/lib/pricing-utils"
 import { getCart, updateCartItem, removeFromCart } from "@/api/cart"
 import { toast } from "sonner"
 import { CartRow, lineTotal } from "@/components/cart/cart-row"
@@ -48,7 +48,8 @@ export function Cart() {
   }
 
   const hasQuoteItem = items.some(i =>
-    i.quantityUsers > i.maxUsersCheckout || i.quantityDevices > i.maxDevicesCheckout
+    isOverTier(i.pricingTiers, UnitType.USER,   i.quantityUsers) ||
+    isOverTier(i.pricingTiers, UnitType.DEVICE, i.quantityDevices)
   )
   const subtotal = items.reduce((s, i) => s + lineTotal(i), 0)
   const tva      = subtotal * 0.2

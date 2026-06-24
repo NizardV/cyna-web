@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { cn, formatPrice } from "@/lib/utils"
 import { getCart, clearCart } from "@/api/cart"
+import { lineTotal } from "@/components/cart/cart-row"
+import { isOverTier, UnitType } from "@/lib/pricing-utils"
 import { useAuth } from "@/hooks/use-auth"
 import { apiClient, ApiError } from "@/api/client"
 import { toast } from "sonner"
@@ -121,7 +123,7 @@ function StripePaymentForm({ total, onSuccess }) {
 // CheckoutSummary
 // ---------------------------------------------------------------------------
 
-function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing, paymentStarted }) {
+function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing, paymentStarted, hasQuoteItem }) {
   const { t } = useTranslation("checkout")
 
   return (
@@ -134,7 +136,7 @@ function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing,
 
           <div className="space-y-2">
             {items.map((item) => {
-              const lineTotal = item.lineTotal ?? 0
+              const itemTotal = item.lineTotal ?? lineTotal(item)
               return (
                 <div key={item.id} className="flex justify-between gap-2 text-xs">
                   <div className="min-w-0">
@@ -145,7 +147,7 @@ function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing,
                       {item.quantityDevices > 0 && ` • ${t("summary.devices", { count: item.quantityDevices })}`}
                     </p>
                   </div>
-                  <span className="shrink-0 font-medium tabular-nums">{formatPrice(lineTotal)}</span>
+                  <span className="shrink-0 font-medium tabular-nums">{formatPrice(itemTotal)}</span>
                 </div>
               )
             })}
@@ -169,6 +171,15 @@ function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing,
             </span>
           </div>
 
+          {hasQuoteItem && (
+            <p className="rounded-md border border-orange-200 bg-orange-50 p-2.5 text-xs text-orange-600">
+              {t("summary.quoteWarning", { defaultValue: "Un article dépasse les tranches en ligne et nécessite un devis." })}{" "}
+              <Link to="/contact" className="font-medium underline">
+                {t("summary.quoteContact", { defaultValue: "Contactez-nous" })}
+              </Link>
+            </p>
+          )}
+
           {paymentStarted ? (
             <p className="text-center text-xs text-muted-foreground">
               {t("summary.completePayment", { defaultValue: "Complétez le paiement à l'étape 3." })}
@@ -177,7 +188,7 @@ function CheckoutSummary({ items, subtotal, tva, total, onProceed, initializing,
             <Button
               className="w-full font-bold"
               onClick={onProceed}
-              disabled={initializing}
+              disabled={initializing || hasQuoteItem}
             >
               {initializing
                 ? t("summary.confirming", { defaultValue: "Chargement…" })
@@ -261,9 +272,18 @@ export function Checkout() {
     init()
   }, [])
 
-  const subtotal = backendSummary?.subtotal  ?? 0
-  const tva      = backendSummary?.taxAmount ?? 0
-  const total    = backendSummary?.total     ?? 0
+  // Repli local à partir des prix snapshot du panier : évite d'afficher 0 €
+  // si le backend ne renvoie pas de récapitulatif (indisponible / non connecté).
+  const localSubtotal = items.reduce((s, i) => s + lineTotal(i), 0)
+  const subtotal = backendSummary?.subtotal  ?? localSubtotal
+  const tva      = backendSummary?.taxAmount ?? subtotal * 0.2
+  const total    = backendSummary?.total     ?? subtotal + subtotal * 0.2
+
+  // Garde-fou : un article hors-tranche nécessite un devis → paiement en ligne impossible.
+  const hasQuoteItem = items.some(i =>
+    isOverTier(i.pricingTiers, UnitType.USER,   i.quantityUsers) ||
+    isOverTier(i.pricingTiers, UnitType.DEVICE, i.quantityDevices)
+  )
 
   // Promesse Stripe créée une fois la clé publiable reçue du backend.
   const stripePromise = useMemo(
@@ -272,6 +292,10 @@ export function Checkout() {
   )
 
   const handleProceed = async () => {
+    if (hasQuoteItem) {
+      toast.error(t("errors.quoteRequired", { defaultValue: "Un article nécessite un devis. Contactez-nous pour finaliser votre commande." }))
+      return
+    }
     if (!address.firstName || !address.lastName || !address.line1 || !address.postalCode || !address.city) {
       toast.error(t("errors.missingAddress"))
       return
@@ -394,6 +418,7 @@ export function Checkout() {
             onProceed={handleProceed}
             initializing={initializing}
             paymentStarted={!!payment}
+            hasQuoteItem={hasQuoteItem}
           />
         </div>
       </div>
