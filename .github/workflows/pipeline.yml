@@ -1,0 +1,223 @@
+name: CI/CD — cyna-web
+
+on:
+  push:
+    branches: [main, dev]
+
+env:
+  FULL_IMAGE: ghcr.io/nizardv/cyna-frontend
+
+jobs:
+  # ══════════════════════════════════════════
+  # CI — Build, Analyze, Push
+  # ══════════════════════════════════════════
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set env variables
+        id: env
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "tag=prod" >> $GITHUB_OUTPUT
+            echo "vite_api_url=https://api.nizard.dev" >> $GITHUB_OUTPUT
+            echo "vite_app_title=Cyna" >> $GITHUB_OUTPUT
+            echo "vite_stripe_key=${{ secrets.STRIPE_PUBLISHABLE_KEY_PROD }}" >> $GITHUB_OUTPUT
+          else
+            echo "tag=staging" >> $GITHUB_OUTPUT
+            echo "vite_api_url=https://api.staging.nizard.dev" >> $GITHUB_OUTPUT
+            echo "vite_app_title=Cyna [Staging]" >> $GITHUB_OUTPUT
+            echo "vite_stripe_key=${{ secrets.STRIPE_PUBLISHABLE_KEY_STAGING }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: SonarCloud Analyze
+        uses: SonarSource/sonarcloud-github-action@v3
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=2028di1p5g3
+            -Dsonar.projectKey=2028DI1P5G3_Cyna-Web
+            -Dsonar.projectName=CYNA - Frontend Web
+            -Dsonar.exclusions=**/node_modules/**,**/dist/**
+
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: NizardV
+          password: ${{ secrets.GHCR_PAT }}
+
+      - name: Docker Build & Push
+        run: |
+          ENV_TAG=${{ steps.env.outputs.tag }}
+          docker build \
+            --build-arg VITE_API_URL=${{ steps.env.outputs.vite_api_url }} \
+            --build-arg VITE_STRIPE_PUBLISHABLE_KEY=${{ steps.env.outputs.vite_stripe_key }} \
+            --build-arg "VITE_APP_TITLE=${{ steps.env.outputs.vite_app_title }}" \
+            --build-arg "VITE_APP_DESCRIPTION=Vente de solutions SaaS de cybersécurité" \
+            -t $FULL_IMAGE:$ENV_TAG \
+            -t $FULL_IMAGE:sha-${{ github.sha }} \
+            -t $FULL_IMAGE:build-${{ github.run_id }} \
+            .
+          docker push $FULL_IMAGE:$ENV_TAG
+          docker push $FULL_IMAGE:sha-${{ github.sha }}
+          docker push $FULL_IMAGE:build-${{ github.run_id }}
+
+  # ══════════════════════════════════════════
+  # CD STAGING — déclenché sur dev
+  # ══════════════════════════════════════════
+  deploy-staging:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/dev'
+
+    steps:
+      - name: Generate .env.staging
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          username: ${{ secrets.OVH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            cat > ~/cyna-infra/docker-compose/.env.staging << EOF
+            DB_PASSWORD=${{ secrets.DB_PASSWORD_STAGING }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY_STAGING }}
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_STAGING }}
+            STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_STAGING }}
+            API_PORT=4001
+            ASPNETCORE_ENVIRONMENT=Staging
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY_STAGING }}
+            RESEND_FROM=${{ secrets.RESEND_FROM_STAGING }}
+            STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY_STAGING }}
+            VITE_APP_TITLE=Cyna [Staging]
+            VITE_APP_DESCRIPTION=Vente de solutions SaaS de cybersécurité
+            EOF
+
+      - name: Deploy Frontend staging
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          username: ${{ secrets.OVH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u NizardV --password-stdin
+            cd ~/cyna-infra && git pull origin main
+            cd docker-compose/
+            echo "─── Pull & Relance Frontend staging sur le port 3001 ───"
+            docker compose -p cyna-staging -f docker-compose.staging.yml pull web
+            docker compose -p cyna-staging -f docker-compose.staging.yml up -d --no-build --force-recreate --no-deps web
+
+      - name: Health check staging
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          username: ${{ secrets.OVH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            sleep 5
+            curl -f http://localhost:3001 || exit 1
+
+  # ══════════════════════════════════════════
+  # CD PROD — déclenché sur main
+  # ══════════════════════════════════════════
+  deploy-prod:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate .env.prod
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          username: ${{ secrets.OVH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            cat > ~/cyna-infra/docker-compose/.env.prod << EOF
+            DB_PASSWORD=${{ secrets.DB_PASSWORD_PROD }}
+            JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY_PROD }}
+            STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY_PROD }}
+            STRIPE_WEBHOOK_SECRET=${{ secrets.STRIPE_WEBHOOK_SECRET_PROD }}
+            API_PORT=4000
+            ASPNETCORE_ENVIRONMENT=Production
+            RESEND_API_KEY=${{ secrets.RESEND_API_KEY_PROD }}
+            RESEND_FROM=${{ secrets.RESEND_FROM_PROD }}
+            STRIPE_PUBLISHABLE_KEY=${{ secrets.STRIPE_PUBLISHABLE_KEY_PROD }}
+            VITE_APP_TITLE=Cyna
+            VITE_APP_DESCRIPTION=Vente de solutions SaaS de cybersécurité
+            EOF
+
+      - name: Versioning — Calcul et tag Git
+        id: version
+        run: |
+          git fetch --tags
+          LAST_TAG=$(git tag --sort=-v:refname | grep -E '^web/v[0-9]+\.[0-9]+\.[0-9]+$' | head -n1)
+          [ -z "$LAST_TAG" ] && LAST_TAG="web/v0.0.0"
+
+          VERSION=${LAST_TAG#web/v}
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          PATCH=$(echo $VERSION | cut -d. -f3)
+
+          COMMITS=$(git log ${LAST_TAG}..HEAD --pretty=format:"%s")
+          BUMP="patch"
+          echo "$COMMITS" | grep -qE '^feat!:|^fix!:|^refactor!:' && BUMP="major"
+          echo "$COMMITS" | grep -qE '^feat:' && [ "$BUMP" != "major" ] && BUMP="minor"
+
+          case $BUMP in
+            major) MAJOR=$((MAJOR+1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR+1)); PATCH=0 ;;
+            patch) PATCH=$((PATCH+1)) ;;
+          esac
+
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          NEW_TAG="web/${NEW_VERSION}"
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag $NEW_TAG
+          git push origin $NEW_TAG
+          echo "Tag $NEW_TAG créé ✅"
+
+      - name: Tag image Docker avec version
+        run: |
+          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u NizardV --password-stdin
+          docker pull $FULL_IMAGE:prod
+          docker tag $FULL_IMAGE:prod $FULL_IMAGE:${{ steps.version.outputs.new_version }}
+          docker push $FULL_IMAGE:${{ steps.version.outputs.new_version }}
+
+      - name: Deploy Frontend prod
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          username: ${{ secrets.OVH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u NizardV --password-stdin
+            cd ~/cyna-infra && git pull origin main
+            cd docker-compose/
+            echo "─── Pull & Relance Frontend prod sur le port 3000 ───"
+            docker compose -p cyna-prod -f docker-compose.prod.yml pull web
+            docker compose -p cyna-prod -f docker-compose.prod.yml up -d --no-build --force-recreate --no-deps web
+
+      - name: Health check prod
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          username: ${{ secrets.OVH_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: |
+            sleep 5
+            curl -f http://localhost:3000 || exit 1
