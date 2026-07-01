@@ -25,12 +25,12 @@ jobs:
         run: |
           if [ "${{ github.ref }}" == "refs/heads/main" ]; then
             echo "tag=prod" >> $GITHUB_OUTPUT
-            echo "vite_api_url=https://api.projet-cyna.fr" >> $GITHUB_OUTPUT
+            echo "vite_api_url=https://api.cyna.nizard.dev" >> $GITHUB_OUTPUT
             echo "vite_app_title=Cyna" >> $GITHUB_OUTPUT
             echo "vite_stripe_key=${{ secrets.STRIPE_PUBLISHABLE_KEY_PROD }}" >> $GITHUB_OUTPUT
           else
             echo "tag=staging" >> $GITHUB_OUTPUT
-            echo "vite_api_url=https://api.staging.projet-cyna.fr" >> $GITHUB_OUTPUT
+            echo "vite_api_url=https://api.staging.cyna.nizard.dev" >> $GITHUB_OUTPUT
             echo "vite_app_title=Cyna [Staging]" >> $GITHUB_OUTPUT
             echo "vite_stripe_key=${{ secrets.STRIPE_PUBLISHABLE_KEY_STAGING }}" >> $GITHUB_OUTPUT
           fi
