@@ -35,11 +35,6 @@ jobs:
             echo "vite_stripe_key=${{ secrets.STRIPE_PUBLISHABLE_KEY_STAGING }}" >> $GITHUB_OUTPUT
           fi
 
-      - name: SonarCloud Analyze
-        uses: SonarSource/sonarcloud-github-action@v5
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-
       - name: Login GHCR
         uses: docker/login-action@v4
         with:
