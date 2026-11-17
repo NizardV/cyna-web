@@ -20,7 +20,7 @@
     "@radix-ui/react-popover": "^1.1.19",
     "@radix-ui/react-select": "^2.3.3",
     "@radix-ui/react-slot": "^1.2.4",
-    "@stripe/react-stripe-js": "^6.7.0",
+    "@stripe/react-stripe-js": "^7.1.0",
     "@stripe/stripe-js": "^9.9.0",
     "chrono-node": "^2.9.1",
     "class-variance-authority": "^0.7.1",
